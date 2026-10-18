@@ -1,0 +1,22 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+Thumbs.db
+
+# IntelliJ / Android Studio / VS Code
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# Flutter / Dart
+**/build/
+**/.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
