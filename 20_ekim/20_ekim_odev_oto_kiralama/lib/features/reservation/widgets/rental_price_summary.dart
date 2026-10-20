@@ -2,10 +2,38 @@ import 'package:flutter/material.dart';
 import '../../../core/utils/price_utils.dart';
 import '../../../core/theme/app_colors.dart';
 
+/// ============================================================================
+/// RENTAL PRICE SUMMARY (KİRALAMA FİYAT ÖZETİ VE HESAP DÖKÜM KARTI)
+/// ============================================================================
+/// 
+/// [RentalPriceSummary], seçilen tarih ve saat aralığına göre kiralama bedelinin
+/// şeffaf bir dökümünü (günlük ücret, ekstra saatler, %15 uzun dönem indirimi
+/// ve nihai toplam tutar) kullanıcıya sunan kart bileşenidir.
+/// 
+/// BU BİLEŞENİN GÖREVLERİ VE ÖĞRENİLECEK KONULAR:
+/// 1. İŞ MANTIĞININ UI'A YANSITILMASI (Domain Logic to UI):
+///    - [AppPriceUtils.calculateRentalPrice] fonksiyonunu çağırarak
+///      gün, saat, ham tutar, indirim tutarı ve nihai tutar verilerini alır.
+/// 
+/// 2. ŞARTLI ARAYÜZ OLUŞTURMA (Conditional UI Rendering):
+///    - Eğer artık saat varsa (`calculation.hours > 0`), ekstra saat satırı eklenir.
+///    - Eğer kiralama süresi 7 gün ve üzerindeyse (`calculation.isDiscountApplied`),
+///      yeşil renkli indirim satırı `-₺X.XXX` şeklinde gösterilir.
+/// 
+/// 3. HİYERARŞİK GÖRSEL TASARIM (Visual Hierarchy):
+///    - Ara hesaplamalar ikincil (gri) renklerle gösterilirken,
+///      toplam tutar 20pt, kalın (w900) ve tema ana rengiyle öne çıkarılır.
 class RentalPriceSummary extends StatelessWidget {
+  /// Aracın 24 saatlik günlük kiralama bedeli
   final double dailyPrice;
+  
+  /// Aracın gün aşımındaki saatlik kiralama bedeli
   final double hourlyPrice;
+  
+  /// Alış tarihi ve saati (kombine DateTime)
   final DateTime startDateTime;
+  
+  /// Dönüş tarihi ve saati (kombine DateTime)
   final DateTime endDateTime;
 
   const RentalPriceSummary({
@@ -22,6 +50,10 @@ class RentalPriceSummary extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
+    // -----------------------------------------------------------------
+    // FİYAT HESAPLAMA MOTORU ÇAĞRISI:
+    // Dart 3 Record veya özel hesap nesnesi üzerinden dökümü alıyoruz
+    // -----------------------------------------------------------------
     final calculation = AppPriceUtils.calculateRentalPrice(
       dailyPrice: dailyPrice,
       hourlyPrice: hourlyPrice,
@@ -41,6 +73,9 @@ class RentalPriceSummary extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // -----------------------------------------------------------
+          // BAŞLIK VE TOPLAM SÜRE ROZETİ (Örn: "3 Gün 4 Saat")
+          // -----------------------------------------------------------
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -69,7 +104,10 @@ class RentalPriceSummary extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          // Günlük Taban Ücret
+          
+          // -----------------------------------------------------------
+          // GÜNLÜK TABAN ÜCRET DÖKÜMÜ (Örn: ₺1.500 x 3 Gün = ₺4.500)
+          // -----------------------------------------------------------
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -83,6 +121,10 @@ class RentalPriceSummary extends StatelessWidget {
               ),
             ],
           ),
+          
+          // -----------------------------------------------------------
+          // EKSTRA SAAT ÜCRETİ (Sadece artık saat varsa görünür)
+          // -----------------------------------------------------------
           if (calculation.hours > 0) ...[
             const SizedBox(height: 6),
             Row(
@@ -99,6 +141,10 @@ class RentalPriceSummary extends StatelessWidget {
               ],
             ),
           ],
+          
+          // -----------------------------------------------------------
+          // %15 UZUN DÖNEM İNDİRİMİ (>= 7 gün kiralamalarda yeşil satır)
+          // -----------------------------------------------------------
           if (calculation.isDiscountApplied) ...[
             const SizedBox(height: 6),
             Row(
@@ -129,8 +175,12 @@ class RentalPriceSummary extends StatelessWidget {
               ],
             ),
           ],
+          
           const Divider(height: 20),
-          // Toplam Ücret
+          
+          // -----------------------------------------------------------
+          // NİHAİ TOPLAM TUTAR (Büyük ve Vurgulu)
+          // -----------------------------------------------------------
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -153,3 +203,4 @@ class RentalPriceSummary extends StatelessWidget {
     );
   }
 }
+

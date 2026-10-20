@@ -3,9 +3,14 @@ import '../../../models/vehicle.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/price_utils.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🏎️ FeaturedVehicleCard — Öne Çıkan Araç Vitrin Kartı
+/// ---------------------------------------------------------------------------
+/// Ana sayfada yatay şeritte gösterilen, geniş görselli, kategori ve yıl rozetli
+/// premium kart bileşenidir.
 class FeaturedVehicleCard extends StatelessWidget {
-  final Vehicle vehicle;
-  final VoidCallback onTap;
+  final Vehicle vehicle;    // Gösterilecek araç modeli
+  final VoidCallback onTap; // Karta dokunulduğunda çalışacak tıklama fonksiyonu
 
   const FeaturedVehicleCard({
     super.key,
@@ -38,13 +43,20 @@ class FeaturedVehicleCard extends StatelessWidget {
             ),
           ],
         ),
+        /// 'Clip.antiAlias':
+        /// Kartın köşeleri yuvarlatıldığı için içindeki köşeli fotoğrafın
+        /// kenarlardan taşmasını engeller ve pürüzsüz biçimde keser (Maskeleme).
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Görsel Alanı
+            // -----------------------------------------------------------------
+            // 📸 1. Görsel ve Rozetler Bölümü (Stack & Positioned)
+            // -----------------------------------------------------------------
+            /// 'Stack': İçindeki widget'ları birbiri üzerine bindirmeye (katman katman) yarar.
             Stack(
               children: [
+                // Araç Görseli
                 Container(
                   height: 150,
                   width: double.infinity,
@@ -52,6 +64,9 @@ class FeaturedVehicleCard extends StatelessWidget {
                   child: Image.network(
                     vehicle.image,
                     fit: BoxFit.cover,
+                    /// 'errorBuilder':
+                    /// İnternet bağlantısı kesildiğinde veya görsel URL'si bozulduğunda
+                    /// uygulamanın çökmesini önler ve yerine şık yedek ikon çizer.
                     errorBuilder: (_, __, ___) {
                       return Center(
                         child: Column(
@@ -77,7 +92,7 @@ class FeaturedVehicleCard extends StatelessWidget {
                     },
                   ),
                 ),
-                // Kategori Rozeti
+                // Sol Üst: Renkli Kategori Rozeti
                 Positioned(
                   top: 12,
                   left: 12,
@@ -105,7 +120,7 @@ class FeaturedVehicleCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Yıl Rozeti
+                // Sağ Üst: Yarı Saydam Siyah Model Yılı Rozeti
                 Positioned(
                   top: 12,
                   right: 12,
@@ -128,12 +143,15 @@ class FeaturedVehicleCard extends StatelessWidget {
               ],
             ),
 
-            // Bilgi Alanı
+            // -----------------------------------------------------------------
+            // 📄 2. Araç Bilgi ve Fiyat Alanı
+            // -----------------------------------------------------------------
             Padding(
               padding: const EdgeInsets.all(14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Marka
                   Text(
                     vehicle.brand,
                     style: TextStyle(
@@ -143,6 +161,7 @@ class FeaturedVehicleCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 2),
+                  // Model
                   Text(
                     vehicle.model,
                     maxLines: 1,
@@ -153,7 +172,8 @@ class FeaturedVehicleCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // Özellik İkonları (Vites & Yakıt)
+
+                  // Vites ve Yakıt Özellik Çipleri
                   Row(
                     children: [
                       _buildChip(
@@ -170,7 +190,8 @@ class FeaturedVehicleCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  // Fiyat ve İncele Butonu
+
+                  // Günlük Ücret ve 'Kirala' Eylem Düğmesi
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -230,6 +251,7 @@ class FeaturedVehicleCard extends StatelessWidget {
     );
   }
 
+  /// Küçük teknik özellik çipi (Vites, Yakıt)
   Widget _buildChip(ThemeData theme, IconData icon, String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -255,3 +277,4 @@ class FeaturedVehicleCard extends StatelessWidget {
     );
   }
 }
+

@@ -1,16 +1,60 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 
+/// ============================================================================
+/// RENTAL DATE FORM (REZERVASYON DETAY VE SAAT/LOKASYON FORMU)
+/// ============================================================================
+/// 
+/// [RentalDateForm], araç kiralama rezervasyonunda kullanıcının şube (lokasyon),
+/// alış/dönüş saati ve opsiyonel hedef şehir bilgilerini girdiği form bileşenidir.
+/// 
+/// BU BİLEŞENİN GÖREVLERİ VE ÖĞRENİLECEK KONULAR:
+/// 1. FORM YÖNETİMİ (Form & `GlobalKey<FormState>`):
+///    - Üst ekrandan geçirilen [formKey] ile form alanlarının validasyonu ve
+///      durum takibi merkezi olarak yönetilir.
+/// 
+/// 2. INPUTDECORATOR KALIBI (InputDecorator Pattern):
+///    - TextFormField olmayan (tıklanınca picker veya bottomsheet açılan)
+///      özel alanlara tam olarak Material `InputDecoration` görünümü (kenarlık,
+///      yüzen etiket/floating label, dolgu) kazandırmak için [InputDecorator] kullanılır.
+///    - Bu sayede formdaki tüm alanlar görsel olarak %100 uyumlu ve standart durur.
+/// 
+/// 3. ASENKRON SEÇİCİLER (Async Pickers):
+///    - [showModalBottomSheet] ile şube listesi açılır ve seçim yaptırılır.
+///    - [showTimePicker] asenkron olarak açılarak saat ve dakika seçtirilir.
+/// 
+/// 4. METİN BİÇİMLENDİRME (padLeft):
+///    - Saati gösterirken tek basamaklı sayıların başına sıfır eklemek için
+///      `time.hour.toString().padLeft(2, '0')` tekniği kullanılır (Örn: 9:5 -> 09:05).
 class RentalDateForm extends StatelessWidget {
+  /// Formun doğrulama anahtarı
   final GlobalKey<FormState> formKey;
+  
+  /// Seçili alış şubesi (Örn: "İstanbul - Kadıköy Rıhtım Ofisi")
   final String pickupLocation;
+  
+  /// Seçili dönüş şubesi (Farklı bir ofise teslimat imkanı)
   final String returnLocation;
+  
+  /// Aracın teslim alınacağı saat
   final TimeOfDay pickupTime;
+  
+  /// Aracın teslim edileceği saat
   final TimeOfDay returnTime;
+  
+  /// Kullanıcının isteğe bağlı girebileceği varış/hedef şehir metin denetleyicisi
   final TextEditingController destinationCityController;
+  
+  /// Alış yeri değiştiğinde üst ekranı bilgilendiren callback
   final ValueChanged<String> onPickupLocationChanged;
+  
+  /// Dönüş yeri değiştiğinde üst ekranı bilgilendiren callback
   final ValueChanged<String> onReturnLocationChanged;
+  
+  /// Alış saati seçildiğinde tetiklenen callback
   final ValueChanged<TimeOfDay> onPickupTimeChanged;
+  
+  /// Dönüş saati seçildiğinde tetiklenen callback
   final ValueChanged<TimeOfDay> onReturnTimeChanged;
 
   const RentalDateForm({
@@ -37,7 +81,9 @@ class RentalDateForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Alış & Dönüş Noktaları
+          // -------------------------------------------------------------
+          // 1. ALIŞ & DÖNÜŞ NOKTALARI SEÇİM ALANLARI (Yan yana 2 Dropdown)
+          // -------------------------------------------------------------
           Row(
             children: [
               Expanded(
@@ -64,7 +110,9 @@ class RentalDateForm extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          // Alış & Dönüş Saatleri
+          // -------------------------------------------------------------
+          // 2. ALIŞ & DÖNÜŞ SAATLERİ (Saat Seçici Butonları)
+          // -------------------------------------------------------------
           Row(
             children: [
               Expanded(
@@ -89,7 +137,9 @@ class RentalDateForm extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          // İsteğe Bağlı Gidilecek Şehir
+          // -------------------------------------------------------------
+          // 3. İSTEĞE BAĞLI GİDİLECEK ŞEHİR (Serbest Metin Alanı)
+          // -------------------------------------------------------------
           TextFormField(
             controller: destinationCityController,
             decoration: const InputDecoration(
@@ -101,7 +151,9 @@ class RentalDateForm extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // 250 KM Günlük Kullanım Bilgi Notu
+          // -------------------------------------------------------------
+          // 4. ŞİRKET POLİTİKASI: 250 KM GÜNLÜK SINIR BİLGİLENDİRME KUTUSU
+          // -------------------------------------------------------------
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
@@ -130,6 +182,7 @@ class RentalDateForm extends StatelessWidget {
     );
   }
 
+  /// Şube seçimi için özel alt sayfa (Modal BottomSheet) açan yardımcı metot
   Widget _buildLocationDropdown({
     required BuildContext context,
     required String label,
@@ -142,6 +195,7 @@ class RentalDateForm extends StatelessWidget {
 
     return InkWell(
       onTap: () {
+        // Tıklanınca ekranın altından şubelerin listelendiği şık bir çekmece açılır
         showModalBottomSheet(
           context: context,
           builder: (ctx) => SafeArea(
@@ -152,13 +206,14 @@ class RentalDateForm extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
                 ),
+                // AppConstants içindeki tüm şubeleri ListTile olarak dönüyoruz
                 ...AppConstants.pickupLocations.map((loc) => ListTile(
                   leading: Icon(icon, color: colorScheme.primary),
                   title: Text(loc, style: const TextStyle(fontSize: 13)),
-                  selected: loc == value,
+                  selected: loc == value, // Seçili olan şubeyi vurgular
                   onTap: () {
-                    onChanged(loc);
-                    Navigator.pop(ctx);
+                    onChanged(loc); // Üst widget'a seçimi bildir
+                    Navigator.pop(ctx); // Çekmeceyi kapat
                   },
                 )),
               ],
@@ -166,6 +221,7 @@ class RentalDateForm extends StatelessWidget {
           ),
         );
       },
+      // InputDecorator: Klasik bir TextField çerçevesi simüle eder
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: label,
@@ -176,6 +232,7 @@ class RentalDateForm extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
+                // "İstanbul - Kadıköy Rıhtım Ofisi" metninden sadece "Kadıköy Rıhtım Ofisi" kısmını gösterir
                 value.split(' - ').last,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -189,6 +246,7 @@ class RentalDateForm extends StatelessWidget {
     );
   }
 
+  /// Saat seçimi için Flutter'ın yerleşik [showTimePicker] diyaloğunu açan yardımcı metot
   Widget _buildTimePicker({
     required BuildContext context,
     required String label,
@@ -197,10 +255,12 @@ class RentalDateForm extends StatelessWidget {
   }) {
     return InkWell(
       onTap: () async {
+        // Asenkron olarak kullanıcıdan saat seçmesini bekleriz
         final picked = await showTimePicker(
           context: context,
           initialTime: time,
         );
+        // Kullanıcı iptal etmediyse ve bir saat seçtiyse callback'i tetikleriz
         if (picked != null) {
           onTimeSelected(picked);
         }
@@ -213,6 +273,7 @@ class RentalDateForm extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // padLeft(2, '0'): Sayı tek haneliyse (örn: 9) başına '0' ekleyerek "09" yapar
             Text(
               '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
@@ -224,3 +285,4 @@ class RentalDateForm extends StatelessWidget {
     );
   }
 }
+

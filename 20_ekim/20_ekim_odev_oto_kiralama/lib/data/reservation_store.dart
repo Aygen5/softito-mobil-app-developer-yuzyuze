@@ -3,15 +3,26 @@ import '../models/reservation.dart';
 import '../models/vehicle.dart';
 import '../core/utils/date_utils.dart';
 
+
+/// ReservationStore — Reaktif Rezervasyon Deposu ve Çakışma Motoru
+
+/// Bu sınıf; backend ve veritabanı olmadığı için kullanıcının yaptığı rezervasyonları uygulama belleğinde (In-Memory) saklar.
+/// Neden `ValueNotifier<List<Reservation>>`?
+/// Bir kullanıcı araç detayında "Rezervasyonu Onayla" butonuna bastığında,"Hesabım & Rezervasyonlarım" ekranının bundan haberdar olup listeyi ANINDA yenilemesi gerekir.
+/// 'ValueNotifier' sayesinde rezervasyon listesi değiştiğinde UI otomatik güncellenir.
+/// Singleton Deseni:
+/// Uygulama boyunca tek bir rezervasyon havuzu olması için Singleton kalıbı kullanıldı.
 class ReservationStore extends ValueNotifier<List<Reservation>> {
   static final ReservationStore _instance = ReservationStore._internal();
   factory ReservationStore() => _instance;
 
   ReservationStore._internal() : super([]) {
+    // Uygulama ilk açıldığında boş kalmasın diye 2 adet demo rezervasyon ekliyoruz
     _initSampleReservations();
   }
 
-  // Başlangıç için örnek rezervasyonlar yükle
+  /// Demo Rezervasyon Başlatıcı:
+  /// Kullanıcı uygulamayı açtığında hem aktif hem geçmiş rezervasyon kartlarını test edebilsin diye oluşturulur.
   void _initSampleReservations() {
     final now = DateTime.now();
     value = [
@@ -46,33 +57,37 @@ class ReservationStore extends ValueNotifier<List<Reservation>> {
     ];
   }
 
-  // Aktif rezervasyonlar
+  /// Aktif (Onaylı veya Beklemede) olan rezervasyonları filtreler
   List<Reservation> get activeReservations =>
       value.where((r) => r.isActive).toList();
 
-  // Geçmiş rezervasyonlar
+  /// Tamamlanmış veya İptal Edilmiş geçmiş rezervasyonları filtreler
   List<Reservation> get pastReservations =>
       value.where((r) => r.isCompleted).toList();
 
-  // Yeni rezervasyon ekle
+  // Yeni Rezervasyon Ekleme (Reaktivite Kuralı)
+  /// Çok Önemli Flutter Notu:
+  /// `value.add(reservation)` yaparsak ValueNotifier listenin referansı değişmediği için ekranları uyarmaz (notifyListeners tetiklenmez)!
+  /// Bu yüzden 'Spread Operator' (`...value`) kullanarak YENİ bir liste oluşturup `value = [reservation, ...value]` şeklinde atama yaparız.
   void addReservation(Reservation reservation) {
-    value = [reservation, ...value];
+    value = [reservation, ...value]; // Başa ekler (en güncel en üstte görünür)
   }
 
-  // Rezervasyon iptal et
+  /// Rezervasyonu İptal Et
+  /// Listeyi kopyalar, ilgili rezervasyonun durumunu 'İptal Edildi' yapar ve yeni listeyi atar.
   bool cancelReservation(String reservationId) {
     final index = value.indexWhere((r) => r.id == reservationId);
     if (index != -1) {
       final updatedList = List<Reservation>.from(value);
       updatedList[index] = updatedList[index].copyWith(status: 'İptal Edildi');
-      value = updatedList;
+      value = updatedList; // UI anında güncellenir
       return true;
     }
     return false;
   }
 
-  // Belirli bir aracın belirli bir tarih aralığında müsait olup olmadığını kontrol et
-  // Hem JSON'daki unavailableRanges hem de bellekteki aktif rezervasyonlar taranır
+  // Araç Müsaitlik ve Çakışma Denetleyicisi (Availability Validator)
+  /// Bir araç için seçilen tarihlerin geçerli olup olmadığını 4 adımda test eder:
   ({bool isAvailable, String? errorMessage}) checkVehicleAvailability({
     required Vehicle vehicle,
     required DateTime startDateTime,
@@ -94,7 +109,7 @@ class ReservationStore extends ValueNotifier<List<Reservation>> {
       );
     }
 
-    // 3. Kural: JSON'da tanımlı dolu tarih aralıkları kontrolü
+    // 3. Kural: JSON'dan gelen statik dolu tarihlerle (unavailableRanges) çakışma var mı?
     for (final range in vehicle.unavailableRanges) {
       if (AppDateUtils.hasDateOverlap(
         start1: startDateTime,
@@ -109,7 +124,7 @@ class ReservationStore extends ValueNotifier<List<Reservation>> {
       }
     }
 
-    // 4. Kural: Bellekteki aktif rezervasyonların çakışma kontrolü
+    // 4. Kural: Bellekte kullanıcının daha önce oluşturduğu aktif rezervasyonlarla çakışma var mı?
     final vehicleActiveReservations = value.where(
       (r) => r.vehicleId == vehicle.id && r.isActive,
     );
@@ -128,24 +143,27 @@ class ReservationStore extends ValueNotifier<List<Reservation>> {
       }
     }
 
+    // Hiçbir engele takılmadıysa araç tamamen müsaittir!
     return (isAvailable: true, errorMessage: null);
   }
 
-  // Belirli bir takvim gününün bu araç için dolu olup olmadığını sorgula (Takvimde kırmızı boyama için)
+  //  Takvimde Günün Dolu Olup Olmadığını Sorgulama
+  /// Müsaitlik takviminde (AvailabilityCalendar) her bir gün kutusu çizilirken çağrılır.
+  /// Eğer gün bu araç için doluysa takvimde kırmızı renk ve kilit simgesi basılır.
   bool isDayUnavailableForVehicle(Vehicle vehicle, DateTime day) {
-    // Geçmiş günler kiralanamaz
+    // Geçmiş günler zaten kiralanamaz (gri pasif gösterilir)
     if (AppDateUtils.isPastDate(day)) {
-      return false; // Geçmiş günler takvimde pasif/gri gösterilir
+      return false;
     }
 
-    // JSON'daki dolu gün aralıkları
+    // JSON'daki dolu gün aralıkları kontrolü
     for (final range in vehicle.unavailableRanges) {
       if (AppDateUtils.isDayWithinRange(day, range.startDate, range.endDate)) {
         return true;
       }
     }
 
-    // Bellekteki aktif rezervasyon günleri
+    // Kullanıcının bellekteki aktif rezervasyonlarının gün kontrolü
     final vehicleActiveReservations = value.where(
       (r) => r.vehicleId == vehicle.id && r.isActive,
     );
@@ -160,5 +178,6 @@ class ReservationStore extends ValueNotifier<List<Reservation>> {
   }
 }
 
-// Global rezervasyon deposu
+/// Uygulama genelinden erişilebilen global rezervasyon deposu örneği
 final ReservationStore reservationStore = ReservationStore();
+

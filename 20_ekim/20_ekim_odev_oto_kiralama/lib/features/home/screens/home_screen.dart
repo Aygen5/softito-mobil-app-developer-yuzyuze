@@ -10,6 +10,16 @@ import '../widgets/category_list.dart';
 import '../widgets/featured_vehicle_card.dart';
 import '../widgets/branch_map_preview.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🏠 HomeScreen — Ana Sayfa ve Keşif Vitrini
+/// ---------------------------------------------------------------------------
+/// Kullanıcının uygulamayı açtığında karşılaştığı ana vitrindir:
+/// - Karşılama başlığı ve anlık açık/koyu tema değiştirme düğmesi
+/// - Araç arama çubuğu
+/// - Hızlı kiralama planlama kartı (alış/dönüş şubesi ve tarih seçici)
+/// - Kategori filtreleme çipleri (Basic, Flex, Lux...)
+/// - Yatay kaydırılabilir "Öne Çıkan Araçlar" vitrini
+/// - Temsili Türkiye şube haritası önizlemesi
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -18,29 +28,36 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Arama kutusundaki metni kontrol etmek için Controller
   final TextEditingController _searchController = TextEditingController();
+
+  // Araç verilerini çeken Singleton servis
   final VehicleDataSource _dataSource = VehicleDataSource();
 
+  // Hızlı Kiralama Formu Durumları (State)
   String _selectedPickupLocation = AppConstants.pickupLocations[0];
   String _selectedReturnLocation = AppConstants.pickupLocations[0];
-  DateTime _selectedStartDate = DateTime.now().add(const Duration(days: 1));
-  DateTime _selectedEndDate = DateTime.now().add(const Duration(days: 4));
+  DateTime _selectedStartDate = DateTime.now().add(const Duration(days: 1)); // Yarın
+  DateTime _selectedEndDate = DateTime.now().add(const Duration(days: 4));   // 4 gün sonra
 
   bool _isLoading = true;
   List<Vehicle> _featuredVehicles = [];
 
+  /// Sayfa açıldığında ilk çalışan fonksiyon
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadData(); // JSON dosyasından araçları yükle
   }
 
+  /// Sayfadan çıkıldığında veya kapatıldığında çalışan temizlik fonksiyonu
   @override
   void dispose() {
-    _searchController.dispose();
+    _searchController.dispose(); // Controller'ı dispose ederek bellek sızıntısını önle
     super.dispose();
   }
 
+  /// Asenkron Veri Yükleme
   Future<void> _loadData() async {
     try {
       await _dataSource.loadVehicles();
@@ -59,10 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  /// Bir kategori çipine (örn: 'Lux') tıklandığında Araç Listesi sayfasına yönlendir
   void _onCategorySelected(String category) {
     AppNavigation.toVehicleList(context, initialCategory: category);
   }
 
+  /// Klavyeden arama onaylandığında filtreli listeye yönlendir
   void _onSearchSubmitted(String query) {
     if (query.trim().isNotEmpty) {
       AppNavigation.toVehicleList(context, initialSearchQuery: query.trim());
@@ -77,6 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       body: SafeArea(
+        /// 'RefreshIndicator':
+        /// Kullanıcı sayfayı yukarıdan aşağıya çektiğinde (Pull to Refresh)
+        /// JSON verisini zorla yeniden yükler (forceReload: true) ve sayfayı tazeler.
         child: RefreshIndicator(
           onRefresh: () async {
             await _dataSource.loadVehicles(forceReload: true);
@@ -86,27 +108,29 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             }
           },
+          /// 'SingleChildScrollView': Ekranın dikey olarak kaydırılabilmesini sağlar.
+          /// 'AlwaysScrollableScrollPhysics': Ekran kısa olsa bile aşağı çekme (Refresh) hareketinin çalışmasını sağlar.
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Üst Başlık & Karşılama
+                // 1. Üst Başlık & Karşılama & Hızlı Tema Butonu
                 _buildHeader(theme, colorScheme),
 
                 const SizedBox(height: 16),
 
-                // Arama Kutusu
+                // 2. Arama Kutusu (Search TextField)
                 _buildSearchBar(theme, colorScheme, isDark),
 
                 const SizedBox(height: 18),
 
-                // Hızlı Rezervasyon / Tarih & Konum Özeti Kartı
+                // 3. Hızlı Rezervasyon / Tarih & Konum Özeti Kartı
                 _buildQuickRentalCard(theme, colorScheme, isDark),
 
                 const SizedBox(height: 24),
 
-                // Araç Kategorileri
+                // 4. Araç Kategorileri (Yatay Çipler)
                 AppSectionTitle(
                   title: 'Araç Kategorileri',
                   subtitle: 'İhtiyacınıza uygun sınıfı seçin',
@@ -119,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 24),
 
-                // Öne Çıkan Araçlar
+                // 5. Öne Çıkan Araçlar (Yatay Kart Listesi)
                 AppSectionTitle(
                   title: 'Öne Çıkan Araçlar',
                   subtitle: 'En çok tercih edilen popüler modeller',
@@ -130,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 24),
 
-                // Temsili Şube Haritası
+                // 6. Temsili Şube Haritası
                 AppSectionTitle(
                   title: 'Hizmet Noktalarımız',
                   subtitle: 'Türkiye geneli havalimanı ve şehir içi şubelerimiz',
@@ -146,6 +170,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+  /// Üst Başlık Bölümü: Karşılama metni ve tema değiştirici (Light/Dark Toggle)
   Widget _buildHeader(ThemeData theme, ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
@@ -154,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(
             children: [
+              // Sol taraftaki yuvarlak köşeli degrade araç ikonu
               Container(
                 width: 44,
                 height: 44,
@@ -203,7 +230,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          // Tema Değiştirme Butonu
+          /// Tema Değiştirme Butonu:
+          /// 'ValueListenableBuilder' ile doğrudan themeController'ı dinler
           ValueListenableBuilder<ThemeMode>(
             valueListenable: themeController,
             builder: (context, mode, _) {
@@ -223,6 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Arama Çubuğu (Search Bar)
   Widget _buildSearchBar(ThemeData theme, ColorScheme colorScheme, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -233,6 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: InputDecoration(
           hintText: 'Araç markası, modeli veya kategorisi arayın...',
           prefixIcon: Icon(Icons.search_rounded, color: colorScheme.primary),
+          // Kullanıcı bir şey yazmışsa temizleme butonu 'X', boşsa filtre simgesi göster
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.clear_rounded, size: 18),
@@ -251,6 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Hızlı Kiralama Planlama Kartı (Quick Rental Card)
+  /// Kullanıcının lokasyon ve tarih seçip doğrudan araç listesine gitmesini sağlar.
   Widget _buildQuickRentalCard(ThemeData theme, ColorScheme colorScheme, bool isDark) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -286,7 +318,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          // Alış & Dönüş Noktası
+
+          // Alış & Dönüş Noktası Seçim Alanları (Yan yana iki kutu)
           Row(
             children: [
               Expanded(
@@ -311,9 +344,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(height: 10),
-          // Tarih Seçimi Özeti
+
+          // Tarih Seçimi Özeti (Dokunulduğunda showDateRangePicker açar)
           InkWell(
             onTap: () async {
+              /// 'showDateRangePicker': Flutter'ın yerleşik iki tarih arası seçici takvimi
               final range = await showDateRangePicker(
                 context: context,
                 firstDate: DateTime.now(),
@@ -362,7 +397,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          // Araçları Bul Butonu
+
+          // 'Müsait Araçları Listele' Butonu
           SizedBox(
             width: double.infinity,
             height: 46,
@@ -384,6 +420,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Lokasyon Seçici Küçük Kutu Şablonu
   Widget _buildLocationSelector({
     required String title,
     required String value,
@@ -419,7 +456,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 2),
             Text(
-              value.split(' - ').last,
+              value.split(' - ').last, // Havalimanı veya şube adını kısaca göster
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
@@ -430,6 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// 'showModalBottomSheet' ile Alttan Açılan Şube Listesi Penceresi
   void _selectLocation({required bool isPickup}) {
     showModalBottomSheet(
       context: context,
@@ -463,7 +501,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             _selectedReturnLocation = loc;
                           }
                         });
-                        Navigator.pop(context);
+                        Navigator.pop(context); // Seçim yapıldıktan sonra alt pencereyi kapat
                       },
                     );
                   },
@@ -476,6 +514,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Öne Çıkan Araçlar Yatay Kart Listesi
   Widget _buildFeaturedList(ThemeData theme) {
     if (_isLoading) {
       return const SizedBox(
@@ -490,6 +529,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return SizedBox(
       height: 310,
+      /// 'ListView.separated' ve 'scrollDirection: Axis.horizontal':
+      /// Araçların yatayda kaydırılabilir bir kart şeridi halinde listelenmesini sağlar.
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         scrollDirection: Axis.horizontal,
@@ -506,3 +547,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

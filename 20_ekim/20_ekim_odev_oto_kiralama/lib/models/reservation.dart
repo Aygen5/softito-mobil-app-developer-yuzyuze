@@ -1,16 +1,22 @@
+/// ---------------------------------------------------------------------------
+/// 📝 Reservation — Kullanıcı Rezervasyon Veri Modeli
+/// ---------------------------------------------------------------------------
+/// Kullanıcının bir aracı belirli tarihler arasında kiralama talebini temsil eder.
+/// Bu model; aracın özet bilgilerini (ad, resim), teslim alma ve bırakma lokasyonlarını,
+/// toplam tutarı ve kiralama durumunu bir arada saklar.
 class Reservation {
-  final String id;
-  final String vehicleId;
-  final String vehicleName;
-  final String vehicleImage;
-  final DateTime startDateTime;
-  final DateTime endDateTime;
-  final String pickupLocation;
-  final String returnLocation;
-  final String? destinationCity;
-  final double totalPrice;
-  final String status; // Onaylandı, Bekliyor, Tamamlandı, İptal Edildi
-  final DateTime createdAt;
+  final String id;                  // Benzersiz rezervasyon takip numarası (örn: 'RES-1729432000')
+  final String vehicleId;           // Kiralanan aracın benzersiz ID'si
+  final String vehicleName;         // Araç adı (örn: 'BMW 320i Sedan')
+  final String vehicleImage;        // Rezervasyon kartında hızlıca göstermek için küçük resim yolu
+  final DateTime startDateTime;     // Alış tarihi ve saati
+  final DateTime endDateTime;       // Teslim ediliş tarihi ve saati
+  final String pickupLocation;      // Aracın teslim alınacağı şube/havalimanı
+  final String returnLocation;      // Aracın iade edileceği şube/havalimanı
+  final String? destinationCity;    // Seyahat edilecek opsiyonel varış şehri
+  final double totalPrice;          // İndirimler düşüldükten sonraki net rezervasyon bedeli
+  final String status;              // 'Onaylandı', 'Bekliyor', 'Tamamlandı', 'İptal Edildi'
+  final DateTime createdAt;         // Rezervasyonun sisteme girildiği an
 
   const Reservation({
     required this.id,
@@ -27,9 +33,17 @@ class Reservation {
     required this.createdAt,
   });
 
+  /// 🎯 UI Kolaylaştırıcı Getter'lar:
+  /// Hesabım ekranında 'Aktif Rezervasyonlar' ve 'Geçmiş Rezervasyonlar' şeklinde
+  /// iki sekme (tab) bulunmaktadır. Bu filtrelemeyi temiz tutmak için iki pratik getter:
+
+  /// Rezervasyon hala geçerli veya onay sürecinde mi?
   bool get isActive => status == 'Onaylandı' || status == 'Bekliyor';
+
+  /// Rezervasyon geçmişte mi kaldı (tamamlandı ya da iptal mi oldu)?
   bool get isCompleted => status == 'Tamamlandı' || status == 'İptal Edildi';
 
+  /// JSON verisinden Dart Reservation nesnesi oluşturur
   factory Reservation.fromJson(Map<String, dynamic> json) {
     return Reservation(
       id: json['id'] as String,
@@ -49,6 +63,7 @@ class Reservation {
     );
   }
 
+  /// Modeli JSON haritasına dönüştürür
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -66,6 +81,7 @@ class Reservation {
     };
   }
 
+  /// Mevcut rezervasyonun belirli alanlarını güncelleyip yeni bir kopya oluşturur
   Reservation copyWith({
     String? id,
     String? vehicleId,
@@ -96,3 +112,4 @@ class Reservation {
     );
   }
 }
+

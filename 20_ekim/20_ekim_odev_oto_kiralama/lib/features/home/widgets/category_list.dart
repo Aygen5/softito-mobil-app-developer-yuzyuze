@@ -2,8 +2,21 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🏷️ CategoryList — Yatay Kategori Seçim Listesi (Category Chips)
+/// ---------------------------------------------------------------------------
+/// Ana sayfada 'Basic', 'Flex', 'Lux', 'Ultra Lux' gibi araç sınıflarını
+/// yatay kaydırılabilir şık kutular halinde gösterir.
+///
+/// 💫 'AnimatedContainer' Kullanımı:
+/// Kullanıcı bir kategoriye dokunduğunda veya seçtiğinde, rengin ve gölgenin
+/// aniden değil, 200 milisaniyelik mikro animasyonla yumuşak bir şekilde
+/// değişmesini sağlar.
 class CategoryList extends StatelessWidget {
+  /// Şu an seçili olan kategori adı (örn: 'Lux'). Seçili olan renkli görünür.
   final String? selectedCategory;
+
+  /// Kullanıcı bir kategoriye dokunduğunda tetiklenen fonksiyon
   final ValueChanged<String> onCategorySelected;
 
   const CategoryList({
@@ -12,6 +25,7 @@ class CategoryList extends StatelessWidget {
     required this.onCategorySelected,
   });
 
+  /// Kategori adına göre uygun ikon seçen yardımcı fonksiyon
   IconData _getCategoryIcon(String category) {
     switch (category) {
       case 'Basic':
@@ -55,6 +69,7 @@ class CategoryList extends StatelessWidget {
               width: 86,
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
               decoration: BoxDecoration(
+                // Seçiliyse kategorinin canlı rengi, değilse yüzey rengi
                 color: isSelected
                     ? catColor
                     : (isDark
@@ -69,6 +84,7 @@ class CategoryList extends StatelessWidget {
                           : theme.colorScheme.outline.withOpacity(0.6)),
                   width: isSelected ? 2 : 1,
                 ),
+                // Seçili olduğunda arkaya renkli ışıltı gölgesi ekle
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
@@ -82,6 +98,7 @@ class CategoryList extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Dairesel İkon Alanı
                   Container(
                     width: 40,
                     height: 40,
@@ -98,6 +115,7 @@ class CategoryList extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
+                  // Kategori Adı
                   Text(
                     category,
                     maxLines: 1,
@@ -119,3 +137,4 @@ class CategoryList extends StatelessWidget {
     );
   }
 }
+

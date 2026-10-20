@@ -4,9 +4,20 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../home/screens/main_shell.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🎬 SplashScreen — Açılış ve Karşılama Ekranı
+/// ---------------------------------------------------------------------------
+/// Uygulama ilk açıldığında gösterilen, logonun yumuşak bir şekilde büyüyerek
+/// belirdiği (Fade & Scale) ve ardından ana kabuğa (MainShell) yönlendirdiği ekrandır.
+///
+/// 🔄 Neden StatefulWidget?
+/// Çünkü bu ekranda:
+/// 1. Bir zamanlayıcı (Timer) çalışır ve süre sonunda durumu değiştirir.
+/// 2. Bir animasyon kontrolcüsü (AnimationController) her karede değeri günceller.
+/// 3. Ekran kapandığında bu kaynakların bellekten (RAM) temizlenmesi (`dispose`) şarttır.
 class SplashScreen extends StatefulWidget {
-  final Duration duration;
-  final bool autoNavigate;
+  final Duration duration;     // Açılış ekranının ekranda kalma süresi
+  final bool autoNavigate;     // Süre bitince otomatik ana sayfaya geçilsin mi (testlerde false yapılabilir)?
 
   const SplashScreen({
     super.key,
@@ -18,25 +29,36 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
+/// 'SingleTickerProviderStateMixin':
+/// Flutter'da animasyonların telefonun ekran yenileme hızıyla (genellikle 60Hz veya 120Hz)
+/// kusursuz senkronize çalışabilmesi için bir 'Ticker' (zaman sayacı) gerekir.
+/// 'vsync: this' parametresini kullanabilmek için bu mixin sınıfa dahil edilir.
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _animController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
-  Timer? _timer;
+  late AnimationController _animController; // Animasyonun süresini ve oynatılmasını yönetir
+  late Animation<double> _fadeAnimation;     // Opaklık (0.0 -> 1.0) geçişi
+  late Animation<double> _scaleAnimation;    // Boyut (0.85 -> 1.0) büyüme geçişi
+  Timer? _timer;                             // Otomatik geçiş sayacı
 
+  /// 'initState()':
+  /// Widget ağaca ilk eklendiğinde YALNIZCA BİR KEZ çalışan yaşam döngüsü (Lifecycle) metodudur.
+  /// Animasyonların ve zamanlayıcıların başlatıldığı yerdir.
   @override
   void initState() {
     super.initState();
+
+    // 1. Animasyon kontrolcüsünü 1200 milisaniye (1.2 sn) süreyle oluştur
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
 
+    // 2. Opaklık animasyonu: easeIn eğrisiyle yumuşakça görünür
     _fadeAnimation = CurvedAnimation(
       parent: _animController,
       curve: Curves.easeIn,
     );
 
+    // 3. Boyut animasyonu: %85 boyuttan %100 boyuta, hafif yaylanma efektiyle (easeOutBack) büyür
     _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
@@ -44,21 +66,33 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       ),
     );
 
+    // Animasyonu başlat (0'dan 1'e doğru oynat)
     _animController.forward();
 
-    // Süre bitince ana ekrana geç
+    // Belirlenen süre (2.2 sn) bitince otomatik ana sayfaya yönlendir
     if (widget.autoNavigate) {
       _timer = Timer(widget.duration, _navigateToHome);
     }
   }
 
+  /// Ana Sayfaya Yönlendirme Fonksiyonu
   void _navigateToHome() {
+    /// ⭐ Çok Kritik Flutter Kuralı: 'mounted' Kontrolü
+    /// Zamanlayıcı tetiklendiğinde kullanıcı uygulamayı arka plana atmış veya kapatmış olabilir.
+    /// Eğer widget artık ekranda değilse (`!mounted`) navigasyon yapmaya çalışmak hata verir.
     if (!mounted) return;
+
     _timer?.cancel();
+
+    /// 'pushReplacement':
+    /// Normal 'push' yerine kullanılır. Çünkü kullanıcı ana sayfaya ulaştığında
+    /// Android'in geri butonuna bastığında tekrar Splash (Açılış) ekranına DÖNMEMELİDİR.
+    /// 'pushReplacement' açılış ekranını yığından (Stack) siler ve yerine MainShell'i koyar.
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => const MainShell(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          // Yumuşak kararma/açılma (Fade) geçiş efekti
           return FadeTransition(opacity: animation, child: child);
         },
         transitionDuration: const Duration(milliseconds: 400),
@@ -66,6 +100,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
   }
 
+  /// 'dispose()':
+  /// Widget ekrandan tamamen kaldırıldığında çalışan temizlik metodudur.
+  /// Bellek Sızıntısını (Memory Leak) önlemek için arka plandaki Timer ve
+  /// AnimationController mutlaka burada kapatılmalıdır!
   @override
   void dispose() {
     _timer?.cancel();
@@ -83,7 +121,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       body: SafeArea(
         child: Stack(
           children: [
-            // Arka plan ortam ışıltısı
+            // Arka plan ortam ışıltısı dekoratif daireleri (Görsel Zenginlik)
             Positioned(
               top: -100,
               right: -100,
@@ -109,7 +147,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               ),
             ),
 
-            // Ana İçerik
+            // Ana İçerik: Fade ve Scale animasyonlarıyla sarılmış merkez blok
             Center(
               child: FadeTransition(
                 opacity: _fadeAnimation,
@@ -141,6 +179,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         child: Image.asset(
                           'assets/images/logo.png',
                           fit: BoxFit.cover,
+                          // Eğer logo görseli yüklenemezse yedek (fallback) araç ikonu göster
                           errorBuilder: (context, error, stackTrace) {
                             return const Center(
                               child: Icon(
@@ -154,7 +193,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       ),
                       const SizedBox(height: 28),
 
-                      // Marka İsmi
+                      // Zengin Metin (RichText): Marka İsmi 'Rota' beyaz, 'Rent' camgöbeği
                       RichText(
                         text: const TextSpan(
                           style: TextStyle(
@@ -169,7 +208,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                             ),
                             TextSpan(
                               text: 'Rent',
-                              style: TextStyle(color: Color(0xFF38BDF8)), // Sky/Cyan Blue
+                              style: TextStyle(color: Color(0xFF38BDF8)),
                             ),
                           ],
                         ),
@@ -196,7 +235,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       ),
                       const SizedBox(height: 48),
 
-                      // Yükleme Göstergesi
+                      // Yükleme Göstergesi (Progress Indicator)
                       SizedBox(
                         width: 28,
                         height: 28,
@@ -214,7 +253,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               ),
             ),
 
-            // Atla Butonu (Sağ Üst)
+            // Kullanıcı beklemek istemezse sağ üstteki 'Atla →' Butonu
             Positioned(
               top: 16,
               right: 16,
@@ -232,7 +271,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               ),
             ),
 
-            // Alt Bilgi
+            // Sürüm ve Telif Bilgisi
             Positioned(
               bottom: 24,
               left: 0,
@@ -253,3 +292,4 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
   }
 }
+

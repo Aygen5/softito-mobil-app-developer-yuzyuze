@@ -4,9 +4,34 @@ import '../../../core/utils/date_utils.dart';
 import '../../../core/utils/price_utils.dart';
 import '../../../core/theme/app_colors.dart';
 
+/// ============================================================================
+/// RESERVATION CARD (REZERVASYON LİSTE KARTI BİLEŞENİ)
+/// ============================================================================
+/// 
+/// [ReservationCard], kullanıcının yapmış olduğu bir araç kiralama rezervasyonunun
+/// tüm detaylarını (araç görseli, model adı, PNR kodu, durum rozeti, alış/teslim
+/// tarihleri ve toplam bedel) derli toplu gösteren kart widget'ıdır.
+/// 
+/// BU BİLEŞENİN GÖREVLERİ VE ÖĞRENİLECEK KONULAR:
+/// 1. SEMANTİK DURUM RENKLENDİRMESİ:
+///    - [AppColors.getStatusColor] ile rezervasyon durumu ("Onaylandı",
+///      "Tamamlandı", "İptal Edildi") anında yeşil, mavi veya kırmızı renge bürünür.
+/// 
+/// 2. HATA TOLERANSLI GÖRSEL YÜKLEME:
+///    - `Image.network` üzerinde `errorBuilder` tanımlanarak ağ hatasında
+///      veya geçersiz resim linkinde arayüzün çökmesi engellenir, zarif bir araba ikonu gösterilir.
+/// 
+/// 3. ŞARTLI BUTON GÖSTERİMİ:
+///    - Sadece aktif olan (`reservation.isActive`) rezervasyonlarda kırmızı renkli
+///      "İptal Et" butonu belirir; tamamlanmış veya zaten iptal edilmiş rezervasyonlarda gösterilmez.
 class ReservationCard extends StatelessWidget {
+  /// Kartın göstereceği rezervasyon verisi
   final Reservation reservation;
+  
+  /// Sözleşmeyi göster butonuna tıklandığında çalışacak callback
   final VoidCallback onShowAgreement;
+  
+  /// Rezervasyonu iptal et butonuna tıklandığında çalışacak callback (null ise buton gizlenir)
   final VoidCallback? onCancel;
 
   const ReservationCard({
@@ -21,6 +46,8 @@ class ReservationCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
+    
+    // Rezervasyon durumuna göre renk (Onaylandı: Yeşil, İptal: Kırmızı, vb.)
     final statusColor = AppColors.getStatusColor(reservation.status);
 
     return Container(
@@ -42,12 +69,14 @@ class ReservationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Üst Başlık & Durum Rozeti
+          // -----------------------------------------------------------
+          // 1. ÜST BAŞLIK, MİNİ ARAÇ GÖRSELİ VE DURUM ROZETİ
+          // -----------------------------------------------------------
           Padding(
             padding: const EdgeInsets.all(14),
             child: Row(
               children: [
-                // Küçük Araç Görseli
+                // Küçük Araç Küçük Resmi (Thumbnail)
                 Container(
                   width: 50,
                   height: 50,
@@ -59,6 +88,7 @@ class ReservationCard extends StatelessWidget {
                   child: Image.network(
                     reservation.vehicleImage,
                     fit: BoxFit.cover,
+                    // Resim yüklenemezse veya çevrimdışıysa çökmemesi için fallback:
                     errorBuilder: (_, __, ___) => Center(
                       child: Icon(
                         Icons.directions_car_rounded,
@@ -69,7 +99,8 @@ class ReservationCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                // Araç Adı ve Rezervasyon No
+                
+                // Araç Adı ve Rezervasyon No (PNR)
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +121,8 @@ class ReservationCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Durum Etiketi
+                
+                // Durum Rozeti (Örn: "Onaylandı")
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
@@ -113,7 +145,9 @@ class ReservationCard extends StatelessWidget {
 
           const Divider(height: 1),
 
-          // Tarih & Konum Bilgileri
+          // -----------------------------------------------------------
+          // 2. KİRALAMA TARİHLERİ VE OFİS/LOKASYON BİLGİLERİ
+          // -----------------------------------------------------------
           Padding(
             padding: const EdgeInsets.all(14),
             child: Column(
@@ -131,6 +165,7 @@ class ReservationCard extends StatelessWidget {
                   value: '${reservation.pickupLocation.split(' - ').last} → ${reservation.returnLocation.split(' - ').last}',
                   colorScheme: colorScheme,
                 ),
+                // Eğer kullanıcı hedef şehir girdiyse rota satırı eklenir
                 if (reservation.destinationCity != null) ...[
                   const SizedBox(height: 8),
                   _buildInfoRow(
@@ -146,12 +181,15 @@ class ReservationCard extends StatelessWidget {
 
           const Divider(height: 1),
 
-          // Alt Tutar & Aksiyonlar
+          // -----------------------------------------------------------
+          // 3. TOPLAM TUTAR VE AKSİYON BUTONLARI (Sözleşme / İptal)
+          // -----------------------------------------------------------
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                // Sol Bölüm: Toplam Fiyat
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -169,8 +207,11 @@ class ReservationCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                
+                // Sağ Bölüm: Aksiyon Butonları
                 Row(
                   children: [
+                    // Sözleşmeyi Görüntüle Butonu
                     OutlinedButton(
                       onPressed: onShowAgreement,
                       style: OutlinedButton.styleFrom(
@@ -181,6 +222,7 @@ class ReservationCard extends StatelessWidget {
                       ),
                       child: const Text('Sözleşme', style: TextStyle(fontSize: 12)),
                     ),
+                    // Sadece aktif rezervasyonlarda iptal seçeneği sunulur
                     if (reservation.isActive && onCancel != null) ...[
                       const SizedBox(width: 8),
                       TextButton(
@@ -202,6 +244,7 @@ class ReservationCard extends StatelessWidget {
     );
   }
 
+  /// Bilgi satırlarını (ikon + etiket + değer) düzenli basan yardımcı metot
   Widget _buildInfoRow({
     required IconData icon,
     required String label,
@@ -228,3 +271,4 @@ class ReservationCard extends StatelessWidget {
     );
   }
 }
+

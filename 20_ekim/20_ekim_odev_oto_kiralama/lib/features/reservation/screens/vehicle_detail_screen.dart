@@ -15,8 +15,18 @@ import '../widgets/rental_price_summary.dart';
 import '../dialogs/fuel_prices_dialog.dart';
 import '../dialogs/reservation_result_dialog.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🏎️ VehicleDetailScreen — Araç Detayı ve Rezervasyon Ekranı
+/// ---------------------------------------------------------------------------
+/// Uygulamanın tüm yeteneklerinin birleştiği ana merkezdir:
+/// 1. Araç Fotoğrafı ve Teknik Özellikleri (Vites, Yakıt, KM, Model Yılı).
+/// 2. Yakıt Göstergesi (FuelGaugeWidget): CustomPaint ile çizilen depo ibresi.
+/// 3. Dinamik Müsaitlik Takvimi (AvailabilityCalendar): Dolu günlerin kırmızı gösterilmesi.
+/// 4. Teslimat ve Saat Formu (RentalDateForm): Form doğrulama ve şube seçimi.
+/// 5. Dinamik Ücret Özeti (RentalPriceSummary): Gün/saat hesabı ve %15 indirim.
+/// 6. Rezervasyon Onaylama Motoru: Bellek içi depoya kayıt ve sonuç modalı.
 class VehicleDetailScreen extends StatefulWidget {
-  final Vehicle vehicle;
+  final Vehicle vehicle; // Detayı gösterilen araç modeli
 
   const VehicleDetailScreen({super.key, required this.vehicle});
 
@@ -25,24 +35,30 @@ class VehicleDetailScreen extends StatefulWidget {
 }
 
 class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
+  /// `GlobalKey<FormState>`:
+  /// Flutter'da form alanlarını (TextFormField, Dropdown vb.) tek bir hamlede
+  /// denetlemek (Validate) ve hata mesajlarını tetiklemek için kullanılan anahtardır.
   final _formKey = GlobalKey<FormState>();
   final _destinationCityController = TextEditingController();
 
+  // Kiralama Tarih ve Saat Durumları
   late DateTime _startDate;
   late DateTime _endDate;
   TimeOfDay _pickupTime = const TimeOfDay(hour: 10, minute: 0);
   TimeOfDay _returnTime = const TimeOfDay(hour: 18, minute: 0);
 
+  // Alış ve İade Şubeleri
   String _pickupLocation = AppConstants.pickupLocations[0];
   String _returnLocation = AppConstants.pickupLocations[0];
 
-  String? _calendarErrorMessage;
-  bool _isBooking = false;
+  String? _calendarErrorMessage; // Takvimde dolu bir gün seçildiyse hata mesajı
+  bool _isBooking = false;       // Rezervasyon oluşturulurken butonda dönen yükleme göstergesi
 
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
+    // Varsayılan olarak kiralama yarın başlasın, 3 gün sonra teslim edilsin
     _startDate = DateTime(now.year, now.month, now.day + 1);
     _endDate = DateTime(now.year, now.month, now.day + 4);
   }
@@ -53,17 +69,22 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
     super.dispose();
   }
 
+  /// Tarih (DateTime) ile Saati (TimeOfDay) birleştirip tam bir DateTime nesnesi üretir
   DateTime _buildFullDateTime(DateTime date, TimeOfDay time) {
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
 
+  // ---------------------------------------------------------------------------
+  // 🏁 Rezervasyonu Onayla ve Oluştur İş Akışı (Booking Flow)
+  // ---------------------------------------------------------------------------
   void _onBookPressed() {
-    // 1. Form doğrulaması
+    // 1. Adım: Form Doğrulaması (Zorunlu alanlar doldurulmuş mu?)
     if (!_formKey.currentState!.validate()) {
       _showSnackbar('Lütfen tüm zorunlu alanları doldurun.', isError: true);
       return;
     }
 
+    // 2. Adım: Takvim Hata Kontrolü (Seçili aralıkta kırmızı gün var mı?)
     if (_calendarErrorMessage != null) {
       _showSnackbar(_calendarErrorMessage!, isError: true);
       return;
@@ -72,7 +93,7 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
     final startDateTime = _buildFullDateTime(_startDate, _pickupTime);
     final endDateTime = _buildFullDateTime(_endDate, _returnTime);
 
-    // 2. Müsaitlik ve iş kuralı kontrolü
+    // 3. Adım: Rezervasyon Çakışma ve Müsaitlik Kontrolü
     final availability = reservationStore.checkVehicleAvailability(
       vehicle: widget.vehicle,
       startDateTime: startDateTime,
@@ -85,10 +106,10 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
     }
 
     setState(() {
-      _isBooking = true;
+      _isBooking = true; // Buton içine yükleme çarkı koy
     });
 
-    // Fiyatı hesapla
+    // 4. Adım: Fiyat ve İndirim Hesaplama
     final pricing = AppPriceUtils.calculateRentalPrice(
       dailyPrice: widget.vehicle.dailyPrice,
       hourlyPrice: widget.vehicle.hourlyPrice,
@@ -96,7 +117,7 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
       end: endDateTime,
     );
 
-    // Yeni rezervasyon oluştur
+    // 5. Adım: Yeni Rezervasyon Nesnesini Oluştur
     final randomId = 'REZ-2026-${(1000 + Random().nextInt(9000))}';
     final newReservation = Reservation(
       id: randomId,
@@ -115,27 +136,29 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
       createdAt: DateTime.now(),
     );
 
-    // Bellek deposuna kaydet
+    // 6. Adım: Bellek Deposuna (ReservationStore) Kaydet
+    // Bu işlem 'Hesabım & Rezervasyonlarım' sekmesini otomatik günceller!
     reservationStore.addReservation(newReservation);
 
     setState(() {
       _isBooking = false;
     });
 
-    // Başarı diyaloğunu göster
+    // 7. Adım: Başarı Diyaloğunu (ReservationResultDialog) Aç
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => ReservationResultDialog(
         reservation: newReservation,
         onGoToReservations: () {
-          // Geri dönüp rezervasyonlar sekmesine yönlendirme
+          // Geri dönüp ana kabuğa (MainShell) yönlendir
           Navigator.of(context).popUntil((route) => route.isFirst);
         },
       ),
     );
   }
 
+  /// Kullanıcıya ekranın altında kayan bildirim mesajı gösterir (SnackBar)
   void _showSnackbar(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -145,6 +168,7 @@ class _VehicleDetailScreenState extends State<VehicleDetailScreen> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

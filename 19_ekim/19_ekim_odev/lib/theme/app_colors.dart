@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Sessiz Defter / Günlüğüm tasarım sistemine ait renk paleti.
+/// Günlüğüm tasarım sistemine ait renk paleti.
 /// Stitch tasarımındaki tonlara uygun olarak oluşturulmuştur.
 class AppColors {
   AppColors._();

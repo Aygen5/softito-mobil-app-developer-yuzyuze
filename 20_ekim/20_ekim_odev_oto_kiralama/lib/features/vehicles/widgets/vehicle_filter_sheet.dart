@@ -3,6 +3,16 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/price_utils.dart';
 import '../../../core/widgets/app_button.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🎛️ VehicleFilterSheet — Araç Filtreleme Alt Sayfası (Modal Bottom Sheet)
+/// ---------------------------------------------------------------------------
+/// Kullanıcının araçları kategori, vites türü, yakıt türü ve bütçesine göre
+/// daraltmasını sağlayan gelişmiş filtre formudur.
+///
+/// 💡 Flutter Bileşenleri:
+/// - 'ChoiceChip': Tekli seçim yapılabilen yuvarlak etiket düğmeleri.
+/// - 'Wrap': Sığmayan çipleri alt satıra kaydıran esnek yerleşim kutusu.
+/// - 'RangeSlider': Minimum ve maksimum fiyat aralığını seçmeyi sağlayan çift uçlu kaydırıcı.
 class VehicleFilterSheet extends StatefulWidget {
   final String? initialCategory;
   final String? initialTransmission;
@@ -35,11 +45,13 @@ class VehicleFilterSheet extends StatefulWidget {
 }
 
 class _VehicleFilterSheetState extends State<VehicleFilterSheet> {
+  // Kullanıcının sayfa içindeki yerel seçimleri
   late String? _selectedCategory;
   late String? _selectedTransmission;
   late String? _selectedFuelType;
   late RangeValues _priceRange;
 
+  /// Üst ekrandan gelen mevcut seçimleri form alanlarına aktar
   @override
   void initState() {
     super.initState();
@@ -56,6 +68,7 @@ class _VehicleFilterSheetState extends State<VehicleFilterSheet> {
 
     return SafeArea(
       child: Container(
+        // Ekranın en fazla %85'ini kaplasın (Kullanıcı arkadaki ekran hissini kaybetmesin)
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.85,
         ),
@@ -84,6 +97,7 @@ class _VehicleFilterSheetState extends State<VehicleFilterSheet> {
                 ],
               ),
             ),
+
             const Divider(height: 1),
 
             Expanded(
@@ -154,7 +168,7 @@ class _VehicleFilterSheetState extends State<VehicleFilterSheet> {
 
                     const SizedBox(height: 24),
 
-                    // Fiyat Aralığı
+                    // Fiyat Aralığı Kaydırıcısı (RangeSlider)
                     _buildSectionHeader('Günlük Fiyat Aralığı'),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -175,6 +189,9 @@ class _VehicleFilterSheetState extends State<VehicleFilterSheet> {
                         ),
                       ],
                     ),
+                    /// 'RangeSlider':
+                    /// İki tutamacı (Thumb) olan ve min/max aralığı belirleyen kaydırıcı.
+                    /// 'divisions: 30': Değerlerin 30 kademeli adımla seçilmesini sağlar.
                     RangeSlider(
                       values: _priceRange,
                       min: widget.minPrice,
@@ -197,7 +214,7 @@ class _VehicleFilterSheetState extends State<VehicleFilterSheet> {
 
             const Divider(height: 1),
 
-            // Aksiyon Butonları
+            // Aksiyon Butonları (Filtreleri Temizle & Uygula)
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
               child: Row(
@@ -231,6 +248,7 @@ class _VehicleFilterSheetState extends State<VehicleFilterSheet> {
                 ],
               ),
             ),
+
           ],
         ),
       ),

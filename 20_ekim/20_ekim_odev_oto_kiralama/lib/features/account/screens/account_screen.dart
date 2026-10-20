@@ -9,7 +9,32 @@ import '../widgets/reservation_card.dart';
 import '../dialogs/rental_agreement_dialog.dart';
 import '../dialogs/logout_dialog.dart';
 
+/// ============================================================================
+/// ACCOUNT SCREEN (KULLANICI PROFİLİ, AYARLAR VE REZERVASYONLAR SAYFASI)
+/// ============================================================================
+/// 
+/// [AccountScreen], kullanıcının kişisel bilgilerini, VIP üyelik rozetini,
+/// tema değiştirme (Dark/Light mode) ayarını ve tüm aktif/geçmiş araç kiralama
+/// kayıtlarını tek bir çatı altında yönettiği ana ekrandır.
+/// 
+/// BU EKRANIN GÖREVLERİ VE ÖĞRENİLECEK KONULAR:
+/// 1. PROFİL VE TEMA YÖNETİMİ:
+///    - İsim baş harflerinden otomatik üretilen profil avatarı ([CircleAvatar]).
+///    - [themeController.toggleTheme] ile anında gece/gündüz moduna geçiren [Switch].
+/// 
+/// 2. ÖZEL BÖLMELİ SEKMELER (Custom Segmented Tabs):
+///    - TabBar yerine GestureDetector ve AnimatedContainer ile sıfırdan yapılmış
+///      iOS Segmented Control benzeri şık sekme çubuğu ("Aktif" vs "Geçmiş").
+/// 
+/// 3. REAKTİF LİSTELEME (ValueListenableBuilder):
+///    - [reservationStore] global deposunu dinler. Kullanıcı araç kiraladığında
+///      veya iptal ettiğinde bu sayfa hiçbir API çağrısı yapmadan otomatik güncellenir.
+/// 
+/// 4. REZERVASYON İPTAL AKIŞI:
+///    - İptal butonuna basıldığında onay diyalogu açılır ve onay verilirse
+///      `reservationStore.cancelReservation` tetiklenir.
 class AccountScreen extends StatefulWidget {
+  /// Ekran açıldığında varsayılan olarak hangi sekmenin seçili olacağı (0: Aktif, 1: Geçmiş)
   final int initialTabIndex;
 
   const AccountScreen({super.key, this.initialTabIndex = 0});
@@ -19,6 +44,7 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+  /// Şu an seçili olan sekme indeksi (0: Aktif Rezervasyonlar, 1: Geçmiş Kiralama)
   late int _selectedTab;
 
   @override
@@ -27,6 +53,7 @@ class _AccountScreenState extends State<AccountScreen> {
     _selectedTab = widget.initialTabIndex;
   }
 
+  /// Kiralama Sözleşmesi modalını açan metot
   void _showAgreementDialog() {
     showDialog(
       context: context,
@@ -34,6 +61,7 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
+  /// Oturum Kapatma onay modalını açan metot
   void _showLogoutDialog() {
     showDialog(
       context: context,
@@ -50,6 +78,7 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
+  /// Rezervasyon iptal onay penceresini açan ve iptali gerçekleştiren metot
   void _cancelReservation(Reservation reservation) {
     showDialog(
       context: context,
@@ -61,8 +90,11 @@ class _AccountScreenState extends State<AccountScreen> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.errorRed),
             onPressed: () {
+              // 1. Depodan rezervasyonu iptal et
               reservationStore.cancelReservation(reservation.id);
+              // 2. Diyaloğu kapat
               Navigator.pop(ctx);
+              // 3. Kullanıcıya bildirim göster
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Rezervasyon iptal edildi.')),
               );
@@ -84,11 +116,13 @@ class _AccountScreenState extends State<AccountScreen> {
       appBar: AppBar(
         title: const Text('Hesabım & Rezervasyonlarım'),
         actions: [
+          // Sözleşme İkon Butonu
           IconButton(
             icon: const Icon(Icons.description_outlined),
             tooltip: 'Sözleşme',
             onPressed: _showAgreementDialog,
           ),
+          // Çıkış Yap İkon Butonu
           IconButton(
             icon: const Icon(Icons.logout_rounded),
             tooltip: 'Çıkış Yap',
@@ -98,7 +132,9 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
       body: Column(
         children: [
-          // Profil Kartı
+          // -----------------------------------------------------------
+          // 1. KULLANICI PROFİL VE TEMA KARTI
+          // -----------------------------------------------------------
           Container(
             margin: const EdgeInsets.fromLTRB(20, 8, 20, 14),
             padding: const EdgeInsets.all(16),
@@ -120,6 +156,7 @@ class _AccountScreenState extends State<AccountScreen> {
               children: [
                 Row(
                   children: [
+                    // Kullanıcı baş harflerinden üretilen yuvarlak profil resmi
                     CircleAvatar(
                       radius: 26,
                       backgroundColor: colorScheme.primaryContainer,
@@ -133,6 +170,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       ),
                     ),
                     const SizedBox(width: 14),
+                    // Kullanıcı Adı, VIP Rozeti ve İletişim Bilgileri
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,6 +185,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                 ),
                               ),
                               const SizedBox(width: 8),
+                              // VIP Üyelik Rozeti
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
@@ -180,7 +219,8 @@ class _AccountScreenState extends State<AccountScreen> {
                   ],
                 ),
                 const Divider(height: 18),
-                // Tema Switch
+                
+                // Tema Değiştirici (Dark / Light Theme Switch)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -208,7 +248,9 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
           ),
 
-          // Özel Sekme Çubuğu (Segmented Tabs)
+          // -----------------------------------------------------------
+          // 2. ÖZEL BÖLMELİ SEÇİM ÇUBUĞU (Segmented Switcher)
+          // -----------------------------------------------------------
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             padding: const EdgeInsets.all(4),
@@ -218,6 +260,7 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
             child: Row(
               children: [
+                // 1. Sekme: Aktif Rezervasyonlar
                 Expanded(
                   child: GestureDetector(
                     onTap: () => setState(() => _selectedTab = 0),
@@ -239,6 +282,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     ),
                   ),
                 ),
+                // 2. Sekme: Geçmiş Kiralama
                 Expanded(
                   child: GestureDetector(
                     onTap: () => setState(() => _selectedTab = 1),
@@ -266,15 +310,19 @@ class _AccountScreenState extends State<AccountScreen> {
 
           const SizedBox(height: 12),
 
-          // Liste Görünümü
+          // -----------------------------------------------------------
+          // 3. REZERVASYON LİSTESİ (Reaktif ValueListenableBuilder)
+          // -----------------------------------------------------------
           Expanded(
             child: ValueListenableBuilder<List<Reservation>>(
               valueListenable: reservationStore,
               builder: (context, allReservations, _) {
+                // Seçili sekmeye göre filtreleme yapıyoruz:
                 final list = _selectedTab == 0
                     ? allReservations.where((r) => r.isActive).toList()
                     : allReservations.where((r) => r.isCompleted).toList();
 
+                // Eğer hiç kayıt yoksa özel boş durum widget'ını gösteriyoruz
                 if (list.isEmpty) {
                   return AppEmptyState(
                     icon: _selectedTab == 0
@@ -287,6 +335,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   );
                 }
 
+                // Kayıtlar varsa kaydırılabilir şık kartlar halinde listeliyoruz
                 return ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
                   itemCount: list.length,
@@ -308,3 +357,4 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 }
+

@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🗺️ BranchMapPreview — Temsili Hizmet Noktaları Haritası ve Şube Kartı
+/// ---------------------------------------------------------------------------
+/// Proje gereksinimine göre harici ağır harita API'leri (Google Maps vb.) yerine;
+/// hafif, hızlı ve CustomPaint ile çizilmiş temsili bir ızgara harita üzerinde
+/// Türkiye'deki şubelerimizi ve anlık müsait araç sayılarını sunar.
 class BranchMapPreview extends StatefulWidget {
   const BranchMapPreview({super.key});
 
@@ -8,8 +14,10 @@ class BranchMapPreview extends StatefulWidget {
 }
 
 class _BranchMapPreviewState extends State<BranchMapPreview> {
+  // Seçili olan şubenin indeksi
   int _selectedBranchIndex = 0;
 
+  /// Dart 3 Records ile tanımlanan şube listesi
   final List<({String city, String title, String address, int vehicleCount, String phone})> _branches = const [
     (
       city: 'İstanbul',
@@ -67,7 +75,9 @@ class _BranchMapPreviewState extends State<BranchMapPreview> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Temsili Harita Görsel / Grafik Alanı
+          // -----------------------------------------------------------------
+          // 🗺️ 1. Temsili Harita Görsel / Grafik Alanı
+          // -----------------------------------------------------------------
           Container(
             height: 140,
             decoration: BoxDecoration(
@@ -82,7 +92,9 @@ class _BranchMapPreviewState extends State<BranchMapPreview> {
             ),
             child: Stack(
               children: [
-                // Arka plan harita deseni / Grid
+                /// 'CustomPaint':
+                /// Arka plana koordinat ızgarası (Grid) deseni çizmek için
+                /// doğrudan Flutter'ın düşük seviye grafik motorunu kullanır.
                 Positioned.fill(
                   child: CustomPaint(
                     painter: _MapGridPainter(
@@ -90,7 +102,8 @@ class _BranchMapPreviewState extends State<BranchMapPreview> {
                     ),
                   ),
                 ),
-                // Türkiye Şube Pinleri (Temsili görsel pinler)
+
+                // Şehir Seçim Rozetleri (Harita Pinleri)
                 Align(
                   alignment: Alignment.center,
                   child: SingleChildScrollView(
@@ -99,59 +112,61 @@ class _BranchMapPreviewState extends State<BranchMapPreview> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(_branches.length, (index) {
-                      final isSelected = _selectedBranchIndex == index;
-                      final branch = _branches[index];
+                        final isSelected = _selectedBranchIndex == index;
+                        final branch = _branches[index];
 
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedBranchIndex = index;
-                          });
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? colorScheme.primary
-                                : (isDark ? const Color(0xFF334155) : Colors.white),
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: (isSelected ? colorScheme.primary : Colors.black).withOpacity(0.2),
-                                blurRadius: isSelected ? 8 : 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.location_on_rounded,
-                                size: 14,
-                                color: isSelected ? Colors.white : colorScheme.primary,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                branch.city,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: isSelected
-                                      ? Colors.white
-                                      : (isDark ? Colors.white : colorScheme.onSurface),
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedBranchIndex = index; // Tıklanan şubeyi aktif yap
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? colorScheme.primary
+                                  : (isDark ? const Color(0xFF334155) : Colors.white),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: (isSelected ? colorScheme.primary : Colors.black).withOpacity(0.2),
+                                  blurRadius: isSelected ? 8 : 4,
+                                  offset: const Offset(0, 2),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.location_on_rounded,
+                                  size: 14,
+                                  color: isSelected ? Colors.white : colorScheme.primary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  branch.city,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: isSelected
+                                        ? Colors.white
+                                        : (isDark ? Colors.white : colorScheme.onSurface),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }),
+                        );
+                      }),
                     ),
                   ),
                 ),
-                // Bilgilendirme etiketi
+
+                // Sağ üst köşe bilgilendirme etiketi
                 Positioned(
                   top: 10,
                   right: 12,
@@ -178,12 +193,15 @@ class _BranchMapPreviewState extends State<BranchMapPreview> {
             ),
           ),
 
-          // Seçili Şube Ayrıntıları
+          // -----------------------------------------------------------------
+          // 🏢 2. Seçili Şube Ayrıntıları Bölümü
+          // -----------------------------------------------------------------
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Şube Başlığı ve Müsait Araç Sayısı Rozeti
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -214,6 +232,8 @@ class _BranchMapPreviewState extends State<BranchMapPreview> {
                   ],
                 ),
                 const SizedBox(height: 6),
+
+                // Açık Adres
                 Row(
                   children: [
                     Icon(Icons.pin_drop_outlined, size: 14, color: colorScheme.onSurfaceVariant),
@@ -230,6 +250,8 @@ class _BranchMapPreviewState extends State<BranchMapPreview> {
                   ],
                 ),
                 const SizedBox(height: 4),
+
+                // Telefon İrtibat Numarası
                 Row(
                   children: [
                     Icon(Icons.phone_in_talk_outlined, size: 14, color: colorScheme.onSurfaceVariant),
@@ -253,25 +275,43 @@ class _BranchMapPreviewState extends State<BranchMapPreview> {
   }
 }
 
+/// ---------------------------------------------------------------------------
+/// 🎨 _MapGridPainter — Harita Izgarası Çizici (CustomPainter)
+/// ---------------------------------------------------------------------------
+/// 'CustomPainter': Flutter'da doğrudan Canvas üzerine piksel piksel çizim yapmayı sağlar.
+/// Burada harita arka planı için yatay ve dikey ızgara çizgileri çekiyoruz.
 class _MapGridPainter extends CustomPainter {
-  final Color color;
+  final Color color; // Çizgilerin rengi
+
   const _MapGridPainter({required this.color});
 
+  /// 'paint': Çizim fonksiyonudur.
+  /// [canvas]: Çizim yaptığımız tuval nesnesi.
+  /// [size]: Çizim alanının genişlik ve yükseklik boyutları.
   @override
   void paint(Canvas canvas, Size size) {
+    // Fırça (Paint) nesnesi oluşturuluyor
     final paint = Paint()
       ..color = color
       ..strokeWidth = 1.0;
 
-    const step = 20.0;
+    const step = 20.0; // Izgara karelerinin kenar uzunluğu (20 piksel)
+
+    // Dikey çizgileri çiz: Soldan sağa x koordinatını 20'şer artırarak
     for (double x = 0; x < size.width; x += step) {
       canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
     }
+
+    // Yatay çizgileri çiz: Yukarıdan aşağıya y koordinatını 20'şer artırarak
     for (double y = 0; y < size.height; y += step) {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
     }
   }
 
+  /// 'shouldRepaint':
+  /// Widget yeniden render olduğunda çizimin tekrar yapılıp yapılmayacağını belirler.
+  /// Eğer çizgi rengi değişmemişse false dönerek gereksiz CPU/GPU çizimini engeller.
   @override
   bool shouldRepaint(covariant _MapGridPainter oldDelegate) => oldDelegate.color != color;
 }
+

@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🔘 AppButton — Yeniden Kullanılabilir Birincil Dolgulu Buton (ElevatedButton)
+/// ---------------------------------------------------------------------------
+/// Neden özel bir buton bileşeni (Custom Widget) yazarız?
+/// 1. Tasarım Tutarlılığı: Uygulamanın her yerinde butonların yüksekliği, köşe yuvarlaklığı
+///    ve yazı tipi birebir aynı olur.
+/// 2. 'isLoading' Yeteneği: Form gönderilirken veya veri beklenirken buton içine
+///    otomatik döner gösterge (CircularProgressIndicator) koyar ve butonu pasif yapar.
+/// 3. Erişilebilirlik (Accessibility): Mobil cihazlarda parmakla rahat basılabilmesi için
+///    standart en az 48px dokunmatik yükseklik kuralı uygulanır (burada 52px).
 class AppButton extends StatelessWidget {
-  final String text;
-  final VoidCallback? onPressed;
-  final IconData? icon;
-  final bool isLoading;
-  final bool isFullWidth;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
-  final double height;
+  final String text;                  // Buton üzerindeki metin
+  final VoidCallback? onPressed;       // Butona tıklandığında çalışacak fonksiyon (null ise buton pasifleşir)
+  final IconData? icon;                // Opsiyonel sol ikon
+  final bool isLoading;               // İşlem devam ediyor mu (dönen çark gösterilsin mi)?
+  final bool isFullWidth;             // Buton bulunduğu satırı boydan boya kaplasın mı?
+  final Color? backgroundColor;       // Özel arka plan rengi (boşsa temadaki primary kullanılır)
+  final Color? foregroundColor;       // Özel metin/ikon rengi (boşsa beyaz kullanılır)
+  final double height;                // Buton yüksekliği
 
   const AppButton({
     super.key,
@@ -24,9 +34,13 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Mevcut aktif temanın renk ve parlaklık bilgilerini alıyoruz
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
+    /// Buton içeriği:
+    /// 'isLoading == true' ise dönen yükleme simgesi göster;
+    /// 'false' ise ikon ve metni yan yana diz.
     final btnContent = isLoading
         ? SizedBox(
             width: 22,
@@ -40,6 +54,7 @@ class AppButton extends StatelessWidget {
             mainAxisSize: isFullWidth ? MainAxisSize.max : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Eğer ikon tanımlanmışsa ikonu ve aradaki 8 piksellik boşluğu ekle
               if (icon != null) ...[
                 Icon(icon, size: 20),
                 const SizedBox(width: 8),
@@ -56,13 +71,16 @@ class AppButton extends StatelessWidget {
           );
 
     return SizedBox(
+      // 'isFullWidth' true ise genişliği sonsuz yaparak ekrana yayılmasını sağlar
       width: isFullWidth ? double.infinity : null,
       height: height,
       child: ElevatedButton(
+        // Yükleniyor durumundayken tıklamayı engellemek için 'null' verilir
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor ?? theme.colorScheme.primary,
           foregroundColor: foregroundColor ?? Colors.white,
+          // Buton pasif (disabled) olduğunda açık/koyu temaya göre opaklık ayarı
           disabledBackgroundColor: isDark
               ? Colors.white.withOpacity(0.12)
               : Colors.black.withOpacity(0.12),
@@ -82,6 +100,11 @@ class AppButton extends StatelessWidget {
   }
 }
 
+/// ---------------------------------------------------------------------------
+/// 🔲 AppOutlinedButton — İkincil Kenarlıklı Buton
+/// ---------------------------------------------------------------------------
+/// İptal etme, filtre temizleme veya geri dönme gibi ikinci planda kalan eylemlerde
+/// kullanıcının dikkatini dağıtmamak için içi boş, kenarlıklı buton kullanılır.
 class AppOutlinedButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -143,3 +166,4 @@ class AppOutlinedButton extends StatelessWidget {
     );
   }
 }
+

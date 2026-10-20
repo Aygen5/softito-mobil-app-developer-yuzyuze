@@ -7,9 +7,18 @@ import '../widgets/vehicle_grid.dart';
 import '../widgets/vehicle_sort_sheet.dart';
 import '../widgets/vehicle_filter_sheet.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🚗 VehicleListScreen — Araç Filtreleme, Sıralama ve Listeleme Ekranı
+/// ---------------------------------------------------------------------------
+/// Kullanıcının tüm filoyu keşfettiği ekrandır:
+/// 1. Çoklu Görünüm Desteği: 1 sütun (Geniş Liste), 2 sütun (Izgara/Grid) ve 3 sütun (Kompakt Grid).
+/// 2. Sıralama: Fiyat (artan/azalan), model yılı ve kilometreye göre.
+/// 3. Filtreleme: Kategori, vites türü, yakıt türü ve fiyat aralığı (RangeSlider).
+/// 4. Arama Çubuğu: Anlık metin araması.
+/// 5. Boş Durum (Empty State): Kriterlere uyan araç yoksa yönlendirici mesaj.
 class VehicleListScreen extends StatefulWidget {
-  final String? initialCategory;
-  final String? initialSearchQuery;
+  final String? initialCategory;    // Başlangıçta seçili açılacak kategori (örn: ana sayfadan tıklandıysa)
+  final String? initialSearchQuery; // Başlangıç arama kelimesi
 
   const VehicleListScreen({
     super.key,
@@ -25,9 +34,12 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
   final VehicleDataSource _dataSource = VehicleDataSource();
   final TextEditingController _searchController = TextEditingController();
 
-  int _columnCount = 1; // 1: Liste, 2: 2'li ızgara, 3: 3'lü kompakt
+  // 1: Liste görünümü, 2: 2'li ızgara, 3: 3'lü kompakt ızgara
+  int _columnCount = 1;
+  // Varsayılan sıralama: Fiyat artan
   String _currentSort = 'price_asc';
 
+  // Filtreleme Durumları (State)
   String? _selectedCategory;
   String? _selectedTransmission;
   String? _selectedFuelType;
@@ -39,6 +51,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
   @override
   void initState() {
     super.initState();
+    // Başlangıç parametrelerini ata
     _selectedCategory = widget.initialCategory;
     if (widget.initialSearchQuery != null) {
       _searchController.text = widget.initialSearchQuery!;
@@ -52,6 +65,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     super.dispose();
   }
 
+  /// Verileri yükle, filtrele ve sırala
   Future<void> _loadAndFilter() async {
     await _dataSource.loadVehicles();
     _applyFiltersAndSort();
@@ -62,6 +76,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     }
   }
 
+  /// Tüm filtreleri ve sıralamayı yerel liste üzerinde çalıştırır
   void _applyFiltersAndSort() {
     final filtered = _dataSource.filterVehicles(
       category: _selectedCategory,
@@ -75,6 +90,8 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     _filteredVehicles = _dataSource.sortVehicles(filtered, _currentSort);
   }
 
+  /// Kullanıcının varsayılan dışı bir filtre seçip seçmediği kontrolü
+  /// (Filtre ikonunun üstüne kırmızı bildirim noktası koymak için kullanılır)
   bool get _hasActiveFilters =>
       _selectedCategory != null ||
       _selectedTransmission != null ||
@@ -82,6 +99,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
       _priceRange.start > 1000.0 ||
       _priceRange.end < 10000.0;
 
+  /// Tüm filtreleri sıfırlayıp ilk haline döndürür
   void _resetFilters() {
     setState(() {
       _selectedCategory = null;
@@ -93,6 +111,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     });
   }
 
+  /// Sıralama Seçenekleri Alt Penceresini (BottomSheet) Açar
   void _showSortSheet() {
     showModalBottomSheet(
       context: context,
@@ -109,6 +128,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     );
   }
 
+  /// Filtreleme Seçenekleri Alt Penceresini Açar
   void _showFilterSheet() {
     showModalBottomSheet(
       context: context,
@@ -139,11 +159,17 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kiralık Araçlar'),
         actions: [
-          // Görünüm Değiştirici (1, 2, 3 Sütun)
+          /// Görünüm Değiştirici Buton (1, 2, 3 Sütun Arasında Döngü)
+          /// '(_columnCount % 3) + 1':
+          /// 1 -> (1 % 3) + 1 = 2
+          /// 2 -> (2 % 3) + 1 = 3
+          /// 3 -> (3 % 3) + 1 = 1
+          /// Bu sayede tek bir düğmeyle 3 farklı ekran yerleşimi arasında gezinebiliriz.
           IconButton(
             icon: Icon(
               _columnCount == 1
@@ -157,13 +183,13 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
               });
             },
           ),
-          // Sıralama Butonu
+          // Sıralama Butonu (Alttan açılan pencere)
           IconButton(
             icon: const Icon(Icons.sort_rounded),
             tooltip: 'Sırala',
             onPressed: _showSortSheet,
           ),
-          // Filtreleme Butonu
+          // Filtreleme Butonu (Aktif filtre varsa sağ üstünde kırmızı rozet noktası gösterir)
           Stack(
             alignment: Alignment.center,
             children: [
@@ -192,7 +218,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
       ),
       body: Column(
         children: [
-          // Arama Kutusu
+          // Arama Kutusu: Anlık filtreleme yapar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
@@ -221,7 +247,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
             ),
           ),
 
-          // Aktif Filtre Çipleri ve Sonuç Sayısı
+          // Aktif Filtre Çipleri ve Listelenen Araç Sayısı
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Row(
@@ -250,6 +276,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
               ],
             ),
           ),
+
 
           if (_hasActiveFilters)
             SizedBox(

@@ -1,11 +1,32 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🎭 AppTheme — Material Design 3 Tema Konfigürasyonu
+/// ---------------------------------------------------------------------------
+/// Flutter'da modern arayüz tasarımı ThemeData ve ColorScheme üzerine kurulur.
+///
+/// Material 3 (M3) Nedir?
+/// Google'ın en güncel tasarım dilidir. `useMaterial3: true` ile aktif edilir.
+/// M3; daha yuvarlatılmış köşeler (BorderRadius), tonal renk paletleri ve
+/// gelişmiş kart/buton/input stilleri sunar.
+///
+/// Bu dosyada hem 'lightTheme' hem de 'darkTheme' tanımlanarak, tüm uygulamanın
+/// tek bir noktadan tutarlı ve profesyonel görünmesi sağlanır.
 class AppTheme {
   AppTheme._();
 
-  // Açık Tema
+  // ---------------------------------------------------------------------------
+  // ☀️ Açık Tema (Light Theme)
+  // ---------------------------------------------------------------------------
   static ThemeData get lightTheme {
+    /// ColorScheme.light:
+    /// Material 3'ün temel renk rollerini belirler:
+    /// - primary: Ana marka rengi (aktif butonlar, başlıklar)
+    /// - onPrimary: Ana rengin üzerine yazılacak metin rengi (örn: buton içi beyaz yazı)
+    /// - surface: Kartların, dialogların ve menülerin arka plan rengi
+    /// - onSurface: Surface zeminindeki yazıların rengi
+    /// - outline: Kenarlık (border) çizgisi rengi
     final colorScheme = ColorScheme.light(
       primary: AppColors.primaryBlue,
       onPrimary: Colors.white,
@@ -23,16 +44,20 @@ class AppTheme {
     );
 
     return ThemeData(
+      // Material 3 standartlarını zorunlu kıl
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: colorScheme,
+      // Sayfaların en alt arka plan rengi (Scaffold)
       scaffoldBackgroundColor: AppColors.lightBackground,
-      fontFamily: null, // Sistem varsayılan yazı tipi
+      fontFamily: null, // Sistem varsayılan yazı tipini kullan (SF Pro / Roboto)
+
+      // Üst Başlık Çubuğu (AppBar) Stili
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
+        backgroundColor: Colors.transparent, // Şeffaf arka plan
+        elevation: 0,                       // Gölgesiz, düz modern görünüm
+        scrolledUnderElevation: 0,          // Sayfa kaydırılınca gölge eklenmesini engelle
+        centerTitle: false,                 // Başlığı sola yasla
         iconTheme: IconThemeData(color: AppColors.lightTextPrimary),
         titleTextStyle: TextStyle(
           color: AppColors.lightTextPrimary,
@@ -40,21 +65,25 @@ class AppTheme {
           fontWeight: FontWeight.w700,
         ),
       ),
+
+      // Kart (Card) Bileşeni Stili
       cardTheme: CardThemeData(
         color: AppColors.lightSurface,
-        elevation: 0,
+        elevation: 0, // Düz kart, derinlik yerine ince kenarlık çizgisi
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: const BorderSide(color: AppColors.lightBorder, width: 1),
         ),
         margin: EdgeInsets.zero,
       ),
+
+      // Dolgulu Buton (ElevatedButton) Stili
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryBlue,
           foregroundColor: Colors.white,
           elevation: 0,
-          minimumSize: const Size(64, 48),
+          minimumSize: const Size(64, 48), // Parmak dostu dokunmatik hedef boyutu (min 48px)
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -64,6 +93,8 @@ class AppTheme {
           ),
         ),
       ),
+
+      // Kenarlıklı Buton (OutlinedButton) Stili
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primaryBlue,
@@ -78,6 +109,8 @@ class AppTheme {
           ),
         ),
       ),
+
+      // Metin Giriş Alanları (TextField / TextFormField) Teması
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.lightSurface,
@@ -103,6 +136,8 @@ class AppTheme {
           fontSize: 14,
         ),
       ),
+
+      // Modal Diyalog Penceresi Teması
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.lightSurface,
         shape: RoundedRectangleBorder(
@@ -110,6 +145,8 @@ class AppTheme {
         ),
         elevation: 8,
       ),
+
+      // Alttan Açılan Sayfa (BottomSheet) Teması
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: AppColors.lightSurface,
         modalBackgroundColor: AppColors.lightSurface,
@@ -117,6 +154,8 @@ class AppTheme {
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
       ),
+
+      // Ayırıcı Çizgi (Divider) Teması
       dividerTheme: const DividerThemeData(
         color: AppColors.lightBorder,
         thickness: 1,
@@ -125,8 +164,12 @@ class AppTheme {
     );
   }
 
-  // Koyu Tema
+  // ---------------------------------------------------------------------------
+  // 🌑 Koyu Tema (Dark Theme)
+  // ---------------------------------------------------------------------------
   static ThemeData get darkTheme {
+    /// ColorScheme.dark:
+    /// Koyu tema için zeminleri antrasit/siyah, yazıları açık renk yapar.
     final colorScheme = ColorScheme.dark(
       primary: AppColors.primaryBlueLight,
       onPrimary: Colors.white,
@@ -149,6 +192,7 @@ class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.darkBackground,
       fontFamily: null,
+
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -161,6 +205,7 @@ class AppTheme {
           fontWeight: FontWeight.w700,
         ),
       ),
+
       cardTheme: CardThemeData(
         color: AppColors.darkSurface,
         elevation: 0,
@@ -170,6 +215,7 @@ class AppTheme {
         ),
         margin: EdgeInsets.zero,
       ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryBlueLight,
@@ -185,6 +231,7 @@ class AppTheme {
           ),
         ),
       ),
+
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primaryBlueLight,
@@ -199,6 +246,7 @@ class AppTheme {
           ),
         ),
       ),
+
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.darkSurfaceElevated,
@@ -224,6 +272,7 @@ class AppTheme {
           fontSize: 14,
         ),
       ),
+
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.darkSurface,
         shape: RoundedRectangleBorder(
@@ -231,6 +280,7 @@ class AppTheme {
         ),
         elevation: 8,
       ),
+
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: AppColors.darkSurface,
         modalBackgroundColor: AppColors.darkSurface,
@@ -238,6 +288,7 @@ class AppTheme {
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
       ),
+
       dividerTheme: const DividerThemeData(
         color: AppColors.darkBorder,
         thickness: 1,
@@ -246,3 +297,4 @@ class AppTheme {
     );
   }
 }
+

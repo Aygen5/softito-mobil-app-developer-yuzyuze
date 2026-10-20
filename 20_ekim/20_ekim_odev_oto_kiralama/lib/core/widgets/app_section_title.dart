@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🏷️ AppSectionTitle — Sayfa Bölüm Başlığı Bileşeni
+/// ---------------------------------------------------------------------------
+/// Ana sayfa ve listelerde farklı bölümleri ("Kategoriler", "Öne Çıkan Araçlar",
+/// "Aktif Rezervasyonlar") birbirinden ayırmak ve sağ tarafta "Tümünü Gör >" gibi
+/// bir eylem bağlantısı sunmak için kullanılır.
 class AppSectionTitle extends StatelessWidget {
-  final String title;
-  final String? subtitle;
-  final String? actionText;
-  final VoidCallback? onActionTap;
-  final EdgeInsetsGeometry padding;
+  final String title;               // Ana başlık metni (örn: 'Öne Çıkan Araçlar')
+  final String? subtitle;           // Opsiyonel alt açıklama metni
+  final String? actionText;         // Sağdaki eylem metni (örn: 'Tümünü Gör')
+  final VoidCallback? onActionTap;  // Eylem metnine tıklandığında çalışacak fonksiyon
+  final EdgeInsetsGeometry padding; // Dış boşluk
 
   const AppSectionTitle({
     super.key,
@@ -24,8 +30,10 @@ class AppSectionTitle extends StatelessWidget {
     return Padding(
       padding: padding,
       child: Row(
+        // 'CrossAxisAlignment.end': Başlık ile sağdaki 'Tümünü Gör' metninin alt tabanlarını hizalar
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          // Sol taraf: Başlık ve alt başlığı barındıran esnek sütun
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,6 +60,7 @@ class AppSectionTitle extends StatelessWidget {
               ],
             ),
           ),
+          // Sağ taraf: Tıklanabilir 'Tümünü Gör >' metni
           if (actionText != null && onActionTap != null)
             GestureDetector(
               onTap: onActionTap,
@@ -83,3 +92,4 @@ class AppSectionTitle extends StatelessWidget {
     );
   }
 }
+

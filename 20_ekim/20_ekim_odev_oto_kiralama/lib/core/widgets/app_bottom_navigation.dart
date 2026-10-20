@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
 
+/// ---------------------------------------------------------------------------
+/// 🧭 AppBottomNavigation — Alt Navigasyon Çubuğu (Material 3 NavigationBar)
+/// ---------------------------------------------------------------------------
+/// Uygulamanın 3 ana sekmesi (Ana Sayfa, Rezervasyonlarım, Hesabım) arasında
+/// hızlı geçiş sağlar.
+///
+/// Material 3 Farkı:
+/// Eski Flutter sürümlerindeki 'BottomNavigationBar' yerine Material 3 standardı olan
+/// 'NavigationBar' ve 'NavigationDestination' kullanıldı.
+/// Bu yeni bileşen; seçili sekmede arkaya hap şeklinde renkli kapsül (indicatorColor)
+/// koyar ve akıcı animasyonlar sunar.
 class AppBottomNavigation extends StatelessWidget {
+  /// Şu an aktif olan sekmenin sıfır tabanlı indeksi (0: Ana Sayfa, 1: Rezervasyonlar, 2: Hesap)
   final int currentIndex;
+
+  /// Kullanıcı başka bir sekmeye dokunduğunda tetiklenen geri çağırım fonksiyonu
   final ValueChanged<int> onTap;
 
   const AppBottomNavigation({
@@ -16,6 +30,7 @@ class AppBottomNavigation extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
+      // Alt çubuğun üstüne ince modern bir sınır çizgisi (border) ekler
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
@@ -30,7 +45,9 @@ class AppBottomNavigation extends StatelessWidget {
         onDestinationSelected: onTap,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        // Aktif ikonun arkasındaki vurgulu oval kapsül rengi
         indicatorColor: theme.colorScheme.primaryContainer,
+        // Yazı etiketlerini her zaman göster
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         height: 68,
         destinations: const [
@@ -54,3 +71,4 @@ class AppBottomNavigation extends StatelessWidget {
     );
   }
 }
+

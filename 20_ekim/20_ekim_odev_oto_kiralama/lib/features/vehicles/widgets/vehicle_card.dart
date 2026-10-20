@@ -3,10 +3,18 @@ import '../../../models/vehicle.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/price_utils.dart';
 
+/// ---------------------------------------------------------------------------
+/// 📇 VehicleCard — Çoklu Sütun Uyumlu Araç Kartı (Adaptive Vehicle Card)
+/// ---------------------------------------------------------------------------
+/// Bu bileşen, 'columnCount' değerine (1, 2 veya 3) göre kendi iç yerleşimini
+/// otomatik olarak adapte eder:
+/// - 1 Sütun: Geniş detaylı kart (Büyük görsel, özellik çipleri, detaylı fiyat ve incele butonu).
+/// - 2 Sütun: Standart e-ticaret kartı (Orta boy görsel, marka/model, kısa özet ve fiyat).
+/// - 3 Sütun: Kompakt mikro kart (Küçük görsel, model adı ve fiyat).
 class VehicleCard extends StatelessWidget {
-  final Vehicle vehicle;
-  final VoidCallback onTap;
-  final int columnCount; // 1: Liste, 2: İkili ızgara, 3: Üçlü kompakt ızgara
+  final Vehicle vehicle;    // Gösterilecek araç nesnesi
+  final VoidCallback onTap; // Karta dokunulduğunda çalışacak fonksiyon
+  final int columnCount;    // Aktif sütun düzeni (1, 2 veya 3)
 
   const VehicleCard({
     super.key,
@@ -17,6 +25,7 @@ class VehicleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Sütun sayısına göre uygun alt metodu tetikler
     if (columnCount == 1) {
       return _buildSingleColumnCard(context);
     } else if (columnCount == 2) {
@@ -26,7 +35,9 @@ class VehicleCard extends StatelessWidget {
     }
   }
 
-  // 1 Sütun: Geniş Yatay/Dikey Detaylı Kart
+  // ---------------------------------------------------------------------------
+  // 1️⃣ 1 Sütun: Geniş Detaylı Kart Tasarımı
+  // ---------------------------------------------------------------------------
   Widget _buildSingleColumnCard(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -67,6 +78,7 @@ class VehicleCard extends StatelessWidget {
                     errorBuilder: (_, __, ___) => _buildFallback(theme),
                   ),
                 ),
+
                 Positioned(
                   top: 12,
                   left: 12,
@@ -190,7 +202,9 @@ class VehicleCard extends StatelessWidget {
     );
   }
 
-  // 2 Sütun: Standart Grid Kartı
+  // ---------------------------------------------------------------------------
+  // 2️⃣ 2 Sütun: Standart Grid Kartı Tasarımı (Orta Boy)
+  // ---------------------------------------------------------------------------
   Widget _buildTwoColumnCard(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -286,7 +300,9 @@ class VehicleCard extends StatelessWidget {
     );
   }
 
-  // 3 Sütun: Kompakt Grid Kartı
+  // ---------------------------------------------------------------------------
+  // 3️⃣ 3 Sütun: Kompakt Mikro Kart Tasarımı (Dar Ekran / Karşılaştırma)
+  // ---------------------------------------------------------------------------
   Widget _buildThreeColumnCard(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -344,6 +360,7 @@ class VehicleCard extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildFallback(ThemeData theme, {double iconSize = 40}) {
     return Center(
