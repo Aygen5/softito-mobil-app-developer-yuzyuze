@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0C1224" />
+      <stop offset="85%" stop-color="#05070F" />
+      <stop offset="100%" stop-color="#05070F" />
+    </radialGradient>
+    <linearGradient id="rocketBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E2E8F0" />
+    </linearGradient>
+    <linearGradient id="rocketFlame" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B2C" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Deep Space Circular Base -->
+  <circle cx="256" cy="256" r="236" fill="url(#bgGlow)" stroke="#1E293B" stroke-width="4" />
+  <circle cx="256" cy="256" r="248" fill="none" stroke="#22D3EE" stroke-width="2" stroke-opacity="0.3" filter="url(#neonGlow)" />
+
+  <!-- Stars -->
+  <circle cx="120" cy="110" r="3" fill="#FFFFFF" opacity="0.8" />
+  <circle cx="390" cy="130" r="4" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="90" cy="330" r="2.5" fill="#FFFFFF" opacity="0.7" />
+  <circle cx="420" cy="370" r="3" fill="#FFFFFF" opacity="0.8" />
+  <circle cx="180" cy="410" r="2" fill="#FFFFFF" opacity="0.6" />
+  <circle cx="340" cy="90" r="2" fill="#FFFFFF" opacity="0.7" />
+
+  <!-- Orbital Ring (Tilted) -->
+  <g transform="rotate(-30 256 256)">
+    <ellipse cx="256" cy="256" rx="200" ry="65" fill="none" stroke="#22D3EE" stroke-width="8" stroke-dasharray="12 8" opacity="0.85" filter="url(#neonGlow)" />
+    <!-- Orbiting Planet (Ascension Lime) -->
+    <circle cx="430" cy="245" r="14" fill="#A3E635" stroke="#FFFFFF" stroke-width="2" filter="url(#neonGlow)" />
+  </g>
+
+  <!-- Ascending Rocket (Rotated towards top-right) -->
+  <g transform="translate(256, 256) rotate(45) translate(-256, -256)">
+    <!-- Flame -->
+    <path d="M 235 320 Q 256 420 256 430 Q 256 420 277 320 Z" fill="url(#rocketFlame)" filter="url(#neonGlow)" />
+    <path d="M 244 320 Q 256 380 256 390 Q 256 380 268 320 Z" fill="#FDE047" />
+
+    <!-- Wings (Purple) -->
+    <path d="M 220 280 L 170 330 L 220 325 Z" fill="#8B5CF6" />
+    <path d="M 292 280 L 342 330 L 292 325 Z" fill="#8B5CF6" />
+
+    <!-- Rocket Body -->
+    <path d="M 256 120 C 290 190 295 280 288 325 L 224 325 C 217 280 222 190 256 120 Z" fill="url(#rocketBody)" stroke="#CBD5E1" stroke-width="2" />
+
+    <!-- Orange Nose Cone -->
+    <path d="M 256 120 C 275 160 280 180 280 195 L 232 195 C 232 180 237 160 256 120 Z" fill="#FF6B2C" />
+
+    <!-- Porthole Window -->
+    <circle cx="256" cy="235" r="22" fill="#22D3EE" stroke="#0F172A" stroke-width="4" filter="url(#neonGlow)" />
+    <circle cx="252" cy="230" r="14" fill="none" stroke="#FFFFFF" stroke-width="2.5" opacity="0.8" />
+  </g>
+</svg>
