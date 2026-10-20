@@ -1,0 +1,282 @@
+[
+  {
+    "id": "veh-001",
+    "brand": "Fiat",
+    "model": "Egea Sedan",
+    "year": 2024,
+    "category": "Basic",
+    "transmission": "Manuel",
+    "fuelType": "Benzin",
+    "mileage": 18500,
+    "hourlyPrice": 110.0,
+    "dailyPrice": 1250.0,
+    "description": "Şehir içi ve uzun yol için son derece ekonomik, geniş bagaj hacmine sahip aile sedanı.",
+    "image": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1541348263662-e0c8de4259ba?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 85,
+    "estimatedRange": 680,
+    "unavailableRanges": [
+      {
+        "startDate": "2026-10-22T09:00:00",
+        "endDate": "2026-10-25T18:00:00"
+      },
+      {
+        "startDate": "2026-11-02T10:00:00",
+        "endDate": "2026-11-05T12:00:00"
+      }
+    ]
+  },
+  {
+    "id": "veh-002",
+    "brand": "Renault",
+    "model": "Clio Touch",
+    "year": 2024,
+    "category": "Basic",
+    "transmission": "Otomatik",
+    "fuelType": "Benzin",
+    "mileage": 12400,
+    "hourlyPrice": 130.0,
+    "dailyPrice": 1450.0,
+    "description": "Kompakt tasarımı, düşük yakıt tüketimi ve pratik park kabiliyetiyle mükemmel bir şehir otomobili.",
+    "image": "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 90,
+    "estimatedRange": 720,
+    "unavailableRanges": [
+      {
+        "startDate": "2026-10-21T12:00:00",
+        "endDate": "2026-10-23T14:00:00"
+      }
+    ]
+  },
+  {
+    "id": "veh-003",
+    "brand": "Volkswagen",
+    "model": "Polo Life",
+    "year": 2025,
+    "category": "Basic+",
+    "transmission": "Otomatik",
+    "fuelType": "Benzin",
+    "mileage": 8200,
+    "hourlyPrice": 155.0,
+    "dailyPrice": 1750.0,
+    "description": "DSG şanzıman konforu, dijital kokpit ve yüksek sürüş güvenliği sunan premium hatchback.",
+    "image": "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 75,
+    "estimatedRange": 610,
+    "unavailableRanges": [
+      {
+        "startDate": "2026-10-26T10:00:00",
+        "endDate": "2026-10-28T16:00:00"
+      }
+    ]
+  },
+  {
+    "id": "veh-004",
+    "brand": "Hyundai",
+    "model": "i20 Style Plus",
+    "year": 2024,
+    "category": "Basic+",
+    "transmission": "Otomatik",
+    "fuelType": "Benzin",
+    "mileage": 15100,
+    "hourlyPrice": 140.0,
+    "dailyPrice": 1600.0,
+    "description": "Geniş iç hacmi ve zengin multimedya donanımı ile genç ve dinamik bir sürüş deneyimi.",
+    "image": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 60,
+    "estimatedRange": 480,
+    "unavailableRanges": []
+  },
+  {
+    "id": "veh-005",
+    "brand": "Toyota",
+    "model": "Corolla Hybrid",
+    "year": 2025,
+    "category": "Flex",
+    "transmission": "Otomatik",
+    "fuelType": "Hibrit",
+    "mileage": 9600,
+    "hourlyPrice": 190.0,
+    "dailyPrice": 2100.0,
+    "description": "Kendi kendini şarj eden hibrit motor teknolojisi ile dur-kalk trafikte sıfır yakıt tüketimi ve sessizlik.",
+    "image": "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 95,
+    "estimatedRange": 850,
+    "unavailableRanges": [
+      {
+        "startDate": "2026-10-24T08:00:00",
+        "endDate": "2026-10-27T19:00:00"
+      }
+    ]
+  },
+  {
+    "id": "veh-006",
+    "brand": "Renault",
+    "model": "Megane Sedan",
+    "year": 2024,
+    "category": "Flex",
+    "transmission": "Otomatik",
+    "fuelType": "Dizel",
+    "mileage": 22000,
+    "hourlyPrice": 180.0,
+    "dailyPrice": 1950.0,
+    "description": "Güçlü dCi dizel motor, geniş koltuk mesafesi ve yüksek tork ile uzun yolculukların vazgeçilmezi.",
+    "image": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 80,
+    "estimatedRange": 790,
+    "unavailableRanges": []
+  },
+  {
+    "id": "veh-007",
+    "brand": "Peugeot",
+    "model": "2008 GT-Line",
+    "year": 2025,
+    "category": "Flex+",
+    "transmission": "Otomatik",
+    "fuelType": "Benzin",
+    "mileage": 6400,
+    "hourlyPrice": 220.0,
+    "dailyPrice": 2450.0,
+    "description": "i-Cockpit 3D gösterge paneli, sportif tasarımı ve yüksek sürüş pozisyonu sunan kompakt SUV.",
+    "image": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 100,
+    "estimatedRange": 650,
+    "unavailableRanges": [
+      {
+        "startDate": "2026-10-28T09:00:00",
+        "endDate": "2026-10-31T18:00:00"
+      }
+    ]
+  },
+  {
+    "id": "veh-008",
+    "brand": "Nissan",
+    "model": "Qashqai e-POWER",
+    "year": 2025,
+    "category": "Flex+",
+    "transmission": "Otomatik",
+    "fuelType": "Hibrit",
+    "mileage": 5100,
+    "hourlyPrice": 240.0,
+    "dailyPrice": 2650.0,
+    "description": "Elektrikli sürüş hissini prize takmadan yaşatan e-POWER teknolojisi ve ferah aile SUV konforu.",
+    "image": "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 70,
+    "estimatedRange": 620,
+    "unavailableRanges": []
+  },
+  {
+    "id": "veh-009",
+    "brand": "BMW",
+    "model": "320i Sedan M Sport",
+    "year": 2025,
+    "category": "Lux",
+    "transmission": "Otomatik",
+    "fuelType": "Benzin",
+    "mileage": 7800,
+    "hourlyPrice": 360.0,
+    "dailyPrice": 3950.0,
+    "description": "Saf sürüş keyfi, mükemmel 50:50 ağırlık dengesi ve üst sınıf M Sport aerodinamik detaylar.",
+    "image": "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 85,
+    "estimatedRange": 710,
+    "unavailableRanges": [
+      {
+        "startDate": "2026-10-23T15:00:00",
+        "endDate": "2026-10-26T12:00:00"
+      }
+    ]
+  },
+  {
+    "id": "veh-010",
+    "brand": "Mercedes-Benz",
+    "model": "C200 4MATIC Edition 1",
+    "year": 2025,
+    "category": "Lux",
+    "transmission": "Otomatik",
+    "fuelType": "Hibrit",
+    "mileage": 4300,
+    "hourlyPrice": 390.0,
+    "dailyPrice": 4200.0,
+    "description": "Dört tekerlekten çekiş güvenliği, lüks ambiyans aydınlatması ve Burmester ses sistemi.",
+    "image": "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 90,
+    "estimatedRange": 740,
+    "unavailableRanges": []
+  },
+  {
+    "id": "veh-011",
+    "brand": "Porsche",
+    "model": "Taycan 4S",
+    "year": 2026,
+    "category": "Ultra Lux",
+    "transmission": "Otomatik",
+    "fuelType": "Elektrik",
+    "mileage": 3100,
+    "hourlyPrice": 650.0,
+    "dailyPrice": 7200.0,
+    "description": "0-100 km/s hızlanmasını 4 saniyede tamamlayan tamamen elektrikli süper spor sedan deneyimi.",
+    "image": "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 92,
+    "estimatedRange": 490,
+    "unavailableRanges": [
+      {
+        "startDate": "2026-10-25T09:00:00",
+        "endDate": "2026-10-29T18:00:00"
+      }
+    ]
+  },
+  {
+    "id": "veh-012",
+    "brand": "Mercedes-Benz",
+    "model": "S400d 4MATIC Long",
+    "year": 2026,
+    "category": "Ultra Lux",
+    "transmission": "Otomatik",
+    "fuelType": "Dizel",
+    "mileage": 2900,
+    "hourlyPrice": 750.0,
+    "dailyPrice": 8500.0,
+    "description": "Arka koltuk masaj sistemi, Executive lüks donanım paketi ve kusursuz VIP seyahat konforu.",
+    "image": "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80"
+    ],
+    "fuelLevel": 98,
+    "estimatedRange": 920,
+    "unavailableRanges": []
+  }
+]
