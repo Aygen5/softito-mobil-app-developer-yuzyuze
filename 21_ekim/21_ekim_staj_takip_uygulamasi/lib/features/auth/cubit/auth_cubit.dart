@@ -203,16 +203,11 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signOut() async {
     try {
       await authRepository.signOut();
+    } catch (_) {
+      // Ağ veya demo oturum durumunda dahi yerel oturum güvenle kapatılır
+    } finally {
       if (!isClosed) {
         emit(const Unauthenticated());
-      }
-    } catch (e) {
-      if (!isClosed) {
-        emit(
-          AuthError(
-            e is Failure ? e.message : 'Çıkış yapılırken bir hata oluştu.',
-          ),
-        );
       }
     }
   }

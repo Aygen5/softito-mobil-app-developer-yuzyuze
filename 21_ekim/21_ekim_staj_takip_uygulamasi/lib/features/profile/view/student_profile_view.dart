@@ -492,9 +492,17 @@ class _ProfileScaffold extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.of(bottomSheetContext).pop();
-                          context.read<ProfileCubit>().signOut();
+                          try {
+                            await context.read<ProfileCubit>().signOut();
+                          } catch (_) {}
+                          if (context.mounted) {
+                            await context.read<AuthCubit>().signOut();
+                          }
+                          if (context.mounted) {
+                            context.go(RouteNames.login);
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFDC2626),
