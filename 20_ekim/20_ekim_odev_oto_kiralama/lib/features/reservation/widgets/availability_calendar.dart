@@ -92,11 +92,22 @@ class _AvailabilityCalendarState extends State<AvailabilityCalendar> {
   @override
   void didUpdateWidget(covariant AvailabilityCalendar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.startDate != oldWidget.startDate || widget.endDate != oldWidget.endDate) {
-      setState(() {
-        _selectedStart = widget.startDate;
-        _selectedEnd = widget.endDate;
-      });
+    bool shouldSetState = false;
+
+    // Yalnızca üst widget'tan farklı bir başlangıç tarihi gelirse ve mevcut seçimden farklıysa güncelle
+    if (widget.startDate != oldWidget.startDate && widget.startDate != _selectedStart) {
+      _selectedStart = widget.startDate;
+      shouldSetState = true;
+    }
+
+    // Yalnızca üst widget'tan farklı bir bitiş tarihi gelirse ve mevcut seçimden farklıysa güncelle
+    if (widget.endDate != oldWidget.endDate && widget.endDate != _selectedEnd) {
+      _selectedEnd = widget.endDate;
+      shouldSetState = true;
+    }
+
+    if (shouldSetState) {
+      setState(() {});
     }
   }
 
