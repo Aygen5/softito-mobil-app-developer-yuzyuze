@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "901197706819",
+    "project_id": "stajtakip-6fd05",
+    "storage_bucket": "stajtakip-6fd05.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901197706819:android:f12b811596afb48a7b46f6",
+        "android_client_info": {
+          "package_name": "com.softito.stajtakip.staj_takip"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAzdi197Y_uVvpr5WZPz-4MpmfF-G37yA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
