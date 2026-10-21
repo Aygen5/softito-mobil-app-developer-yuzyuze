@@ -1,0 +1,153 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Yardımcı güvenlik fonksiyonları
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function getUserData(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data;
+    }
+
+    function currentUserRole() {
+      return getUserData(request.auth.uid).role;
+    }
+
+    function getInternship(internshipId) {
+      return get(/databases/$(database)/documents/internships/$(internshipId)).data;
+    }
+
+    // ------------------------------------------------------------------------
+    // 1. Users Koleksiyonu
+    // ------------------------------------------------------------------------
+    match /users/{userId} {
+      // Oturum açmış herkes temel profil bilgilerini okuyabilir (öğrenci-danışman-kurum eşleşmesi için)
+      allow read: if isSignedIn();
+
+      // Yeni kullanıcı oluşturma: Sadece kendi uid'si için ve ilk kayıtta rol 'student' olmalı
+      allow create: if isOwner(userId) && (
+        !request.resource.data.keys().hasAny(['role']) ||
+        request.resource.data.role == 'student'
+      );
+
+      // Profil güncelleme: Kullanıcı kendi profilini güncelleyebilir fakat rolünü değiştiremez
+      allow update: if isOwner(userId) && (
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'uid'])
+      );
+
+      // Profil silmeye istemciden izin verilmez
+      allow delete: if false;
+    }
+
+    // ------------------------------------------------------------------------
+    // 2. Internships Koleksiyonu
+    // ------------------------------------------------------------------------
+    match /internships/{internshipId} {
+      // Staj kaydını sadece ilgili öğrenci, atanan şirket yetkilisi veya akademik danışman okuyabilir
+      allow read: if isSignedIn() && (
+        resource.data.studentId == request.auth.uid ||
+        resource.data.companySupervisorId == request.auth.uid ||
+        resource.data.academicAdvisorId == request.auth.uid
+      );
+
+      // Staj kaydı oluşturma: Oturum açmış yetkili veya kendi stajını başlatan öğrenci
+      allow create: if isSignedIn() && (
+        request.resource.data.studentId == request.auth.uid ||
+        request.resource.data.companySupervisorId == request.auth.uid ||
+        request.resource.data.academicAdvisorId == request.auth.uid
+      );
+
+      // Staj güncelleme: İlgili paydaşlar güncelleyebilir
+      allow update: if isSignedIn() && (
+        resource.data.studentId == request.auth.uid ||
+        resource.data.companySupervisorId == request.auth.uid ||
+        resource.data.academicAdvisorId == request.auth.uid
+      );
+
+      // Staj silme kapalı
+      allow delete: if false;
+    }
+
+    // ------------------------------------------------------------------------
+    // 3. DailyReports Koleksiyonu
+    // ------------------------------------------------------------------------
+    match /dailyReports/{reportId} {
+      // Okuma: Raporun sahibi öğrenci veya stajın atanan kurum/akademik yetkilisi
+      allow read: if isSignedIn() && (
+        resource.data.studentId == request.auth.uid ||
+        resource.data.internshipId == null ||
+        (
+          exists(/databases/$(database)/documents/internships/$(resource.data.internshipId)) &&
+          (
+            getInternship(resource.data.internshipId).companySupervisorId == request.auth.uid ||
+            getInternship(resource.data.internshipId).academicAdvisorId == request.auth.uid ||
+            getInternship(resource.data.internshipId).studentId == request.auth.uid
+          )
+        )
+      );
+
+      // Yeni rapor oluşturma:
+      // - Öğrenci yalnızca kendi studentId'si ile rapor açabilir
+      // - İlk oluşturulduğunda durum 'draft' veya 'submitted' olmalı
+      // - Öğrenci kendi kendine onay damgalarını true yapamaz
+      allow create: if isSignedIn() &&
+        request.resource.data.studentId == request.auth.uid &&
+        request.resource.data.status in ['draft', 'submitted'] &&
+        request.resource.data.companyApproved == false &&
+        request.resource.data.advisorApproved == false;
+
+      // Güncelleme:
+      // A) Öğrenci güncellemesi: Yalnızca taslak veya düzeltme istenmiş raporlarda; onay bayraklarını değiştiremez
+      // B) Yetkili güncellemesi: Kurum yetkilisi veya akademik danışman onay/ret/düzeltme durumunu güncelleyebilir
+      allow update: if isSignedIn() && (
+        // Durum A: Öğrencinin raporunu düzenlemesi / göndermesi
+        (
+          resource.data.studentId == request.auth.uid &&
+          (resource.data.status == 'draft' || resource.data.status == 'revisionRequested') &&
+          request.resource.data.companyApproved == resource.data.companyApproved &&
+          request.resource.data.advisorApproved == resource.data.advisorApproved
+        ) ||
+        // Durum B: Atanmış kurum yetkilisi veya danışmanın inceleme/onay işlemi
+        (
+          exists(/databases/$(database)/documents/internships/$(resource.data.internshipId)) &&
+          (
+            getInternship(resource.data.internshipId).companySupervisorId == request.auth.uid ||
+            getInternship(resource.data.internshipId).academicAdvisorId == request.auth.uid
+          )
+        )
+      );
+
+      // Rapor silme: Yalnızca öğrenci ve yalnızca 'draft' durumundaki raporlar silinebilir
+      allow delete: if isSignedIn() &&
+        resource.data.studentId == request.auth.uid &&
+        resource.data.status == 'draft';
+    }
+
+    // ------------------------------------------------------------------------
+    // 4. Reviews Koleksiyonu (Onay, Puanlama ve Düzeltme Denetim İzi)
+    // ------------------------------------------------------------------------
+    match /reviews/{reviewId} {
+      // Okuma: Oturum açmış yetkililer veya ilgili öğrenci
+      allow read: if isSignedIn();
+
+      // Oluşturma:
+      // - Yorumu/onayı yapan kişi reviewerId ile eşleşmeli
+      // - Düzeltme kararı verilmişse ('revisionRequested') comment alanı zorunludur ve boş olamaz
+      allow create: if isSignedIn() &&
+        request.resource.data.reviewerId == request.auth.uid &&
+        (
+          request.resource.data.decision != 'revisionRequested' ||
+          (request.resource.data.comment is string && request.resource.data.comment.size() > 0)
+        );
+
+      // İnceleme geçmişi (audit log) asla sonradan değiştirilemez veya silinemez
+      allow update, delete: if false;
+    }
+  }
+}

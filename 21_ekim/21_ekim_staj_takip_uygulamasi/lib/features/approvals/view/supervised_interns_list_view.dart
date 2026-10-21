@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../common/widgets/empty_view.dart';
 import '../../../common/widgets/error_view.dart';
 import '../../../common/widgets/loading_view.dart';
@@ -18,10 +19,7 @@ import '../cubit/supervised_interns_state.dart';
 class SupervisedInternsListView extends StatelessWidget {
   final String title;
 
-  const SupervisedInternsListView({
-    super.key,
-    required this.title,
-  });
+  const SupervisedInternsListView({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -122,8 +120,9 @@ class _InternsBody extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 20,
-                            backgroundColor:
-                                AppColors.primaryBlue.withValues(alpha: 0.12),
+                            backgroundColor: AppColors.primaryBlue.withValues(
+                              alpha: 0.12,
+                            ),
                             child: Text(
                               student.fullName.isNotEmpty
                                   ? student.fullName[0].toUpperCase()

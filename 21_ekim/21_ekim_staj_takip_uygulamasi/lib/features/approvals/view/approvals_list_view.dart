@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../common/widgets/empty_view.dart';
 import '../../../common/widgets/error_view.dart';
 import '../../../common/widgets/loading_view.dart';
@@ -190,7 +191,10 @@ class _PendingReportCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    StatusBadge(status: report.status, size: StatusBadgeSize.small),
+                    StatusBadge(
+                      status: report.status,
+                      size: StatusBadgeSize.small,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),

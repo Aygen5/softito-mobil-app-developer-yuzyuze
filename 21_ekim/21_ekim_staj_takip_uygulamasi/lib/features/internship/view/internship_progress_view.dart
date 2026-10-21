@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/empty_view.dart';
 import '../../../common/widgets/error_view.dart';
@@ -27,7 +28,9 @@ class InternshipProgressView extends StatelessWidget {
 
     if (user == null) {
       return const Scaffold(
-        body: Center(child: LoadingView(message: 'Oturum bilgisi yükleniyor...')),
+        body: Center(
+          child: LoadingView(message: 'Oturum bilgisi yükleniyor...'),
+        ),
       );
     }
 
@@ -76,8 +79,7 @@ class _ProgressBody extends StatelessWidget {
           return const EmptyView(
             icon: Icons.calendar_today_outlined,
             title: 'Aktif Staj Bulunamadı',
-            message:
-                'Staj ilerleme ve eksik gün takibi için aktif bir staj kaydınız olmalıdır.',
+            message: 'Staj ilerleme ve eksik gün takibi için aktif bir staj kaydınız olmalıdır.',
           );
         }
 
@@ -251,10 +253,7 @@ class _TimelineDayTile extends StatelessWidget {
   final TimelineDay day;
   final String internshipId;
 
-  const _TimelineDayTile({
-    required this.day,
-    required this.internshipId,
-  });
+  const _TimelineDayTile({required this.day, required this.internshipId});
 
   @override
   Widget build(BuildContext context) {

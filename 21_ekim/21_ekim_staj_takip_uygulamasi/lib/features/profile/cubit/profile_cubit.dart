@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/errors/failure.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/repositories/auth_repository.dart';
@@ -23,17 +24,22 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> loadProfile() async {
+    if (isClosed) return;
     emit(const ProfileLoading());
     try {
       final user =
           await userRepository.getUserProfile(initialUser.uid) ?? initialUser;
-      final internship =
-          await internshipRepository.getActiveInternshipForStudent(user.uid);
+      if (isClosed) return;
+      final internship = await internshipRepository
+          .getActiveInternshipForStudent(user.uid);
+      if (isClosed) return;
 
       emit(ProfileLoaded(user: user, activeInternship: internship));
     } on Failure catch (e) {
+      if (isClosed) return;
       emit(ProfileError(e.message));
     } catch (e) {
+      if (isClosed) return;
       emit(ProfileError(e.toString()));
     }
   }
@@ -42,8 +48,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     try {
       await authRepository.signOut();
     } on Failure catch (e) {
+      if (isClosed) return;
       emit(ProfileError(e.message));
     } catch (e) {
+      if (isClosed) return;
       emit(ProfileError(e.toString()));
     }
   }

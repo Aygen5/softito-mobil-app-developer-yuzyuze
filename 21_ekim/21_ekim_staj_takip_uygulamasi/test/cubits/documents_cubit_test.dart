@@ -12,7 +12,9 @@ import 'package:staj_takip/features/documents/cubit/documents_state.dart';
 import 'package:staj_takip/features/documents/services/pdf_generator_service.dart';
 
 class MockDailyReportRepository extends Mock implements DailyReportRepository {}
+
 class MockInternshipRepository extends Mock implements InternshipRepository {}
+
 class MockUserRepository extends Mock implements UserRepository {}
 
 void main() {
@@ -73,59 +75,65 @@ void main() {
       );
     });
 
-    test('DocumentsCubit loads data and emits DocumentsLoaded with correct stats', () async {
-      when(() => mockInternshipRepository.getInternshipById('intern-1'))
-          .thenAnswer((_) async => testInternship);
-      when(() => mockDailyReportRepository.getApprovedReports('intern-1'))
-          .thenAnswer((_) async => testReports);
-      when(() => mockUserRepository.getUserProfile('adv-1'))
-          .thenAnswer((_) async => null);
-      when(() => mockUserRepository.getUserProfile('comp-1'))
-          .thenAnswer((_) async => null);
+    test(
+      'DocumentsCubit loads data and emits DocumentsLoaded with correct stats',
+      () async {
+        when(() => mockInternshipRepository.getInternshipById('intern-1'))
+            .thenAnswer((_) async => testInternship);
+        when(() => mockDailyReportRepository.getApprovedReports('intern-1'))
+            .thenAnswer((_) async => testReports);
+        when(() => mockUserRepository.getUserProfile('adv-1'))
+            .thenAnswer((_) async => null);
+        when(() => mockUserRepository.getUserProfile('comp-1'))
+            .thenAnswer((_) async => null);
 
-      final cubit = DocumentsCubit(
-        internshipId: 'intern-1',
-        student: testStudent,
-        dailyReportRepository: mockDailyReportRepository,
-        internshipRepository: mockInternshipRepository,
-        userRepository: mockUserRepository,
-        pdfGeneratorService: fastPdfService,
-      );
+        final cubit = DocumentsCubit(
+          internshipId: 'intern-1',
+          student: testStudent,
+          dailyReportRepository: mockDailyReportRepository,
+          internshipRepository: mockInternshipRepository,
+          userRepository: mockUserRepository,
+          pdfGeneratorService: fastPdfService,
+        );
 
-      await Future<void>.delayed(const Duration(milliseconds: 50));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
 
-      expect(cubit.state, isA<DocumentsLoaded>());
-      final loadedState = cubit.state as DocumentsLoaded;
-      expect(loadedState.approvedDaysCount, equals(1));
-      expect(loadedState.totalRequiredDays, equals(20));
-      expect(loadedState.hasMissingDays, isTrue);
-      expect(loadedState.isFullyCompleted, isFalse);
-      expect(loadedState.totalHours, equals(8));
-      expect(loadedState.pdfBytes, isNotEmpty);
+        expect(cubit.state, isA<DocumentsLoaded>());
+        final loadedState = cubit.state as DocumentsLoaded;
+        expect(loadedState.approvedDaysCount, equals(1));
+        expect(loadedState.totalRequiredDays, equals(20));
+        expect(loadedState.hasMissingDays, isTrue);
+        expect(loadedState.isFullyCompleted, isFalse);
+        expect(loadedState.totalHours, equals(8));
+        expect(loadedState.pdfBytes, isNotEmpty);
 
-      await cubit.close();
-    });
+        await cubit.close();
+      },
+    );
 
-    test('DocumentsCubit emits DocumentsFailure when internship not found', () async {
-      when(() => mockInternshipRepository.getInternshipById('not-found'))
-          .thenAnswer((_) async => null);
+    test(
+      'DocumentsCubit emits DocumentsFailure when internship not found',
+      () async {
+        when(() => mockInternshipRepository.getInternshipById('not-found'))
+            .thenAnswer((_) async => null);
 
-      final cubit = DocumentsCubit(
-        internshipId: 'not-found',
-        student: testStudent,
-        dailyReportRepository: mockDailyReportRepository,
-        internshipRepository: mockInternshipRepository,
-        userRepository: mockUserRepository,
-        pdfGeneratorService: fastPdfService,
-      );
+        final cubit = DocumentsCubit(
+          internshipId: 'not-found',
+          student: testStudent,
+          dailyReportRepository: mockDailyReportRepository,
+          internshipRepository: mockInternshipRepository,
+          userRepository: mockUserRepository,
+          pdfGeneratorService: fastPdfService,
+        );
 
-      await Future<void>.delayed(const Duration(milliseconds: 50));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
 
-      expect(cubit.state, isA<DocumentsFailure>());
-      final failureState = cubit.state as DocumentsFailure;
-      expect(failureState.message, contains('Staj kaydı bulunamadı'));
+        expect(cubit.state, isA<DocumentsFailure>());
+        final failureState = cubit.state as DocumentsFailure;
+        expect(failureState.message, contains('Staj kaydı bulunamadı'));
 
-      await cubit.close();
-    });
+        await cubit.close();
+      },
+    );
   });
 }

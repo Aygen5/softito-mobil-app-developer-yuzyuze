@@ -24,7 +24,8 @@ class ProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveRatio = progressRatio ??
+    final effectiveRatio =
+        progressRatio ??
         WorkdayCalculator.calculateProgressRatio(
           completedDays: completedDays,
           requiredDays: requiredDays,

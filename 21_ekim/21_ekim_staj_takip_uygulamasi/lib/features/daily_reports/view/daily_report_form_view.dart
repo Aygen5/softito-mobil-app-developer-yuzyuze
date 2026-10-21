@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/app_text_field.dart';
 import '../../../common/widgets/attachment_tile.dart';
@@ -29,7 +30,9 @@ class DailyReportFormView extends StatelessWidget {
 
     if (user == null) {
       return const Scaffold(
-        body: Center(child: LoadingView(message: 'Oturum bilgisi yükleniyor...')),
+        body: Center(
+          child: LoadingView(message: 'Oturum bilgisi yükleniyor...'),
+        ),
       );
     }
 
@@ -309,8 +312,9 @@ class _ReportFormScaffoldState extends State<_ReportFormScaffold> {
                           color: isSelected
                               ? Colors.white
                               : AppColors.textPrimary,
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.w500,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
                         ),
                         onSelected: (selected) {
                           if (selected) {

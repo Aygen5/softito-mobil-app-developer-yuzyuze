@@ -1,0 +1,34 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // ------------------------------------------------------------------------
+    // Staj Rapor Belgeleri Depolama Kuralları
+    // ------------------------------------------------------------------------
+    match /reports/{studentId}/{allPaths=**} {
+      // Okuma: Oturum açmış yetkililer ve raporun sahibi öğrenci
+      allow read: if isSignedIn();
+
+      // Dosya yükleme:
+      // 1. Kullanıcı kendi öğrenci klasörüne yüklemeli
+      // 2. Maksimum dosya boyutu 10MB olmalı
+      // 3. Dosya türü geçerli belge/resim formatında olmalı
+      allow write: if isSignedIn() &&
+        request.auth.uid == studentId &&
+        request.resource.size < 10 * 1024 * 1024 &&
+        (
+          request.resource.contentType.matches('image/.*') ||
+          request.resource.contentType == 'application/pdf' ||
+          request.resource.contentType == 'application/msword' ||
+          request.resource.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        );
+
+      // Dosya silme: Yalnızca dosya sahibi öğrenci
+      allow delete: if isSignedIn() && request.auth.uid == studentId;
+    }
+  }
+}

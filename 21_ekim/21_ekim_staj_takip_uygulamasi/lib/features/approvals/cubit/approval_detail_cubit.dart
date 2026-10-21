@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/errors/failure.dart';
 import '../../../data/models/daily_report_model.dart';
 import '../../../data/models/review_model.dart';
@@ -30,12 +31,15 @@ class ApprovalDetailCubit extends Cubit<ApprovalDetailState> {
     emit(const ApprovalDetailLoading());
 
     try {
-      final reviews =
-          await reviewRepository.getReviewsForReport(initialReport.id);
-      final internship = await internshipRepository
-          .getInternshipById(initialReport.internshipId);
-      final student =
-          await userRepository.getUserProfile(initialReport.studentId);
+      final reviews = await reviewRepository.getReviewsForReport(
+        initialReport.id,
+      );
+      final internship = await internshipRepository.getInternshipById(
+        initialReport.internshipId,
+      );
+      final student = await userRepository.getUserProfile(
+        initialReport.studentId,
+      );
 
       emit(
         ApprovalDetailLoaded(
@@ -56,11 +60,7 @@ class ApprovalDetailCubit extends Cubit<ApprovalDetailState> {
     final currentState = state;
     if (currentState is! ApprovalDetailLoaded) return;
 
-    emit(
-      const ApprovalDetailLoading(
-        message: 'Onay işlemi kaydediliyor...',
-      ),
-    );
+    emit(const ApprovalDetailLoading(message: 'Onay işlemi kaydediliyor...'));
 
     try {
       final now = DateTime.now();
@@ -88,7 +88,8 @@ class ApprovalDetailCubit extends Cubit<ApprovalDetailState> {
         reviewerId: reviewer.uid,
         reviewerRole: reviewer.role,
         decision: ReviewDecision.approved,
-        comment: comment ??
+        comment:
+            comment ??
             (reviewer.role.isCompany
                 ? 'Kurum yetkilisi tarafından onaylandı.'
                 : 'Akademik danışman tarafından onaylandı.'),
@@ -133,9 +134,7 @@ class ApprovalDetailCubit extends Cubit<ApprovalDetailState> {
     }
 
     emit(
-      const ApprovalDetailLoading(
-        message: 'Düzeltme talebi kaydediliyor...',
-      ),
+      const ApprovalDetailLoading(message: 'Düzeltme talebi kaydediliyor...'),
     );
 
     try {

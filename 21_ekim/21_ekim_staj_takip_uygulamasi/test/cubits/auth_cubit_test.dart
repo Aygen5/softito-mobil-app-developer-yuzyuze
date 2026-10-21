@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,8 +11,11 @@ import 'package:staj_takip/data/repositories/user_repository.dart';
 import 'package:staj_takip/features/auth/cubit/auth_cubit.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
+
 class MockUserRepository extends Mock implements UserRepository {}
+
 class MockUserCredential extends Mock implements UserCredential {}
+
 class MockUser extends Mock implements User {}
 
 void main() {
@@ -124,10 +128,12 @@ void main() {
         when(() => mockUser.email).thenReturn('ogrenci@staj.com');
         when(() => mockCred.user).thenReturn(mockUser);
 
-        when(() => mockAuthRepository.signInWithEmailAndPassword(
-              email: 'ogrenci@staj.com',
-              password: 'Password123!',
-            )).thenAnswer((_) async => mockCred);
+        when(
+          () => mockAuthRepository.signInWithEmailAndPassword(
+            email: 'ogrenci@staj.com',
+            password: 'Password123!',
+          ),
+        ).thenAnswer((_) async => mockCred);
 
         when(() => mockUserRepository.getUserProfile('uid_123'))
             .thenAnswer((_) async => testUser);
@@ -136,10 +142,8 @@ void main() {
         authRepository: mockAuthRepository,
         userRepository: mockUserRepository,
       ),
-      act: (cubit) => cubit.signIn(
-        email: 'ogrenci@staj.com',
-        password: 'Password123!',
-      ),
+      act: (cubit) =>
+          cubit.signIn(email: 'ogrenci@staj.com', password: 'Password123!'),
       expect: () => [
         const AuthLoading(message: 'Giriş yapılıyor...'),
         Authenticated(testUser),
@@ -149,19 +153,18 @@ void main() {
     blocTest<AuthCubit, AuthState>(
       'signIn emits [AuthLoading, AuthError] on failure',
       setUp: () {
-        when(() => mockAuthRepository.signInWithEmailAndPassword(
-              email: 'hatali@staj.com',
-              password: 'wrong',
-            )).thenThrow(const Failure('E-posta veya şifre hatalı.'));
+        when(
+          () => mockAuthRepository.signInWithEmailAndPassword(
+            email: 'hatali@staj.com',
+            password: 'wrong',
+          ),
+        ).thenThrow(const Failure('E-posta veya şifre hatalı.'));
       },
       build: () => AuthCubit(
         authRepository: mockAuthRepository,
         userRepository: mockUserRepository,
       ),
-      act: (cubit) => cubit.signIn(
-        email: 'hatali@staj.com',
-        password: 'wrong',
-      ),
+      act: (cubit) => cubit.signIn(email: 'hatali@staj.com', password: 'wrong'),
       expect: () => [
         const AuthLoading(message: 'Giriş yapılıyor...'),
         const AuthError('E-posta veya şifre hatalı.'),
@@ -176,10 +179,12 @@ void main() {
         when(() => mockUser.uid).thenReturn('new_student_uid');
         when(() => mockCred.user).thenReturn(mockUser);
 
-        when(() => mockAuthRepository.signUpWithEmailAndPassword(
-              email: 'yeni@staj.com',
-              password: 'Password123!',
-            )).thenAnswer((_) async => mockCred);
+        when(
+          () => mockAuthRepository.signUpWithEmailAndPassword(
+            email: 'yeni@staj.com',
+            password: 'Password123!',
+          ),
+        ).thenAnswer((_) async => mockCred);
 
         when(() => mockUserRepository.createUserProfile(any()))
             .thenAnswer((_) async {});

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -11,14 +12,21 @@ import 'package:staj_takip/data/repositories/review_repository.dart';
 import 'package:staj_takip/data/repositories/user_repository.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
+
 class MockUserRepository extends Mock implements UserRepository {}
+
 class MockInternshipRepository extends Mock implements InternshipRepository {}
+
 class MockDailyReportRepository extends Mock implements DailyReportRepository {}
+
 class MockReviewRepository extends Mock implements ReviewRepository {}
+
 class MockDocumentRepository extends Mock implements DocumentRepository {}
 
 void main() {
-  testWidgets('StajTakipApp initial route renders LoginView', (WidgetTester tester) async {
+  testWidgets('StajTakipApp initial route renders LoginView', (
+    WidgetTester tester,
+  ) async {
     final mockAuthRepo = MockAuthRepository();
     final mockUserRepo = MockUserRepository();
     final mockInternshipRepo = MockInternshipRepository();
@@ -27,7 +35,8 @@ void main() {
     final mockDocumentRepo = MockDocumentRepository();
     final controller = StreamController<User?>();
 
-    when(() => mockAuthRepo.authStateChanges).thenAnswer((_) => controller.stream);
+    when(() => mockAuthRepo.authStateChanges)
+        .thenAnswer((_) => controller.stream);
 
     await tester.pumpWidget(
       StajTakipApp(

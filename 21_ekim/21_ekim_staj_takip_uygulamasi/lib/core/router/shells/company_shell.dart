@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../theme/app_colors.dart';
 
 /// Şirket Yetkilisi paneli için alt menülü StatefulShellRoute kabuğu.
 class CompanyShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const CompanyShell({
-    super.key,
-    required this.navigationShell,
-  });
+  const CompanyShell({super.key, required this.navigationShell});
 
   void _onDestinationSelected(int index) {
     navigationShell.goBranch(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import 'core/constants/app_constants.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
@@ -52,10 +53,13 @@ class _StajTakipAppState extends State<StajTakipApp> {
     super.initState();
     _authRepository = widget.authRepository ?? FirebaseAuthRepository();
     _userRepository = widget.userRepository ?? FirebaseUserRepository();
-    _internshipRepository = widget.internshipRepository ?? FirebaseInternshipRepository();
-    _dailyReportRepository = widget.dailyReportRepository ?? FirebaseDailyReportRepository();
+    _internshipRepository =
+        widget.internshipRepository ?? FirebaseInternshipRepository();
+    _dailyReportRepository =
+        widget.dailyReportRepository ?? FirebaseDailyReportRepository();
     _reviewRepository = widget.reviewRepository ?? FirebaseReviewRepository();
-    _documentRepository = widget.documentRepository ?? FirebaseDocumentRepository();
+    _documentRepository =
+        widget.documentRepository ?? FirebaseDocumentRepository();
 
     _authCubit = AuthCubit(
       authRepository: _authRepository,
@@ -78,10 +82,16 @@ class _StajTakipAppState extends State<StajTakipApp> {
       providers: [
         RepositoryProvider<AuthRepository>.value(value: _authRepository),
         RepositoryProvider<UserRepository>.value(value: _userRepository),
-        RepositoryProvider<InternshipRepository>.value(value: _internshipRepository),
-        RepositoryProvider<DailyReportRepository>.value(value: _dailyReportRepository),
+        RepositoryProvider<InternshipRepository>.value(
+          value: _internshipRepository,
+        ),
+        RepositoryProvider<DailyReportRepository>.value(
+          value: _dailyReportRepository,
+        ),
         RepositoryProvider<ReviewRepository>.value(value: _reviewRepository),
-        RepositoryProvider<DocumentRepository>.value(value: _documentRepository),
+        RepositoryProvider<DocumentRepository>.value(
+          value: _documentRepository,
+        ),
       ],
       child: BlocProvider<AuthCubit>.value(
         value: _authCubit,

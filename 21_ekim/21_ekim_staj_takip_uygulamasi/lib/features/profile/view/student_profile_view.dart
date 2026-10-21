@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/error_view.dart';
 import '../../../common/widgets/loading_view.dart';
@@ -62,7 +63,9 @@ class _ProfileScaffold extends StatelessWidget {
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
           if (state is ProfileLoading || state is ProfileInitial) {
-            return const LoadingView(message: 'Kullanıcı bilgileri alınıyor...');
+            return const LoadingView(
+              message: 'Kullanıcı bilgileri alınıyor...',
+            );
           }
 
           if (state is ProfileError) {
@@ -92,8 +95,9 @@ class _ProfileScaffold extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 36,
-                          backgroundColor:
-                              AppColors.primaryBlue.withValues(alpha: 0.12),
+                          backgroundColor: AppColors.primaryBlue.withValues(
+                            alpha: 0.12,
+                          ),
                           child: Text(
                             user.fullName.isNotEmpty
                                 ? user.fullName[0].toUpperCase()
@@ -170,7 +174,9 @@ class _ProfileScaffold extends StatelessWidget {
                         _InfoRow(
                           icon: Icons.calendar_today_outlined,
                           label: 'Kayıt Tarihi',
-                          value: DateFormatter.formatDateTurkish(user.createdAt),
+                          value: DateFormatter.formatDateTurkish(
+                            user.createdAt,
+                          ),
                         ),
                         const Divider(height: 20),
                         _InfoRow(

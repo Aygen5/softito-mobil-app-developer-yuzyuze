@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../data/models/daily_report_model.dart';
 import '../../../data/models/internship_model.dart';
 
@@ -18,11 +19,7 @@ class TimelineDay extends Equatable {
   final TimelineDayStatus status;
   final DailyReportModel? report;
 
-  const TimelineDay({
-    required this.date,
-    required this.status,
-    this.report,
-  });
+  const TimelineDay({required this.date, required this.status, this.report});
 
   bool get isApproved => status == TimelineDayStatus.approved;
   bool get isMissing => status == TimelineDayStatus.missing;

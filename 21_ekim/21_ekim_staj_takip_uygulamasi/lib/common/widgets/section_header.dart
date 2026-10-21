@@ -16,8 +16,8 @@ class SectionHeader extends StatelessWidget {
     String? actionLabel,
     VoidCallback? onActionTap,
     VoidCallback? onActionPressed,
-  })  : actionText = actionLabel ?? actionText,
-        onActionTap = onActionPressed ?? onActionTap;
+  }) : actionText = actionLabel ?? actionText,
+       onActionTap = onActionPressed ?? onActionTap;
 
   @override
   Widget build(BuildContext context) {

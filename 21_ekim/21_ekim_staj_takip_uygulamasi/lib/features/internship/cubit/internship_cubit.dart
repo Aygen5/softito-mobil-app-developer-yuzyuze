@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/errors/failure.dart';
 import '../../../core/utils/workday_calculator.dart';
 import '../../../data/models/daily_report_model.dart';
@@ -41,8 +43,9 @@ class InternshipCubit extends Cubit<InternshipState> {
             }
           },
           onError: (error) {
-            final failure =
-                error is Failure ? error : Failure(error.toString());
+            final failure = error is Failure
+                ? error
+                : Failure(error.toString());
             emit(InternshipError(failure.message));
           },
         );
@@ -57,8 +60,9 @@ class InternshipCubit extends Cubit<InternshipState> {
             _computeTimeline(internship, reports);
           },
           onError: (error) {
-            final failure =
-                error is Failure ? error : Failure(error.toString());
+            final failure = error is Failure
+                ? error
+                : Failure(error.toString());
             emit(InternshipError(failure.message));
           },
         );

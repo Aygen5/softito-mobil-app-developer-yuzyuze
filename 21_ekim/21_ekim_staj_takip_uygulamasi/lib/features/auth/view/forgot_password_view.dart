@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/app_card.dart';
 import '../../../common/widgets/app_text_field.dart';
@@ -29,9 +30,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
 
   void _onReset() {
     if (_formKey.currentState?.validate() ?? false) {
-      context.read<AuthCubit>().sendPasswordReset(
-            email: _emailController.text,
-          );
+      context.read<AuthCubit>().sendPasswordReset(email: _emailController.text);
     }
   }
 
@@ -46,7 +45,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 20.0,
+            ),
             child: BlocConsumer<AuthCubit, AuthState>(
               listener: (context, state) {
                 if (state is AuthError) {

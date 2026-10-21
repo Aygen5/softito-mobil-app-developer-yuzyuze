@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/loading_view.dart';
 import '../../../core/constants/app_constants.dart';
@@ -13,10 +14,7 @@ import '../../auth/cubit/auth_cubit.dart';
 class ReviewerProfileView extends StatelessWidget {
   final String title;
 
-  const ReviewerProfileView({
-    super.key,
-    required this.title,
-  });
+  const ReviewerProfileView({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +56,9 @@ class ReviewerProfileView extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 36,
-                    backgroundColor:
-                        AppColors.primaryNavy.withValues(alpha: 0.12),
+                    backgroundColor: AppColors.primaryNavy.withValues(
+                      alpha: 0.12,
+                    ),
                     child: Text(
                       user.fullName.isNotEmpty
                           ? user.fullName[0].toUpperCase()

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/errors/failure.dart';
 import '../../../data/models/daily_report_model.dart';
 import '../../../data/models/internship_model.dart';
@@ -33,11 +34,13 @@ class ApprovalsCubit extends Cubit<ApprovalsState> {
       // 1. Yetkiliye atanmış stajları al
       final List<InternshipModel> internships;
       if (reviewerRole.isCompany) {
-        internships = await internshipRepository
-            .getInternshipsForSupervisor(reviewerId);
+        internships = await internshipRepository.getInternshipsForSupervisor(
+          reviewerId,
+        );
       } else {
-        internships =
-            await internshipRepository.getInternshipsForAdvisor(reviewerId);
+        internships = await internshipRepository.getInternshipsForAdvisor(
+          reviewerId,
+        );
       }
 
       if (internships.isEmpty) {
@@ -54,17 +57,16 @@ class ApprovalsCubit extends Cubit<ApprovalsState> {
       final internshipsMap = {for (var i in internships) i.id: i};
 
       // 2. Bu stajlara ait 'submitted' durumdaki raporları çek
-      final rawReports = await dailyReportRepository
-          .getPendingReportsForReview(internshipIds: internshipIds);
+      final rawReports = await dailyReportRepository.getPendingReportsForReview(
+        internshipIds: internshipIds,
+      );
 
       // 3. Role göre filtrele:
       // Şirket yetkilisi henüz kurum onayı verilmemişleri görür:
       // Danışman ise kurum onayından geçmiş ama danışman onayı bekleyenleri görür:
       final List<DailyReportModel> pendingReports;
       if (reviewerRole.isCompany) {
-        pendingReports = rawReports
-            .where((r) => !r.companyApproved)
-            .toList();
+        pendingReports = rawReports.where((r) => !r.companyApproved).toList();
       } else {
         pendingReports = rawReports
             .where((r) => r.companyApproved && !r.advisorApproved)
@@ -72,8 +74,7 @@ class ApprovalsCubit extends Cubit<ApprovalsState> {
       }
 
       // 4. Öğrenci profillerini al
-      final studentIds =
-          internships.map((e) => e.studentId).toSet().toList();
+      final studentIds = internships.map((e) => e.studentId).toSet().toList();
       final studentsMap = <String, UserModel>{};
 
       for (final sId in studentIds) {

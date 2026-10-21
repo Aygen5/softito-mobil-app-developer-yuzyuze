@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:staj_takip/data/models/daily_report_model.dart';
@@ -9,6 +10,7 @@ import 'package:staj_takip/features/dashboard/cubit/dashboard_cubit.dart';
 import 'package:staj_takip/features/dashboard/cubit/dashboard_state.dart';
 
 class MockInternshipRepository extends Mock implements InternshipRepository {}
+
 class MockDailyReportRepository extends Mock implements DailyReportRepository {}
 
 void main() {
@@ -21,8 +23,9 @@ void main() {
   });
 
   test('DashboardCubit emits DashboardNoInternship when student has no active internship', () async {
-    when(() => mockInternshipRepository.getActiveInternshipStream('student-123'))
-        .thenAnswer((_) => Stream.value(null));
+    when(
+      () => mockInternshipRepository.getActiveInternshipStream('student-123'),
+    ).thenAnswer((_) => Stream.value(null));
 
     final cubit = DashboardCubit(
       studentId: 'student-123',
@@ -32,9 +35,7 @@ void main() {
 
     await expectLater(
       cubit.stream,
-      emitsInOrder([
-        const DashboardNoInternship(),
-      ]),
+      emitsInOrder([const DashboardNoInternship()]),
     );
 
     await cubit.close();
@@ -68,10 +69,12 @@ void main() {
       ),
     ];
 
-    when(() => mockInternshipRepository.getActiveInternshipStream('student-123'))
-        .thenAnswer((_) => Stream.value(internship));
-    when(() => mockDailyReportRepository.getReportsForInternshipStream('intern-1'))
-        .thenAnswer((_) => Stream.value(reports));
+    when(
+      () => mockInternshipRepository.getActiveInternshipStream('student-123'),
+    ).thenAnswer((_) => Stream.value(internship));
+    when(
+      () => mockDailyReportRepository.getReportsForInternshipStream('intern-1'),
+    ).thenAnswer((_) => Stream.value(reports));
 
     final cubit = DashboardCubit(
       studentId: 'student-123',

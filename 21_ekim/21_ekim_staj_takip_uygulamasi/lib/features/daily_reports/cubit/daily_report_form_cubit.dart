@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/constants/app_constants.dart';
 import '../../../core/errors/failure.dart';
 import '../../../core/utils/workday_calculator.dart';
@@ -91,15 +92,13 @@ class DailyReportFormCubit extends Cubit<DailyReportFormState> {
         emit(
           currentState.copyWith(
             workDate: normalized,
-            dateError: () => 'Bu tarihte zaten kayıtlı bir raporunuz bulunmaktadır.',
+            dateError: () =>
+                'Bu tarihte zaten kayıtlı bir raporunuz bulunmaktadır.',
           ),
         );
       } else {
         emit(
-          currentState.copyWith(
-            workDate: normalized,
-            dateError: () => null,
-          ),
+          currentState.copyWith(workDate: normalized, dateError: () => null),
         );
       }
     } catch (_) {
@@ -236,11 +235,10 @@ class DailyReportFormCubit extends Cubit<DailyReportFormState> {
 
     try {
       final now = DateTime.now();
-      final reportId = initialReport?.id ??
-          DateTime.now().millisecondsSinceEpoch.toString();
+      final reportId =
+          initialReport?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
-      final newStatus =
-          isDraft ? ReportStatus.draft : ReportStatus.submitted;
+      final newStatus = isDraft ? ReportStatus.draft : ReportStatus.submitted;
 
       final report = DailyReportModel(
         id: reportId,

@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/errors/failure.dart';
 import '../../../data/models/daily_report_model.dart';
 import '../../../data/models/internship_model.dart';
@@ -46,8 +48,9 @@ class DailyReportsCubit extends Cubit<DailyReportsState> {
             }
           },
           onError: (error) {
-            final failure =
-                error is Failure ? error : Failure(error.toString());
+            final failure = error is Failure
+                ? error
+                : Failure(error.toString());
             emit(DailyReportsError(failure.message));
           },
         );
@@ -63,8 +66,9 @@ class DailyReportsCubit extends Cubit<DailyReportsState> {
             _applyFilters();
           },
           onError: (error) {
-            final failure =
-                error is Failure ? error : Failure(error.toString());
+            final failure = error is Failure
+                ? error
+                : Failure(error.toString());
             emit(DailyReportsError(failure.message));
           },
         );
@@ -96,8 +100,9 @@ class DailyReportsCubit extends Cubit<DailyReportsState> {
     if (_currentQuery.isNotEmpty) {
       filtered = filtered.where((report) {
         final tasksMatch = report.tasks.toLowerCase().contains(_currentQuery);
-        final learningsMatch =
-            report.learnings.toLowerCase().contains(_currentQuery);
+        final learningsMatch = report.learnings.toLowerCase().contains(
+          _currentQuery,
+        );
         return tasksMatch || learningsMatch;
       }).toList();
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/empty_view.dart';
 import '../../../common/widgets/error_view.dart';
@@ -30,7 +31,9 @@ class StudentDashboardView extends StatelessWidget {
 
     if (user == null) {
       return const Scaffold(
-        body: Center(child: LoadingView(message: 'Oturum bilgisi yükleniyor...')),
+        body: Center(
+          child: LoadingView(message: 'Oturum bilgisi yükleniyor...'),
+        ),
       );
     }
 
@@ -117,8 +120,7 @@ class _DashboardBody extends StatelessWidget {
                 const EmptyView(
                   icon: Icons.assignment_outlined,
                   title: 'Aktif Staj Kaydı Bulunamadı',
-                  message:
-                      'Henüz adınıza tanımlanmış aktif bir staj kaydı bulunmuyor. Danışmanınız veya kurum yetkiliniz ile iletişime geçiniz.',
+                  message: 'Henüz adınıza tanımlanmış aktif bir staj kaydı bulunmuyor. Danışmanınız veya kurum yetkiliniz ile iletişime geçiniz.',
                 ),
               ],
             ),
@@ -249,8 +251,7 @@ class _DashboardBody extends StatelessWidget {
                   // Son Raporlarım Bölüm Başlığı
                   SectionHeader(
                     title: 'Son Raporlarım',
-                    actionLabel:
-                        recentReports.isNotEmpty ? 'Tümünü Gör' : null,
+                    actionLabel: recentReports.isNotEmpty ? 'Tümünü Gör' : null,
                     onActionPressed: recentReports.isNotEmpty
                         ? () {
                             context.go(RouteNames.studentJournal);
@@ -265,8 +266,7 @@ class _DashboardBody extends StatelessWidget {
                     EmptyView(
                       icon: Icons.note_alt_outlined,
                       title: 'Henüz Rapor Eklenmedi',
-                      message:
-                          'Bugünün staj çalışmalarını kaydetmek için yukarıdaki butondan ilk raporunuzu ekleyin.',
+                      message: 'Bugünün staj çalışmalarını kaydetmek için yukarıdaki butondan ilk raporunuzu ekleyin.',
                     )
                   else
                     ...recentReports.map(

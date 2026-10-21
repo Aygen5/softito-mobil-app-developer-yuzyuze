@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/app_card.dart';
 import '../../../core/theme/app_colors.dart';
@@ -58,23 +59,33 @@ class PendingApprovalView extends StatelessWidget {
                       if (email.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.surfaceVariant,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: AppColors.border, width: 1),
+                            border: Border.all(
+                              color: AppColors.border,
+                              width: 1,
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'E-posta: $email',
-                                style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w600),
+                                style: AppTextStyles.caption.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               if (uid.isNotEmpty)
                                 Text(
                                   'UID: $uid',
-                                  style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),
+                                  style: AppTextStyles.caption.copyWith(
+                                    color: AppColors.textMuted,
+                                  ),
                                 ),
                             ],
                           ),

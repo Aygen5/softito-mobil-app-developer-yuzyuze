@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/errors/failure.dart';
 import '../../../core/utils/workday_calculator.dart';
 import '../../../data/models/internship_model.dart';
@@ -32,11 +33,13 @@ class SupervisedInternsCubit extends Cubit<SupervisedInternsState> {
     try {
       final List<InternshipModel> internships;
       if (reviewerRole.isCompany) {
-        internships = await internshipRepository
-            .getInternshipsForSupervisor(reviewerId);
+        internships = await internshipRepository.getInternshipsForSupervisor(
+          reviewerId,
+        );
       } else {
-        internships =
-            await internshipRepository.getInternshipsForAdvisor(reviewerId);
+        internships = await internshipRepository.getInternshipsForAdvisor(
+          reviewerId,
+        );
       }
 
       if (internships.isEmpty) {
@@ -46,11 +49,12 @@ class SupervisedInternsCubit extends Cubit<SupervisedInternsState> {
 
       final items = <InternProgressItem>[];
       for (final internship in internships) {
-        final student =
-            await userRepository.getUserProfile(internship.studentId);
+        final student = await userRepository.getUserProfile(
+          internship.studentId,
+        );
         if (student != null) {
-          final approvedReports =
-              await dailyReportRepository.getApprovedReports(internship.id);
+          final approvedReports = await dailyReportRepository
+              .getApprovedReports(internship.id);
           final progressRatio = WorkdayCalculator.calculateProgressRatio(
             completedDays: approvedReports.length,
             requiredDays: internship.requiredDays,

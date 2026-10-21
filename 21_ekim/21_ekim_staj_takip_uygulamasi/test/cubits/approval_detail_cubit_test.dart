@@ -10,7 +10,9 @@ import 'package:staj_takip/features/approvals/cubit/approval_detail_cubit.dart';
 import 'package:staj_takip/features/approvals/cubit/approval_detail_state.dart';
 
 class MockReviewRepository extends Mock implements ReviewRepository {}
+
 class MockInternshipRepository extends Mock implements InternshipRepository {}
+
 class MockUserRepository extends Mock implements UserRepository {}
 
 void main() {
@@ -77,10 +79,12 @@ void main() {
         .thenAnswer((_) async => null);
     when(() => mockUserRepository.getUserProfile('student-1'))
         .thenAnswer((_) async => null);
-    when(() => mockReviewRepository.submitReview(
-          review: any(named: 'review'),
-          updatedReport: any(named: 'updatedReport'),
-        )).thenAnswer((_) async {});
+    when(
+      () => mockReviewRepository.submitReview(
+        review: any(named: 'review'),
+        updatedReport: any(named: 'updatedReport'),
+      ),
+    ).thenAnswer((_) async {});
 
     final cubit = ApprovalDetailCubit(
       initialReport: testReport,
@@ -100,39 +104,44 @@ void main() {
     final success = cubit.state as ApprovalDetailSuccess;
     expect(success.isApproved, true);
 
-    verify(() => mockReviewRepository.submitReview(
-          review: any(named: 'review'),
-          updatedReport: any(named: 'updatedReport'),
-        )).called(1);
+    verify(
+      () => mockReviewRepository.submitReview(
+        review: any(named: 'review'),
+        updatedReport: any(named: 'updatedReport'),
+      ),
+    ).called(1);
 
     await cubit.close();
   });
 
-  test('ApprovalDetailCubit requestRevision fails if comment is empty', () async {
-    when(() => mockReviewRepository.getReviewsForReport('rep-1'))
-        .thenAnswer((_) async => []);
-    when(() => mockInternshipRepository.getInternshipById('intern-1'))
-        .thenAnswer((_) async => null);
-    when(() => mockUserRepository.getUserProfile('student-1'))
-        .thenAnswer((_) async => null);
+  test(
+    'ApprovalDetailCubit requestRevision fails if comment is empty',
+    () async {
+      when(() => mockReviewRepository.getReviewsForReport('rep-1'))
+          .thenAnswer((_) async => []);
+      when(() => mockInternshipRepository.getInternshipById('intern-1'))
+          .thenAnswer((_) async => null);
+      when(() => mockUserRepository.getUserProfile('student-1'))
+          .thenAnswer((_) async => null);
 
-    final cubit = ApprovalDetailCubit(
-      initialReport: testReport,
-      reviewer: companyReviewer,
-      reviewRepository: mockReviewRepository,
-      internshipRepository: mockInternshipRepository,
-      userRepository: mockUserRepository,
-    );
+      final cubit = ApprovalDetailCubit(
+        initialReport: testReport,
+        reviewer: companyReviewer,
+        reviewRepository: mockReviewRepository,
+        internshipRepository: mockInternshipRepository,
+        userRepository: mockUserRepository,
+      );
 
-    await Future<void>.delayed(const Duration(milliseconds: 50));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
 
-    final states = <ApprovalDetailState>[];
-    final sub = cubit.stream.listen(states.add);
+      final states = <ApprovalDetailState>[];
+      final sub = cubit.stream.listen(states.add);
 
-    await cubit.requestRevision(comment: '   ');
-    expect(states.any((s) => s is ApprovalDetailFailure), isTrue);
+      await cubit.requestRevision(comment: '   ');
+      expect(states.any((s) => s is ApprovalDetailFailure), isTrue);
 
-    await sub.cancel();
-    await cubit.close();
-  });
+      await sub.cancel();
+      await cubit.close();
+    },
+  );
 }

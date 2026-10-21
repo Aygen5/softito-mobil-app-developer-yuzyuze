@@ -29,19 +29,24 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   }
 
   Future<void> loadLogbook() async {
-    emit(const DocumentsLoading(message: 'Staj defteri verileri toplanıyor...'));
+    emit(
+      const DocumentsLoading(message: 'Staj defteri verileri toplanıyor...'),
+    );
 
     try {
       // 1. Staj Bilgisini Yükle
-      final internship = await internshipRepository.getInternshipById(internshipId);
+      final internship = await internshipRepository.getInternshipById(
+        internshipId,
+      );
       if (internship == null) {
         emit(const DocumentsFailure('Staj kaydı bulunamadı.'));
         return;
       }
 
       // 2. Yalnızca Çift Aşamalı Onayı Tamamlanmış Raporları Çek
-      final approvedReports =
-          await dailyReportRepository.getApprovedReports(internshipId);
+      final approvedReports = await dailyReportRepository.getApprovedReports(
+        internshipId,
+      );
 
       // 3. Yetkili Bilgilerini Yükle
       UserModel? advisor;

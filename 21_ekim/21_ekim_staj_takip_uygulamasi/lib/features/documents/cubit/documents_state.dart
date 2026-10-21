@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 
 import '../../../data/models/daily_report_model.dart';
@@ -46,20 +47,18 @@ final class DocumentsLoaded extends DocumentsState {
   int get approvedDaysCount => approvedReports.length;
   bool get isFullyCompleted => approvedDaysCount >= totalRequiredDays;
   bool get hasMissingDays => approvedDaysCount < totalRequiredDays;
-  int get totalHours => approvedReports.fold<int>(
-        0,
-        (sum, item) => sum + item.hoursWorked,
-      );
+  int get totalHours =>
+      approvedReports.fold<int>(0, (sum, item) => sum + item.hoursWorked);
 
   @override
   List<Object?> get props => [
-        student,
-        internship,
-        approvedReports,
-        advisor,
-        companySupervisor,
-        pdfBytes,
-      ];
+    student,
+    internship,
+    approvedReports,
+    advisor,
+    companySupervisor,
+    pdfBytes,
+  ];
 }
 
 final class DocumentsFailure extends DocumentsState {

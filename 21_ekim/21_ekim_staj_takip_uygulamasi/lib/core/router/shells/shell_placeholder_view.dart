@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/app_card.dart';
 import '../../../features/auth/cubit/auth_cubit.dart';
@@ -54,7 +55,11 @@ class ShellPlaceholderView extends StatelessWidget {
                           color: AppColors.primaryBlue.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(icon, size: 40, color: AppColors.primaryBlue),
+                        child: Icon(
+                          icon,
+                          size: 40,
+                          color: AppColors.primaryBlue,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       Text(title, style: AppTextStyles.cardTitle),
@@ -67,7 +72,10 @@ class ShellPlaceholderView extends StatelessWidget {
                       if (user != null) ...[
                         const SizedBox(height: 16),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.surfaceVariant,
                             borderRadius: BorderRadius.circular(8),
@@ -75,7 +83,9 @@ class ShellPlaceholderView extends StatelessWidget {
                           ),
                           child: Text(
                             'Kullanıcı: ${user.fullName} (${user.role.label})',
-                            style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w600),
+                            style: AppTextStyles.caption.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],

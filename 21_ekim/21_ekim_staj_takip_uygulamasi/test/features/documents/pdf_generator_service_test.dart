@@ -70,16 +70,19 @@ void main() {
       expect(header, equals('%PDF-'));
     });
 
-    test('generateInternshipJournalPdf works even with empty approved reports', () async {
-      final bytes = await service.generateInternshipJournalPdf(
-        student: testStudent,
-        internship: testInternship,
-        approvedReports: const [],
-      );
+    test(
+      'generateInternshipJournalPdf works even with empty approved reports',
+      () async {
+        final bytes = await service.generateInternshipJournalPdf(
+          student: testStudent,
+          internship: testInternship,
+          approvedReports: const [],
+        );
 
-      expect(bytes, isNotEmpty);
-      final header = String.fromCharCodes(bytes.take(5));
-      expect(header, equals('%PDF-'));
-    });
+        expect(bytes, isNotEmpty);
+        final header = String.fromCharCodes(bytes.take(5));
+        expect(header, equals('%PDF-'));
+      },
+    );
   });
 }

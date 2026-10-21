@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/app_text_field.dart';
 import '../../../common/widgets/attachment_tile.dart';
@@ -84,8 +85,9 @@ class _ApprovalDetailScaffoldState extends State<_ApprovalDetailScaffold> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
-              backgroundColor:
-                  state.isApproved ? AppColors.success : AppColors.warning,
+              backgroundColor: state.isApproved
+                  ? AppColors.success
+                  : AppColors.warning,
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -153,8 +155,9 @@ class _ApprovalDetailScaffoldState extends State<_ApprovalDetailScaffold> {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor:
-                      AppColors.primaryBlue.withValues(alpha: 0.12),
+                  backgroundColor: AppColors.primaryBlue.withValues(
+                    alpha: 0.12,
+                  ),
                   child: Text(
                     student?.fullName.isNotEmpty == true
                         ? student!.fullName[0].toUpperCase()
@@ -352,7 +355,9 @@ class _ApprovalDetailScaffoldState extends State<_ApprovalDetailScaffold> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ...state.reviews.map((rev) => _ReviewHistoryTile(review: rev)),
+                  ...state.reviews.map(
+                    (rev) => _ReviewHistoryTile(review: rev),
+                  ),
                 ],
               ),
             ),
@@ -366,7 +371,9 @@ class _ApprovalDetailScaffoldState extends State<_ApprovalDetailScaffold> {
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.primaryBlue.withValues(alpha: 0.3)),
+                border: Border.all(
+                  color: AppColors.primaryBlue.withValues(alpha: 0.3),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

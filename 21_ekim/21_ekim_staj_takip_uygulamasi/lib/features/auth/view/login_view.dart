@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/app_card.dart';
 import '../../../common/widgets/app_text_field.dart';
@@ -33,9 +34,9 @@ class _LoginViewState extends State<LoginView> {
   void _onLogin() {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthCubit>().signIn(
-            email: _emailController.text,
-            password: _passwordController.text,
-          );
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
     }
   }
 
@@ -46,7 +47,10 @@ class _LoginViewState extends State<LoginView> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 20.0,
+            ),
             child: BlocConsumer<AuthCubit, AuthState>(
               listener: (context, state) {
                 if (state is AuthError) {
@@ -126,7 +130,9 @@ class _LoginViewState extends State<LoginView> {
                                 if (val == null || val.trim().isEmpty) {
                                   return 'Lütfen e-posta adresinizi giriniz.';
                                 }
-                                if (!AppConstants.emailRegex.hasMatch(val.trim())) {
+                                if (!AppConstants.emailRegex.hasMatch(
+                                  val.trim(),
+                                )) {
                                   return 'Geçerli bir e-posta adresi yazınız.';
                                 }
                                 return null;
@@ -144,7 +150,8 @@ class _LoginViewState extends State<LoginView> {
                                 if (val == null || val.trim().isEmpty) {
                                   return 'Lütfen şifrenizi giriniz.';
                                 }
-                                if (val.trim().length < AppConstants.minPasswordLength) {
+                                if (val.trim().length <
+                                    AppConstants.minPasswordLength) {
                                   return 'Şifre en az 6 karakter olmalıdır.';
                                 }
                                 return null;

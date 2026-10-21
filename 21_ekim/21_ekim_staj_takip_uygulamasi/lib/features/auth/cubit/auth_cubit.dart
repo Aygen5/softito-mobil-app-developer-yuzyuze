@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/errors/failure.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/repositories/auth_repository.dart';
@@ -13,25 +15,26 @@ class AuthCubit extends Cubit<AuthState> {
   final UserRepository userRepository;
   StreamSubscription<dynamic>? _authSubscription;
 
-  AuthCubit({
-    required this.authRepository,
-    required this.userRepository,
-  }) : super(const AuthInitial()) {
+  AuthCubit({required this.authRepository, required this.userRepository})
+    : super(const AuthInitial()) {
     _initAuthListener();
   }
 
   void _initAuthListener() {
-    _authSubscription = authRepository.authStateChanges.listen((user) async {
-      if (user == null) {
-        if (!isClosed) emit(const Unauthenticated());
-      } else {
-        await _loadUserProfile(user.uid, user.email ?? '');
-      }
-    }, onError: (error) {
-      if (!isClosed) {
-        emit(AuthError(error is Failure ? error.message : error.toString()));
-      }
-    });
+    _authSubscription = authRepository.authStateChanges.listen(
+      (user) async {
+        if (user == null) {
+          if (!isClosed) emit(const Unauthenticated());
+        } else {
+          await _loadUserProfile(user.uid, user.email ?? '');
+        }
+      },
+      onError: (error) {
+        if (!isClosed) {
+          emit(AuthError(error is Failure ? error.message : error.toString()));
+        }
+      },
+    );
   }
 
   /// Firestore üzerinden kullanıcı profilini ve rolünü yükler.
@@ -43,33 +46,40 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (userModel == null) {
         // Auth hesabı var ancak Firestore'da profil açılmamış
-        emit(AuthPendingApproval(
-          uid: uid,
-          email: email,
-          message: 'Hesap kaydınız bulundu ancak profiliniz veya rolünüz henüz tanımlanmamıştır.',
-        ));
+        emit(
+          AuthPendingApproval(
+            uid: uid,
+            email: email,
+            message: 'Hesap kaydınız bulundu ancak profiliniz veya rolünüz henüz tanımlanmamıştır.',
+          ),
+        );
       } else if (!userModel.isActive) {
         // Hesap yönetici tarafından pasif yapılmış
-        emit(AuthPendingApproval(
-          uid: uid,
-          email: email,
-          message: 'Hesabınız yönetici tarafından askıya alınmıştır. Lütfen danışmanınızla görüşünüz.',
-        ));
+        emit(
+          AuthPendingApproval(
+            uid: uid,
+            email: email,
+            message: 'Hesabınız yönetici tarafından askıya alınmıştır. Lütfen danışmanınızla görüşünüz.',
+          ),
+        );
       } else {
         emit(Authenticated(userModel));
       }
     } catch (e) {
       if (!isClosed) {
-        emit(AuthError(e is Failure ? e.message : 'Kullanıcı profili yüklenirken bir hata oluştu.'));
+        emit(
+          AuthError(
+            e is Failure
+                ? e.message
+                : 'Kullanıcı profili yüklenirken bir hata oluştu.',
+          ),
+        );
       }
     }
   }
 
   /// E-posta ve şifre ile giriş yapma işlemi.
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signIn({required String email, required String password}) async {
     if (isClosed) return;
     emit(const AuthLoading(message: 'Giriş yapılıyor...'));
 
@@ -132,9 +142,13 @@ class AuthCubit extends Cubit<AuthState> {
         emit(Authenticated(newUser));
       }
     } on Failure catch (e) {
-      if (!isClosed) emit(AuthError(e.message));
+      if (!isClosed) {
+        emit(AuthError(e.message));
+      }
     } catch (e) {
-      if (!isClosed) emit(AuthError('Kayıt oluşturulurken bir hata oluştu: $e'));
+      if (!isClosed) {
+        emit(AuthError('Kayıt oluşturulurken bir hata oluştu: $e'));
+      }
     }
   }
 
@@ -164,7 +178,11 @@ class AuthCubit extends Cubit<AuthState> {
       }
     } catch (e) {
       if (!isClosed) {
-        emit(AuthError(e is Failure ? e.message : 'Çıkış yapılırken bir hata oluştu.'));
+        emit(
+          AuthError(
+            e is Failure ? e.message : 'Çıkış yapılırken bir hata oluştu.',
+          ),
+        );
       }
     }
   }

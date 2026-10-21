@@ -119,5 +119,13 @@ class UserModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [uid, fullName, email, role, institutionId, isActive, createdAt];
+  List<Object?> get props => [
+    uid,
+    fullName,
+    email,
+    role,
+    institutionId,
+    isActive,
+    createdAt,
+  ];
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../common/widgets/status_badge.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -10,11 +11,7 @@ class DashboardReportCard extends StatelessWidget {
   final DailyReportModel report;
   final VoidCallback? onTap;
 
-  const DashboardReportCard({
-    super.key,
-    required this.report,
-    this.onTap,
-  });
+  const DashboardReportCard({super.key, required this.report, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +52,10 @@ class DashboardReportCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    StatusBadge(status: report.status, size: StatusBadgeSize.small),
+                    StatusBadge(
+                      status: report.status,
+                      size: StatusBadgeSize.small,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),

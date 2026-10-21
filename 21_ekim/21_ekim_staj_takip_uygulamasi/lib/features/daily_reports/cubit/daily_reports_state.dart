@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../data/models/daily_report_model.dart';
 import '../../../data/models/internship_model.dart';
 
@@ -48,8 +49,9 @@ class DailyReportsLoaded extends DailyReportsState {
       internship: internship ?? this.internship,
       allReports: allReports ?? this.allReports,
       filteredReports: filteredReports ?? this.filteredReports,
-      selectedFilter:
-          selectedFilter != null ? selectedFilter() : this.selectedFilter,
+      selectedFilter: selectedFilter != null
+          ? selectedFilter()
+          : this.selectedFilter,
       searchQuery: searchQuery ?? this.searchQuery,
     );
   }

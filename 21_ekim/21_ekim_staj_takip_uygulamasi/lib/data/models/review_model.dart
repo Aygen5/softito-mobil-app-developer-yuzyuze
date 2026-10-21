@@ -30,7 +30,8 @@ enum ReviewDecision {
 
   // Takma adlar
   static const ReviewDecision approved = ReviewDecision.approve;
-  static const ReviewDecision revisionRequested = ReviewDecision.requestRevision;
+  static const ReviewDecision revisionRequested =
+      ReviewDecision.requestRevision;
 }
 
 /// Firestore `reviews` koleksiyonu veri modeli (Onay ve inceleme geçmişi).

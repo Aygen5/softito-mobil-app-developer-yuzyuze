@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/errors/failure.dart';
 import '../../../core/utils/workday_calculator.dart';
 import '../../../data/models/daily_report_model.dart';
@@ -42,8 +44,9 @@ class DashboardCubit extends Cubit<DashboardState> {
             }
           },
           onError: (error) {
-            final failure =
-                error is Failure ? error : Failure(error.toString());
+            final failure = error is Failure
+                ? error
+                : Failure(error.toString());
             emit(DashboardError(failure.message));
           },
         );
@@ -65,8 +68,9 @@ class DashboardCubit extends Cubit<DashboardState> {
             );
           },
           onError: (error) {
-            final failure =
-                error is Failure ? error : Failure(error.toString());
+            final failure = error is Failure
+                ? error
+                : Failure(error.toString());
             emit(DashboardError(failure.message));
           },
         );

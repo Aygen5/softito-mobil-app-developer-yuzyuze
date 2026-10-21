@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../theme/app_colors.dart';
 
 /// Akademik Danışman paneli için alt menülü StatefulShellRoute kabuğu.
 class AdvisorShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const AdvisorShell({
-    super.key,
-    required this.navigationShell,
-  });
+  const AdvisorShell({super.key, required this.navigationShell});
 
   void _onDestinationSelected(int index) {
     navigationShell.goBranch(

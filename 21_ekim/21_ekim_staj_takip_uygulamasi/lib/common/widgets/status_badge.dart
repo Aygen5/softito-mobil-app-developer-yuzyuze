@@ -61,8 +61,7 @@ class StatusBadge extends StatelessWidget {
   }
 
   _StatusConfig _getStatusConfig(Object status) {
-    final statusStr =
-        status is ReportStatus ? status.value : status.toString();
+    final statusStr = status is ReportStatus ? status.value : status.toString();
     switch (statusStr.toLowerCase()) {
       case 'approved':
       case 'onaylandi':

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../data/models/internship_model.dart';
 import '../../../data/models/user_model.dart';
 
@@ -22,10 +23,7 @@ class ProfileLoaded extends ProfileState {
   final UserModel user;
   final InternshipModel? activeInternship;
 
-  const ProfileLoaded({
-    required this.user,
-    this.activeInternship,
-  });
+  const ProfileLoaded({required this.user, this.activeInternship});
 
   @override
   List<Object?> get props => [user, activeInternship];

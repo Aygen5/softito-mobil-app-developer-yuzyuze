@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -14,10 +15,7 @@ class PdfGeneratorService {
   final pw.Font? customRegularFont;
   final pw.Font? customBoldFont;
 
-  PdfGeneratorService({
-    this.customRegularFont,
-    this.customBoldFont,
-  });
+  PdfGeneratorService({this.customRegularFont, this.customBoldFont});
 
   /// Staj defterini kurallara uygun olarak üretir ve Uint8List bayt dizisi döndürür.
   Future<Uint8List> generateInternshipJournalPdf({
@@ -37,10 +35,7 @@ class PdfGeneratorService {
     final regularFont = customRegularFont ?? await _resolveRegularFont();
     final boldFont = customBoldFont ?? await _resolveBoldFont();
 
-    final theme = pw.ThemeData.withFont(
-      base: regularFont,
-      bold: boldFont,
-    );
+    final theme = pw.ThemeData.withFont(base: regularFont, bold: boldFont);
 
     final dateFormat = DateFormat('dd.MM.yyyy');
     final totalHours = approvedReports.fold<int>(
@@ -65,7 +60,9 @@ class PdfGeneratorService {
                 padding: const pw.EdgeInsets.all(16),
                 decoration: pw.BoxDecoration(
                   border: pw.Border.all(color: PdfColors.blue900, width: 2),
-                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                  borderRadius: const pw.BorderRadius.all(
+                    pw.Radius.circular(8),
+                  ),
                   color: PdfColors.blue50,
                 ),
                 child: pw.Column(
@@ -115,7 +112,10 @@ class PdfGeneratorService {
               ),
               pw.SizedBox(height: 8),
               pw.Table(
-                border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
+                border: pw.TableBorder.all(
+                  color: PdfColors.grey400,
+                  width: 0.5,
+                ),
                 children: [
                   _buildTableRow(
                     'Öğrenci Adı Soyadı',
@@ -172,7 +172,10 @@ class PdfGeneratorService {
               ),
               pw.SizedBox(height: 8),
               pw.Table(
-                border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
+                border: pw.TableBorder.all(
+                  color: PdfColors.grey400,
+                  width: 0.5,
+                ),
                 children: [
                   _buildTableRow(
                     'Kurum Staj Yetkilisi',
@@ -199,7 +202,9 @@ class PdfGeneratorService {
                 padding: const pw.EdgeInsets.all(12),
                 decoration: pw.BoxDecoration(
                   color: PdfColors.grey100,
-                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+                  borderRadius: const pw.BorderRadius.all(
+                    pw.Radius.circular(6),
+                  ),
                   border: pw.Border.all(color: PdfColors.grey300),
                 ),
                 child: pw.Text(
@@ -219,9 +224,24 @@ class PdfGeneratorService {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildSignatureBox('Öğrenci İmzası', student.fullName, boldFont, regularFont),
-                  _buildSignatureBox('Kurum Yetkilisi Onay & Kaşe', companySupervisor?.fullName ?? 'Kurum Yetkilisi', boldFont, regularFont),
-                  _buildSignatureBox('Akademik Danışman Onay', advisor?.fullName ?? 'Akademik Danışman', boldFont, regularFont),
+                  _buildSignatureBox(
+                    'Öğrenci İmzası',
+                    student.fullName,
+                    boldFont,
+                    regularFont,
+                  ),
+                  _buildSignatureBox(
+                    'Kurum Yetkilisi Onay & Kaşe',
+                    companySupervisor?.fullName ?? 'Kurum Yetkilisi',
+                    boldFont,
+                    regularFont,
+                  ),
+                  _buildSignatureBox(
+                    'Akademik Danışman Onay',
+                    advisor?.fullName ?? 'Akademik Danışman',
+                    boldFont,
+                    regularFont,
+                  ),
                 ],
               ),
               pw.SizedBox(height: 12),
@@ -332,17 +352,24 @@ class PdfGeneratorService {
                   margin: const pw.EdgeInsets.only(bottom: 14),
                   decoration: pw.BoxDecoration(
                     border: pw.Border.all(color: PdfColors.grey300),
-                    borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+                    borderRadius: const pw.BorderRadius.all(
+                      pw.Radius.circular(6),
+                    ),
                   ),
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.stretch,
                     children: [
                       // Rapor Başlığı
                       pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const pw.EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
                         decoration: const pw.BoxDecoration(
                           color: PdfColors.grey100,
-                          borderRadius: pw.BorderRadius.vertical(top: pw.Radius.circular(5)),
+                          borderRadius: pw.BorderRadius.vertical(
+                            top: pw.Radius.circular(5),
+                          ),
                         ),
                         child: pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -415,7 +442,10 @@ class PdfGeneratorService {
                       ),
                       // Onay Şeritleri
                       pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const pw.EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: const pw.BoxDecoration(
                           border: pw.Border(
                             top: pw.BorderSide(color: PdfColors.grey200),
@@ -469,19 +499,31 @@ class PdfGeneratorService {
       children: [
         pw.Padding(
           padding: const pw.EdgeInsets.all(6),
-          child: pw.Text(label1, style: pw.TextStyle(font: boldFont, fontSize: 9)),
+          child: pw.Text(
+            label1,
+            style: pw.TextStyle(font: boldFont, fontSize: 9),
+          ),
         ),
         pw.Padding(
           padding: const pw.EdgeInsets.all(6),
-          child: pw.Text(value1, style: pw.TextStyle(font: regularFont, fontSize: 9)),
+          child: pw.Text(
+            value1,
+            style: pw.TextStyle(font: regularFont, fontSize: 9),
+          ),
         ),
         pw.Padding(
           padding: const pw.EdgeInsets.all(6),
-          child: pw.Text(label2, style: pw.TextStyle(font: boldFont, fontSize: 9)),
+          child: pw.Text(
+            label2,
+            style: pw.TextStyle(font: boldFont, fontSize: 9),
+          ),
         ),
         pw.Padding(
           padding: const pw.EdgeInsets.all(6),
-          child: pw.Text(value2, style: pw.TextStyle(font: regularFont, fontSize: 9)),
+          child: pw.Text(
+            value2,
+            style: pw.TextStyle(font: regularFont, fontSize: 9),
+          ),
         ),
       ],
     );
@@ -510,18 +552,23 @@ class PdfGeneratorService {
           pw.SizedBox(height: 4),
           pw.Text(
             name,
-            style: pw.TextStyle(font: regularFont, fontSize: 8, color: PdfColors.grey800),
+            style: pw.TextStyle(
+              font: regularFont,
+              fontSize: 8,
+              color: PdfColors.grey800,
+            ),
             textAlign: pw.TextAlign.center,
           ),
           pw.SizedBox(height: 28),
-          pw.Container(
-            height: 0.5,
-            color: PdfColors.grey400,
-          ),
+          pw.Container(height: 0.5, color: PdfColors.grey400),
           pw.SizedBox(height: 2),
           pw.Text(
             'İmza / Mühür',
-            style: pw.TextStyle(font: regularFont, fontSize: 7, color: PdfColors.grey500),
+            style: pw.TextStyle(
+              font: regularFont,
+              fontSize: 7,
+              color: PdfColors.grey500,
+            ),
           ),
         ],
       ),

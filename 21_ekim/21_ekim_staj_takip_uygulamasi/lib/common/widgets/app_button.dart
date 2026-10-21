@@ -37,9 +37,9 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.width,
     this.height = 48,
-  })  : isOutlined = false,
-        backgroundColor = AppColors.primaryBlue,
-        textColor = AppColors.textOnPrimary;
+  }) : isOutlined = false,
+       backgroundColor = AppColors.primaryBlue,
+       textColor = AppColors.textOnPrimary;
 
   const AppButton.outline({
     super.key,
@@ -49,9 +49,9 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.width,
     this.height = 48,
-  })  : isOutlined = true,
-        backgroundColor = AppColors.primaryNavy,
-        textColor = AppColors.primaryNavy;
+  }) : isOutlined = true,
+       backgroundColor = AppColors.primaryNavy,
+       textColor = AppColors.primaryNavy;
 
   const AppButton.danger({
     super.key,
@@ -61,9 +61,9 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.width,
     this.height = 48,
-  })  : isOutlined = false,
-        backgroundColor = AppColors.error,
-        textColor = Colors.white;
+  }) : isOutlined = false,
+       backgroundColor = AppColors.error,
+       textColor = Colors.white;
 
   @override
   Widget build(BuildContext context) {

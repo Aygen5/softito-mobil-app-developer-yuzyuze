@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/app_card.dart';
 import '../../../common/widgets/app_text_field.dart';
@@ -36,10 +37,10 @@ class _RegisterViewState extends State<RegisterView> {
   void _onRegister() {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthCubit>().signUp(
-            fullName: _fullNameController.text,
-            email: _emailController.text,
-            password: _passwordController.text,
-          );
+        fullName: _fullNameController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
     }
   }
 
@@ -54,7 +55,10 @@ class _RegisterViewState extends State<RegisterView> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 16.0,
+            ),
             child: BlocConsumer<AuthCubit, AuthState>(
               listener: (context, state) {
                 if (state is AuthError) {
@@ -83,16 +87,25 @@ class _RegisterViewState extends State<RegisterView> {
                         decoration: BoxDecoration(
                           color: AppColors.infoLight,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFBBDEFB), width: 1),
+                          border: Border.all(
+                            color: const Color(0xFFBBDEFB),
+                            width: 1,
+                          ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.info_outline, size: 22, color: AppColors.info),
+                            const Icon(
+                              Icons.info_outline,
+                              size: 22,
+                              color: AppColors.info,
+                            ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
                                 'Bu formdan açılan hesaplar Öğrenci rolündedir. Kurum ve danışman yetkileri kurum tarafından tanımlanır.',
-                                style: AppTextStyles.caption.copyWith(color: const Color(0xFF0D47A1)),
+                                style: AppTextStyles.caption.copyWith(
+                                  color: const Color(0xFF0D47A1),
+                                ),
                               ),
                             ),
                           ],
@@ -139,7 +152,9 @@ class _RegisterViewState extends State<RegisterView> {
                                 if (val == null || val.trim().isEmpty) {
                                   return 'Lütfen e-posta adresinizi giriniz.';
                                 }
-                                if (!AppConstants.emailRegex.hasMatch(val.trim())) {
+                                if (!AppConstants.emailRegex.hasMatch(
+                                  val.trim(),
+                                )) {
                                   return 'Geçerli bir e-posta adresi yazınız.';
                                 }
                                 return null;
@@ -157,7 +172,8 @@ class _RegisterViewState extends State<RegisterView> {
                                 if (val == null || val.trim().isEmpty) {
                                   return 'Lütfen bir şifre belirleyiniz.';
                                 }
-                                if (val.trim().length < AppConstants.minPasswordLength) {
+                                if (val.trim().length <
+                                    AppConstants.minPasswordLength) {
                                   return 'Şifre en az 6 karakter olmalıdır.';
                                 }
                                 return null;

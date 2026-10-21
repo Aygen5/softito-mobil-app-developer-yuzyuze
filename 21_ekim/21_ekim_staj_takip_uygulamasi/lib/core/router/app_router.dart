@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../features/auth/cubit/auth_cubit.dart';
 import '../../features/auth/view/forgot_password_view.dart';
 import '../../features/auth/view/login_view.dart';
@@ -39,7 +41,9 @@ class GoRouterRefreshStream extends ChangeNotifier {
 
 /// StajTakip merkezi GoRouter yapılandırması ve rol tabanlı korumalı rota yöneticisi.
 abstract final class AppRouter {
-  static final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'rootNav');
+  static final _rootNavigatorKey = GlobalKey<NavigatorState>(
+    debugLabel: 'rootNav',
+  );
 
   static GoRouter createRouter(AuthCubit authCubit) {
     return GoRouter(
@@ -50,12 +54,14 @@ abstract final class AppRouter {
         final authState = authCubit.state;
         final location = state.matchedLocation;
 
-        final isAuthRoute = location == RouteNames.login ||
+        final isAuthRoute =
+            location == RouteNames.login ||
             location == RouteNames.register ||
             location == RouteNames.forgotPassword;
 
         // 1. Durum henüz yükleniyor veya başlangıçta ise yönlendirme yapma
-        if (authState is AuthInitial || (authState is AuthLoading && authState.message == null)) {
+        if (authState is AuthInitial ||
+            (authState is AuthLoading && authState.message == null)) {
           return null;
         }
 
@@ -66,7 +72,9 @@ abstract final class AppRouter {
 
         // 3. Kullanıcı hesabı var ancak onay/profil bekliyorsa
         if (authState is AuthPendingApproval) {
-          return location == RouteNames.pendingApproval ? null : RouteNames.pendingApproval;
+          return location == RouteNames.pendingApproval
+              ? null
+              : RouteNames.pendingApproval;
         }
 
         // 4. Kullanıcı başarıyla doğrulanmışsa
@@ -83,13 +91,19 @@ abstract final class AppRouter {
           }
 
           // Yetkisiz rota erişim kontrolü (URL üzerinden doğrudan erişim koruması)
-          if (role.isStudent && (location.startsWith('/advisor') || location.startsWith('/company'))) {
+          if (role.isStudent &&
+              (location.startsWith('/advisor') ||
+                  location.startsWith('/company'))) {
             return RouteNames.studentHome;
           }
-          if (role.isAcademicAdvisor && (location.startsWith('/student') || location.startsWith('/company'))) {
+          if (role.isAcademicAdvisor &&
+              (location.startsWith('/student') ||
+                  location.startsWith('/company'))) {
             return RouteNames.advisorPending;
           }
-          if (role.isCompanyRepresentative && (location.startsWith('/student') || location.startsWith('/advisor'))) {
+          if (role.isCompanyRepresentative &&
+              (location.startsWith('/student') ||
+                  location.startsWith('/advisor'))) {
             return RouteNames.companyPending;
           }
         }
@@ -144,9 +158,8 @@ abstract final class AppRouter {
                     GoRoute(
                       path: 'form',
                       name: RouteNames.studentReportFormName,
-                      builder: (context, state) => DailyReportFormView(
-                        extra: state.extra,
-                      ),
+                      builder: (context, state) =>
+                          DailyReportFormView(extra: state.extra),
                     ),
                   ],
                 ),
@@ -177,18 +190,15 @@ abstract final class AppRouter {
         GoRoute(
           path: RouteNames.approvalDetail,
           name: RouteNames.approvalDetailName,
-          builder: (context, state) => ApprovalDetailView(
-            extra: state.extra,
-          ),
+          builder: (context, state) => ApprovalDetailView(extra: state.extra),
         ),
 
         // PDF Staj Defteri Önizleme Rotası (Ekran 6)
         GoRoute(
           path: RouteNames.studentPdfPreview,
           name: RouteNames.studentPdfPreviewName,
-          builder: (context, state) => PdfPreviewView(
-            internshipId: state.extra as String? ?? '',
-          ),
+          builder: (context, state) =>
+              PdfPreviewView(internshipId: state.extra as String? ?? ''),
         ),
 
         // Akademik Danışman Alt Menülü Rotaları

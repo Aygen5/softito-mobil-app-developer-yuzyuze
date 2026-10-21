@@ -27,15 +27,27 @@ void main() {
       expect(deserialized.email, user.email);
     });
 
-    test('UserRole parsing should handle case-insensitive strings and aliases', () {
-      expect(UserRole.fromString('companyRepresentative'), UserRole.companyRepresentative);
-      expect(UserRole.fromString('company'), UserRole.companyRepresentative);
-      expect(UserRole.fromString('kurum'), UserRole.companyRepresentative);
-      expect(UserRole.fromString('sirketyetkilisi'), UserRole.companyRepresentative);
-      expect(UserRole.fromString('academicAdvisor'), UserRole.academicAdvisor);
-      expect(UserRole.fromString('ADVISOR'), UserRole.academicAdvisor);
-      expect(UserRole.fromString('danisman'), UserRole.academicAdvisor);
-      expect(UserRole.fromString('unknown'), UserRole.student);
-    });
+    test(
+      'UserRole parsing should handle case-insensitive strings and aliases',
+      () {
+        expect(
+          UserRole.fromString('companyRepresentative'),
+          UserRole.companyRepresentative,
+        );
+        expect(UserRole.fromString('company'), UserRole.companyRepresentative);
+        expect(UserRole.fromString('kurum'), UserRole.companyRepresentative);
+        expect(
+          UserRole.fromString('sirketyetkilisi'),
+          UserRole.companyRepresentative,
+        );
+        expect(
+          UserRole.fromString('academicAdvisor'),
+          UserRole.academicAdvisor,
+        );
+        expect(UserRole.fromString('ADVISOR'), UserRole.academicAdvisor);
+        expect(UserRole.fromString('danisman'), UserRole.academicAdvisor);
+        expect(UserRole.fromString('unknown'), UserRole.student);
+      },
+    );
   });
 }

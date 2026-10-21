@@ -19,10 +19,7 @@ import '../services/pdf_generator_service.dart';
 class PdfPreviewView extends StatelessWidget {
   final String internshipId;
 
-  const PdfPreviewView({
-    super.key,
-    required this.internshipId,
-  });
+  const PdfPreviewView({super.key, required this.internshipId});
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +29,7 @@ class PdfPreviewView extends StatelessWidget {
     if (student == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Staj Defteri PDF')),
-        body: const Center(
-          child: Text('Kullanıcı oturumu bulunamadı.'),
-        ),
+        body: const Center(child: Text('Kullanıcı oturumu bulunamadı.')),
       );
     }
 
@@ -69,7 +64,10 @@ class _PdfPreviewScaffold extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: AppColors.primaryNavy),
+            icon: const Icon(
+              Icons.refresh_rounded,
+              color: AppColors.primaryNavy,
+            ),
             tooltip: 'Yeniden Derle',
             onPressed: () {
               context.read<DocumentsCubit>().regenerate();
@@ -210,10 +208,7 @@ class _PdfPreviewScaffold extends StatelessWidget {
     );
   }
 
-  static Widget _buildChip({
-    required IconData icon,
-    required String label,
-  }) {
+  static Widget _buildChip({required IconData icon, required String label}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(

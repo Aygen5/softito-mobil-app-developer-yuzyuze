@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../common/widgets/empty_view.dart';
 import '../../../common/widgets/error_view.dart';
 import '../../../common/widgets/loading_view.dart';
@@ -27,7 +28,9 @@ class DailyReportsListView extends StatelessWidget {
 
     if (user == null) {
       return const Scaffold(
-        body: Center(child: LoadingView(message: 'Oturum bilgisi yükleniyor...')),
+        body: Center(
+          child: LoadingView(message: 'Oturum bilgisi yükleniyor...'),
+        ),
       );
     }
 
@@ -197,9 +200,8 @@ class _DailyReportsBodyState extends State<_DailyReportsBody> {
                             isSelected:
                                 state.selectedFilter ==
                                 ReportStatus.revisionRequested,
-                            onTap: () => cubit.setFilter(
-                              ReportStatus.revisionRequested,
-                            ),
+                            onTap: () =>
+                                cubit.setFilter(ReportStatus.revisionRequested),
                           ),
                           const SizedBox(width: 8),
                           _FilterChip(
@@ -226,7 +228,8 @@ class _DailyReportsBodyState extends State<_DailyReportsBody> {
                             EmptyView(
                               icon: Icons.filter_list_off_rounded,
                               title: 'Rapor Bulunamadı',
-                              message: state.searchQuery.isNotEmpty ||
+                              message:
+                                  state.searchQuery.isNotEmpty ||
                                       state.selectedFilter != null
                                   ? 'Arama veya filtre kriterlerinize uygun rapor bulunamadı.'
                                   : 'Henüz bir staj raporu oluşturmadınız.',
