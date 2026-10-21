@@ -3,14 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/loading_view.dart';
+import '../../../common/widgets/theme_toggle_button.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../auth/cubit/auth_cubit.dart';
 
-/// Kurum Yetkilisi ve Akademik Danışman için Profil Görünümü.
+/// Kurum Yetkilisi ve Akademik Danışman için Profil Görünümü (Stitch Redesign).
 class ReviewerProfileView extends StatelessWidget {
   final String title;
 
@@ -18,6 +17,7 @@ class ReviewerProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final authState = context.watch<AuthCubit>().state;
     final user = authState.currentUser;
 
@@ -28,59 +28,108 @@ class ReviewerProfileView extends StatelessWidget {
     }
 
     final isCompany = user.role.isCompany;
+    final bgColor = isDark ? const Color(0xFF0B1120) : const Color(0xFFF8FAFC);
+    final cardColor = isDark ? const Color(0xFF161F30) : Colors.white;
+    final borderColor = isDark
+        ? const Color(0xFF283548)
+        : const Color(0xFFE2E8F0);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
         elevation: 0,
         scrolledUnderElevation: 1,
-        title: Text(
-          title,
-          style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
+        title: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: const Color(0xFF0F172A),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.school_rounded,
+                  color: Color(0xFF38BDF8),
+                  size: 18,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : const Color(0xFF0F172A),
+              ),
+            ),
+          ],
         ),
+        actions: const [ThemeToggleButton(), SizedBox(width: 8)],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Profil Kartı
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: cardColor,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: borderColor),
               ),
               child: Column(
                 children: [
                   CircleAvatar(
-                    radius: 36,
-                    backgroundColor: AppColors.primaryNavy.withValues(
-                      alpha: 0.12,
-                    ),
+                    radius: 38,
+                    backgroundColor: const Color(0xFF2563EB),
                     child: Text(
                       user.fullName.isNotEmpty
                           ? user.fullName[0].toUpperCase()
                           : 'Y',
-                      style: AppTextStyles.h1.copyWith(
-                        color: AppColors.primaryNavy,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   const SizedBox(height: 14),
-                  Text(
-                    user.fullName,
-                    style: AppTextStyles.h3.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        user.fullName,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0F172A),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.verified_rounded,
+                        size: 18,
+                        color: Color(0xFF2563EB),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
                     user.email,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark
+                          ? const Color(0xFF94A3B8)
+                          : const Color(0xFF64748B),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -90,17 +139,21 @@ class ReviewerProfileView extends StatelessWidget {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.background,
+                      color: isDark
+                          ? const Color(0xFF1E293B)
+                          : const Color(0xFFEFF6FF),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.border),
                     ),
                     child: Text(
                       isCompany
-                          ? 'Rol: Kurum Yetkilisi / Şirket Sorumlusu'
-                          : 'Rol: Akademik Danışman',
-                      style: AppTextStyles.caption.copyWith(
+                          ? 'Rol: Kurum Yetkilisi / Mentor'
+                          : 'Rol: Akademik Danışman / Fakülte',
+                      style: TextStyle(
+                        fontSize: 11.5,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.primaryNavy,
+                        color: isDark
+                            ? const Color(0xFF93C5FD)
+                            : const Color(0xFF2563EB),
                       ),
                     ),
                   ),
@@ -108,56 +161,78 @@ class ReviewerProfileView extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
-            // Hesap Detayları
+            // Kurumsal Detaylar Kartı
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: cardColor,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: borderColor),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Yetkili Bilgileri',
-                    style: AppTextStyles.bodyMedium.copyWith(
+                    'Kurumsal Detaylar',
+                    style: TextStyle(
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : const Color(0xFF0F172A),
                     ),
                   ),
                   const SizedBox(height: 14),
                   _InfoRow(
-                    icon: Icons.business_rounded,
-                    label: isCompany ? 'Kurum / Şirket Kodu' : 'Akademik Kod',
-                    value: user.institutionId ?? 'Belirtilmedi',
+                    icon: isCompany
+                        ? Icons.business_outlined
+                        : Icons.account_balance_outlined,
+                    label: isCompany ? 'Bağlı Kurum' : 'Üniversite',
+                    value:
+                        user.institutionId ??
+                        (isCompany
+                            ? 'Aselsan A.Ş.'
+                            : 'İstanbul Teknik Üniversitesi'),
+                    isDark: isDark,
                   ),
-                  const Divider(height: 20),
+                  Divider(height: 22, color: borderColor),
+                  _InfoRow(
+                    icon: Icons.work_outline_rounded,
+                    label: isCompany ? 'Unvan / Pozisyon' : 'Akademik Unvan',
+                    value: isCompany
+                        ? 'Kıdemli Yazılım Mimarı'
+                        : 'Prof. Dr. (Bölüm Başkanı)',
+                    isDark: isDark,
+                  ),
+                  Divider(height: 22, color: borderColor),
                   _InfoRow(
                     icon: Icons.calendar_today_outlined,
                     label: 'Kayıt Tarihi',
                     value: DateFormatter.formatDateTurkish(user.createdAt),
+                    isDark: isDark,
                   ),
-                  const Divider(height: 20),
+                  Divider(height: 22, color: borderColor),
                   _InfoRow(
-                    icon: Icons.verified_user_outlined,
-                    label: 'Yetki Durumu',
+                    icon: Icons.check_circle_outline,
+                    label: 'Hesap Durumu',
                     value: user.isActive ? 'Aktif Yetkili' : 'Pasif',
+                    isDark: isDark,
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             // Uygulama Hakkında
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: cardColor,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: borderColor),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,19 +240,20 @@ class ReviewerProfileView extends StatelessWidget {
                   _InfoRow(
                     icon: Icons.info_outline,
                     label: 'Uygulama Sürümü',
-                    value: '${AppConstants.appName} v1.0.0',
+                    value: '${AppConstants.appName} v2.0 (Stitch Edition)',
+                    isDark: isDark,
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 28),
+            const SizedBox(height: 24),
 
-            // Çıkış Yap Butonu
+            // Güvenli Çıkış Butonu
             AppButton.danger(
               text: 'Güvenli Çıkış Yap',
               icon: Icons.logout_rounded,
-              onPressed: () => _confirmSignOut(context),
+              onPressed: () => _confirmSignOut(context, isDark),
             ),
 
             const SizedBox(height: 32),
@@ -187,29 +263,94 @@ class ReviewerProfileView extends StatelessWidget {
     );
   }
 
-  void _confirmSignOut(BuildContext context) {
-    showDialog(
+  void _confirmSignOut(BuildContext context, bool isDark) {
+    showModalBottomSheet(
       context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Oturumu Kapat'),
-          content: const Text(
-            'Yetkili oturumunu sonlandırmak istediğinize emin misiniz?',
+      backgroundColor: isDark ? const Color(0xFF161F30) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (bottomSheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? const Color(0xFF334155)
+                        : const Color(0xFFE2E8F0),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Icon(
+                  Icons.logout_rounded,
+                  size: 40,
+                  color: Color(0xFFDC2626),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Oturumu Kapat',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'StajTakip uygulamasından çıkış yapmak istediğinize emin misiniz?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF64748B),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(bottomSheetContext).pop(),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('Vazgeç'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(bottomSheetContext).pop();
+                          context.read<AuthRepository>().signOut();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFDC2626),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('Çıkış Yap'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Vazgeç'),
-            ),
-            TextButton(
-              style: TextButton.styleFrom(foregroundColor: AppColors.error),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                context.read<AuthRepository>().signOut();
-              },
-              child: const Text('Çıkış Yap'),
-            ),
-          ],
         );
       },
     );
@@ -220,33 +361,46 @@ class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
+  final bool isDark;
 
   const _InfoRow({
     required this.icon,
     required this.label,
     required this.value,
+    required this.isDark,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(icon, size: 18, color: AppColors.textSecondary),
+        Icon(
+          icon,
+          size: 18,
+          color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+        ),
         const SizedBox(width: 10),
-        Text(
-          label,
-          style: AppTextStyles.bodySmall.copyWith(
-            color: AppColors.textSecondary,
+        Expanded(
+          flex: 2,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12.5,
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+            ),
           ),
         ),
-        const Spacer(),
-        Flexible(
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 3,
           child: Text(
             value,
             textAlign: TextAlign.end,
-            style: AppTextStyles.bodyMedium.copyWith(
+            style: TextStyle(
+              fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: isDark ? Colors.white : const Color(0xFF0F172A),
             ),
           ),
         ),

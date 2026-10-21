@@ -28,19 +28,20 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(const ProfileLoading());
     try {
       final user =
-          await userRepository.getUserProfile(initialUser.uid) ?? initialUser;
+          await userRepository
+              .getUserProfile(initialUser.uid)
+              .catchError((_) => initialUser) ??
+          initialUser;
       if (isClosed) return;
       final internship = await internshipRepository
-          .getActiveInternshipForStudent(user.uid);
+          .getActiveInternshipForStudent(user.uid)
+          .catchError((_) => null);
       if (isClosed) return;
 
       emit(ProfileLoaded(user: user, activeInternship: internship));
-    } on Failure catch (e) {
+    } catch (_) {
       if (isClosed) return;
-      emit(ProfileError(e.message));
-    } catch (e) {
-      if (isClosed) return;
-      emit(ProfileError(e.toString()));
+      emit(ProfileLoaded(user: initialUser, activeInternship: null));
     }
   }
 

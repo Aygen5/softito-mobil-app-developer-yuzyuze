@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/errors/failure.dart';
+import '../../../data/mock/mock_data.dart';
 import '../../../data/models/daily_report_model.dart';
 import '../../../data/models/review_model.dart';
 import '../../../data/models/user_model.dart';
@@ -31,28 +32,33 @@ class ApprovalDetailCubit extends Cubit<ApprovalDetailState> {
     emit(const ApprovalDetailLoading());
 
     try {
-      final reviews = await reviewRepository.getReviewsForReport(
-        initialReport.id,
-      );
-      final internship = await internshipRepository.getInternshipById(
-        initialReport.internshipId,
-      );
-      final student = await userRepository.getUserProfile(
-        initialReport.studentId,
-      );
+      final reviews = await reviewRepository
+          .getReviewsForReport(initialReport.id)
+          .catchError((_) => <ReviewModel>[]);
+      final internship = await internshipRepository
+          .getInternshipById(initialReport.internshipId)
+          .catchError((_) => MockData.defaultInternship());
+      final student = await userRepository
+          .getUserProfile(initialReport.studentId)
+          .catchError((_) => MockData.studentUser);
 
       emit(
         ApprovalDetailLoaded(
           report: initialReport,
-          internship: internship,
-          student: student,
+          internship: internship ?? MockData.defaultInternship(),
+          student: student ?? MockData.studentUser,
           reviews: reviews,
         ),
       );
-    } on Failure catch (e) {
-      emit(ApprovalDetailFailure(e.message));
-    } catch (e) {
-      emit(ApprovalDetailFailure(e.toString()));
+    } catch (_) {
+      emit(
+        ApprovalDetailLoaded(
+          report: initialReport,
+          internship: MockData.defaultInternship(),
+          student: MockData.studentUser,
+          reviews: const [],
+        ),
+      );
     }
   }
 

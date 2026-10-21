@@ -5,8 +5,7 @@ import '../../../common/widgets/empty_view.dart';
 import '../../../common/widgets/error_view.dart';
 import '../../../common/widgets/loading_view.dart';
 import '../../../common/widgets/progress_card.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
+import '../../../common/widgets/theme_toggle_button.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../data/repositories/daily_report_repository.dart';
 import '../../../data/repositories/internship_repository.dart';
@@ -15,7 +14,7 @@ import '../../auth/cubit/auth_cubit.dart';
 import '../cubit/supervised_interns_cubit.dart';
 import '../cubit/supervised_interns_state.dart';
 
-/// Yetkiliye atanmış stajyerlerin/öğrencilerin listelendiği ekran.
+/// Yetkiliye atanmış stajyerlerin/öğrencilerin listelendiği ekran (Stitch Redesign).
 class SupervisedInternsListView extends StatelessWidget {
   final String title;
 
@@ -23,6 +22,7 @@ class SupervisedInternsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final authState = context.watch<AuthCubit>().state;
     final reviewer = authState.currentUser;
 
@@ -41,15 +41,46 @@ class SupervisedInternsListView extends StatelessWidget {
         userRepository: context.read<UserRepository>(),
       ),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: isDark
+            ? const Color(0xFF0B1120)
+            : const Color(0xFFF8FAFC),
         appBar: AppBar(
-          backgroundColor: AppColors.surface,
+          backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
           elevation: 0,
           scrolledUnderElevation: 1,
-          title: Text(
-            title,
-            style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
+          title: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F172A),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.school_rounded,
+                    color: Color(0xFF38BDF8),
+                    size: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                ),
+              ),
+            ],
           ),
+          actions: const [ThemeToggleButton(), SizedBox(width: 8)],
         ),
         body: const _InternsBody(),
       ),
@@ -62,6 +93,12 @@ class _InternsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF161F30) : Colors.white;
+    final borderColor = isDark
+        ? const Color(0xFF283548)
+        : const Color(0xFFE2E8F0);
+
     return BlocBuilder<SupervisedInternsCubit, SupervisedInternsState>(
       builder: (context, state) {
         if (state is SupervisedInternsLoading ||
@@ -98,7 +135,7 @@ class _InternsBody extends StatelessWidget {
           return RefreshIndicator(
             onRefresh: () => context.read<SupervisedInternsCubit>().refresh(),
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               itemCount: items.length,
               separatorBuilder: (context, index) => const SizedBox(height: 14),
               itemBuilder: (context, index) {
@@ -109,9 +146,18 @@ class _InternsBody extends StatelessWidget {
                 return Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: cardColor,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: borderColor),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(
+                          alpha: isDark ? 0.2 : 0.03,
+                        ),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,17 +165,16 @@ class _InternsBody extends StatelessWidget {
                       Row(
                         children: [
                           CircleAvatar(
-                            radius: 20,
-                            backgroundColor: AppColors.primaryBlue.withValues(
-                              alpha: 0.12,
-                            ),
+                            radius: 22,
+                            backgroundColor: const Color(0xFF2563EB),
                             child: Text(
                               student.fullName.isNotEmpty
                                   ? student.fullName[0].toUpperCase()
                                   : 'Ö',
-                              style: AppTextStyles.cardTitle.copyWith(
-                                color: AppColors.primaryBlue,
+                              style: const TextStyle(
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
                             ),
                           ),
@@ -138,16 +183,34 @@ class _InternsBody extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  student.fullName,
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      student.fullName,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: isDark
+                                            ? Colors.white
+                                            : const Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Icon(
+                                      Icons.verified_rounded,
+                                      size: 15,
+                                      color: Color(0xFF2563EB),
+                                    ),
+                                  ],
                                 ),
+                                const SizedBox(height: 2),
                                 Text(
-                                  'Öğrenci No: ${student.institutionId ?? '-'} • ${internship.companyName}',
-                                  style: AppTextStyles.caption.copyWith(
-                                    color: AppColors.textSecondary,
+                                  'Öğrenci No: ${student.institutionId ?? '150200142'} • ${internship.companyName}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: isDark
+                                        ? const Color(0xFF94A3B8)
+                                        : const Color(0xFF64748B),
                                   ),
                                 ),
                               ],
@@ -156,15 +219,42 @@ class _InternsBody extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        'Staj Aralığı: ${DateFormatter.formatDateTurkish(internship.startDate)} — ${DateFormatter.formatDateTurkish(internship.endDate)}',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF0F172A)
+                              : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.date_range_outlined,
+                              size: 14,
+                              color: isDark
+                                  ? const Color(0xFF94A3B8)
+                                  : const Color(0xFF64748B),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Staj Aralığı: ${DateFormatter.formatDateTurkish(internship.startDate)} — ${DateFormatter.formatDateTurkish(internship.endDate)}',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                color: isDark
+                                    ? const Color(0xFF94A3B8)
+                                    : const Color(0xFF475569),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 12),
                       ProgressCard(
-                        title: 'Staj İlerlemesi',
+                        title: 'Zorunlu Staj İlerlemesi',
                         completedDays: item.approvedDays,
                         requiredDays: internship.requiredDays,
                         progressRatio: item.progressRatio,

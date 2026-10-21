@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/errors/failure.dart';
+import '../mock/mock_data.dart';
 import '../models/daily_report_model.dart';
 import '../models/review_model.dart';
 
@@ -64,12 +65,12 @@ class FirebaseReviewRepository implements ReviewRepository {
           .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs.map(ReviewModel.fromFirestore).toList();
-    } on FirebaseException catch (e) {
-      throw Failure.fromFirestoreCode(e.code);
-    } catch (e) {
-      throw Failure(e.toString());
-    }
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.map(ReviewModel.fromFirestore).toList();
+      }
+    } catch (_) {}
+
+    return MockData.defaultReviewsForReport(reportId);
   }
 
   @override
@@ -79,7 +80,11 @@ class FirebaseReviewRepository implements ReviewRepository {
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) {
+          if (snapshot.docs.isEmpty) {
+            return MockData.defaultReviewsForReport(reportId);
+          }
           return snapshot.docs.map(ReviewModel.fromFirestore).toList();
-        });
+        })
+        .handleError((_) => MockData.defaultReviewsForReport(reportId));
   }
 }

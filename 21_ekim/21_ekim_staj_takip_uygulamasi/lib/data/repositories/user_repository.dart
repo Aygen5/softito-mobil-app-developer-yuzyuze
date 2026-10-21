@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/errors/failure.dart';
+import '../mock/mock_data.dart';
 import '../models/user_model.dart';
 
 /// Kullanıcı profil yönetimi veri erişim arayüzü.
@@ -24,6 +25,10 @@ class FirebaseUserRepository implements UserRepository {
 
   @override
   Future<UserModel?> getUserProfile(String uid) async {
+    if (uid == MockData.studentUser.uid) return MockData.studentUser;
+    if (uid == MockData.companyUser.uid) return MockData.companyUser;
+    if (uid == MockData.advisorUser.uid) return MockData.advisorUser;
+
     try {
       final doc = await _usersRef.doc(uid).get();
       if (!doc.exists || doc.data() == null) {
@@ -39,6 +44,16 @@ class FirebaseUserRepository implements UserRepository {
 
   @override
   Stream<UserModel?> getUserProfileStream(String uid) {
+    if (uid == MockData.studentUser.uid) {
+      return Stream.value(MockData.studentUser);
+    }
+    if (uid == MockData.companyUser.uid) {
+      return Stream.value(MockData.companyUser);
+    }
+    if (uid == MockData.advisorUser.uid) {
+      return Stream.value(MockData.advisorUser);
+    }
+
     return _usersRef.doc(uid).snapshots().map((doc) {
       if (!doc.exists || doc.data() == null) {
         return null;

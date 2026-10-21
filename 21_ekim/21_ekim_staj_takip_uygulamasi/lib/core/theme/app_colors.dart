@@ -39,4 +39,13 @@ abstract final class AppColors {
   // Gölgeler
   static const shadow = Color(0x0D000000);
   static const shadowMedium = Color(0x1A142D4E);
+
+  // Koyu Mod (Dark Mode) Renk Token'ları
+  static const darkBackground = Color(0xFF0B1120);
+  static const darkSurface = Color(0xFF161F30);
+  static const darkSurfaceVariant = Color(0xFF1E293B);
+  static const darkBorder = Color(0xFF283548);
+  static const darkTextPrimary = Color(0xFFF8FAFC);
+  static const darkTextSecondary = Color(0xFF94A3B8);
+  static const darkTextMuted = Color(0xFF64748B);
 }

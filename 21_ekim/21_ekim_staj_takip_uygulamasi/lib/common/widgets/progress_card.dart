@@ -82,26 +82,38 @@ class ProgressCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '$completedDays',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '$completedDays',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: ' / $requiredDays Gün Tamamlandı',
-                      style: AppTextStyles.subtitle,
-                    ),
-                  ],
+                      TextSpan(
+                        text: ' / $requiredDays Gün Tamamlandı',
+                        style: AppTextStyles.subtitle,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              if (subtitle != null)
-                Text(subtitle!, style: AppTextStyles.caption),
+              if (subtitle != null) ...[
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    subtitle!,
+                    style: AppTextStyles.caption,
+                    textAlign: TextAlign.end,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+              ],
             ],
           ),
         ],

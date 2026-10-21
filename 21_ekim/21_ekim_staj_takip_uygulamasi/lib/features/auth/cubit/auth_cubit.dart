@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/constants/demo_accounts.dart';
 import '../../../core/errors/failure.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/repositories/auth_repository.dart';
@@ -24,6 +25,8 @@ class AuthCubit extends Cubit<AuthState> {
     _authSubscription = authRepository.authStateChanges.listen(
       (user) async {
         if (user == null) {
+          // Eğer aktif durum zaten Authenticated ise (örn. Demo oturumu), çıkış yapılmadığı sürece koru
+          if (state is Authenticated) return;
           if (!isClosed) emit(const Unauthenticated());
         } else {
           await _loadUserProfile(user.uid, user.email ?? '');
@@ -78,10 +81,26 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  /// Demo hesaplarıyla anında, sıfır hatayla doğrudan giriş yapma işlemi.
+  Future<void> signInDemo(DemoAccount account) async {
+    if (isClosed) return;
+    emit(const AuthLoading(message: 'Demo oturumu başlatılıyor...'));
+    await Future.delayed(const Duration(milliseconds: 200));
+    if (!isClosed) {
+      emit(Authenticated(account.userModel));
+    }
+  }
+
   /// E-posta ve şifre ile giriş yapma işlemi.
   Future<void> signIn({required String email, required String password}) async {
     if (isClosed) return;
     emit(const AuthLoading(message: 'Giriş yapılıyor...'));
+
+    final trimmedEmail = email.trim().toLowerCase();
+    final matchedDemo = DemoAccounts.all.cast<DemoAccount?>().firstWhere(
+      (a) => a?.email.toLowerCase() == trimmedEmail,
+      orElse: () => null,
+    );
 
     try {
       final credential = await authRepository.signInWithEmailAndPassword(
@@ -94,12 +113,23 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (uid != null) {
         await _loadUserProfile(uid, userEmail);
+      } else if (matchedDemo != null) {
+        emit(Authenticated(matchedDemo.userModel));
       } else {
         emit(const AuthError('Kullanıcı kimliği alınamadı.'));
       }
     } on Failure catch (e) {
+      // Demo hesabı girilmişse Firebase Auth hatası yerine doğrudan demo oturumunu başlat
+      if (matchedDemo != null) {
+        emit(Authenticated(matchedDemo.userModel));
+        return;
+      }
       if (!isClosed) emit(AuthError(e.message));
     } catch (e) {
+      if (matchedDemo != null) {
+        emit(Authenticated(matchedDemo.userModel));
+        return;
+      }
       if (!isClosed) emit(AuthError('Giriş başarısız: $e'));
     }
   }

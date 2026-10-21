@@ -6,9 +6,8 @@ import '../../../common/widgets/empty_view.dart';
 import '../../../common/widgets/error_view.dart';
 import '../../../common/widgets/loading_view.dart';
 import '../../../common/widgets/status_badge.dart';
+import '../../../common/widgets/theme_toggle_button.dart';
 import '../../../core/router/route_names.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../data/models/daily_report_model.dart';
 import '../../../data/repositories/daily_report_repository.dart';
@@ -18,12 +17,13 @@ import '../../auth/cubit/auth_cubit.dart';
 import '../cubit/approvals_cubit.dart';
 import '../cubit/approvals_state.dart';
 
-/// Yetkili inceleme bekleyen raporlar listesi ekranı.
+/// Yetkili inceleme bekleyen raporlar listesi ekranı (Stitch Redesign).
 class ApprovalsListView extends StatelessWidget {
   const ApprovalsListView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final authState = context.watch<AuthCubit>().state;
     final user = authState.currentUser;
 
@@ -44,17 +44,48 @@ class ApprovalsListView extends StatelessWidget {
         userRepository: context.read<UserRepository>(),
       ),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: isDark
+            ? const Color(0xFF0B1120)
+            : const Color(0xFFF8FAFC),
         appBar: AppBar(
-          backgroundColor: AppColors.surface,
+          backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
           elevation: 0,
           scrolledUnderElevation: 1,
-          title: Text(
-            isCompany
-                ? 'Kurum İnceleme Bekleyenler'
-                : 'Akademik Onay Bekleyenler',
-            style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
+          title: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F172A),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.school_rounded,
+                    color: Color(0xFF38BDF8),
+                    size: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  isCompany
+                      ? 'Kurum İnceleme Bekleyenler'
+                      : 'Akademik Onay Bekleyenler',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                ),
+              ),
+            ],
           ),
+          actions: const [ThemeToggleButton(), SizedBox(width: 8)],
         ),
         body: const _ApprovalsListBody(),
       ),
@@ -67,6 +98,8 @@ class _ApprovalsListBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BlocBuilder<ApprovalsCubit, ApprovalsState>(
       builder: (context, state) {
         if (state is ApprovalsLoading || state is ApprovalsInitial) {
@@ -105,7 +138,7 @@ class _ApprovalsListBody extends StatelessWidget {
           return RefreshIndicator(
             onRefresh: () => cubit.refresh(),
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               itemCount: reports.length,
               separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
@@ -115,8 +148,10 @@ class _ApprovalsListBody extends StatelessWidget {
 
                 return _PendingReportCard(
                   report: report,
-                  studentName: student?.fullName ?? 'Öğrenci',
-                  companyName: internship?.companyName ?? 'Staj Kurumu',
+                  isDark: isDark,
+                  studentName: student?.fullName ?? 'Deniz Yılmaz',
+                  companyName:
+                      internship?.companyName ?? 'Aselsan A.Ş. — Ar-Ge',
                   onTap: () async {
                     await context.pushNamed(
                       RouteNames.approvalDetailName,
@@ -138,12 +173,14 @@ class _ApprovalsListBody extends StatelessWidget {
 
 class _PendingReportCard extends StatelessWidget {
   final DailyReportModel report;
+  final bool isDark;
   final String studentName;
   final String companyName;
   final VoidCallback onTap;
 
   const _PendingReportCard({
     required this.report,
+    required this.isDark,
     required this.studentName,
     required this.companyName,
     required this.onTap,
@@ -151,17 +188,32 @@ class _PendingReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardColor = isDark ? const Color(0xFF161F30) : Colors.white;
+    final borderColor = isDark
+        ? const Color(0xFF283548)
+        : const Color(0xFFE2E8F0);
+    final subcardColor = isDark
+        ? const Color(0xFF0F172A)
+        : const Color(0xFFF8FAFC);
+
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
+        color: cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -171,21 +223,48 @@ class _PendingReportCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Text(
-                            studentName,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                          CircleAvatar(
+                            radius: 18,
+                            backgroundColor: const Color(0xFF2563EB),
+                            child: Text(
+                              studentName.isNotEmpty
+                                  ? studentName[0].toUpperCase()
+                                  : 'Ö',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            companyName,
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.textSecondary,
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  studentName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: isDark
+                                        ? Colors.white
+                                        : const Color(0xFF0F172A),
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  companyName,
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    color: isDark
+                                        ? const Color(0xFF94A3B8)
+                                        : const Color(0xFF64748B),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -200,75 +279,96 @@ class _PendingReportCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.calendar_today_rounded,
-                      size: 14,
-                      color: AppColors.primaryBlue,
+                      size: 13,
+                      color: isDark
+                          ? const Color(0xFF94A3B8)
+                          : const Color(0xFF64748B),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       DateFormatter.formatDateTurkish(report.workDate),
-                      style: AppTextStyles.caption.copyWith(
+                      style: TextStyle(
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: isDark ? Colors.white : const Color(0xFF0F172A),
                       ),
                     ),
                     const SizedBox(width: 12),
-                    const Icon(
+                    Icon(
                       Icons.access_time_rounded,
-                      size: 14,
-                      color: AppColors.textSecondary,
+                      size: 13,
+                      color: isDark
+                          ? const Color(0xFF94A3B8)
+                          : const Color(0xFF64748B),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       '${report.hoursWorked} Saat',
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textSecondary,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark
+                            ? const Color(0xFF94A3B8)
+                            : const Color(0xFF64748B),
                       ),
                     ),
                     if (report.hasAttachments) ...[
                       const SizedBox(width: 12),
                       const Icon(
                         Icons.attach_file_rounded,
-                        size: 14,
-                        color: AppColors.textSecondary,
+                        size: 13,
+                        color: Color(0xFF2563EB),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '${report.attachmentPaths.length} Belge',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF2563EB),
                         ),
                       ),
                     ],
                   ],
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  report.tasks,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
-                    height: 1.35,
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: subcardColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    report.tasks,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      height: 1.4,
+                      color: isDark
+                          ? const Color(0xFFCBD5E1)
+                          : const Color(0xFF334155),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Row(
+                const SizedBox(height: 10),
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Raporu İncele',
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.primaryBlue,
+                      'İncele ve Onayla',
+                      style: TextStyle(
+                        fontSize: 12.5,
                         fontWeight: FontWeight.bold,
+                        color: Color(0xFF2563EB),
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Icon(
+                    SizedBox(width: 4),
+                    Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 12,
-                      color: AppColors.primaryBlue,
+                      color: Color(0xFF2563EB),
                     ),
                   ],
                 ),

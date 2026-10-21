@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'core/constants/app_constants.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_cubit.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/daily_report_repository.dart';
 import 'data/repositories/document_repository.dart';
@@ -69,8 +70,11 @@ class _StajTakipAppState extends State<StajTakipApp> {
     _router = AppRouter.createRouter(_authCubit);
   }
 
+  late final ThemeCubit _themeCubit = ThemeCubit();
+
   @override
   void dispose() {
+    _themeCubit.close();
     _authCubit.close();
     _router.dispose();
     super.dispose();
@@ -93,13 +97,22 @@ class _StajTakipAppState extends State<StajTakipApp> {
           value: _documentRepository,
         ),
       ],
-      child: BlocProvider<AuthCubit>.value(
-        value: _authCubit,
-        child: MaterialApp.router(
-          title: AppConstants.appName,
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          routerConfig: _router,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthCubit>.value(value: _authCubit),
+          BlocProvider<ThemeCubit>.value(value: _themeCubit),
+        ],
+        child: BlocBuilder<ThemeCubit, ThemeMode>(
+          builder: (context, themeMode) {
+            return MaterialApp.router(
+              title: AppConstants.appName,
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeMode,
+              routerConfig: _router,
+            );
+          },
         ),
       ),
     );
