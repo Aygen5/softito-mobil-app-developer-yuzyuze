@@ -45,6 +45,29 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  Future<void> updateProfile({
+    required String fullName,
+    String? institutionId,
+  }) async {
+    final currentState = state;
+    if (currentState is! ProfileLoaded) return;
+    try {
+      final updatedUser = currentState.user.copyWith(
+        fullName: fullName.trim(),
+        institutionId: institutionId?.trim(),
+      );
+      await userRepository.updateUserProfile(updatedUser).catchError((_) {});
+      if (isClosed) return;
+      emit(ProfileLoaded(
+        user: updatedUser,
+        activeInternship: currentState.activeInternship,
+      ));
+    } catch (e) {
+      if (isClosed) return;
+      emit(ProfileError('Profil güncellenirken bir hata oluştu: $e'));
+    }
+  }
+
   Future<void> signOut() async {
     try {
       await authRepository.signOut();

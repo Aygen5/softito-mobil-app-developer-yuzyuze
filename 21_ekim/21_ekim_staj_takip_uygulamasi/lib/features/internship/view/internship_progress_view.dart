@@ -121,17 +121,22 @@ class _InternshipProgressViewState extends State<InternshipProgressView> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16, left: 4),
-              child: CircleAvatar(
-                radius: 16,
-                backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.15),
-                child: const Text(
-                  'D',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryBlue,
-                    fontSize: 13,
+            InkWell(
+              onTap: () => context.go(RouteNames.studentProfile),
+              borderRadius: BorderRadius.circular(20),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16, left: 4),
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundColor:
+                      AppColors.primaryBlue.withValues(alpha: 0.15),
+                  child: const Text(
+                    'AY',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryBlue,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ),
@@ -150,7 +155,7 @@ class _InternshipProgressViewState extends State<InternshipProgressView> {
 
     final displayName = user?.fullName.isNotEmpty == true
         ? user!.fullName
-        : 'Deniz Yılmaz';
+        : 'Aygen Yıldırım';
     final studentNo = user?.institutionId ?? '150200142';
 
     return BlocBuilder<InternshipCubit, InternshipState>(
@@ -184,12 +189,10 @@ class _InternshipProgressViewState extends State<InternshipProgressView> {
                         backgroundColor: AppColors.primaryBlue.withValues(
                           alpha: 0.12,
                         ),
-                        child: Text(
-                          displayName.isNotEmpty
-                              ? displayName[0].toUpperCase()
-                              : 'D',
-                          style: const TextStyle(
-                            fontSize: 22,
+                        child: const Text(
+                          'AY',
+                          style: TextStyle(
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primaryBlue,
                           ),
@@ -699,53 +702,7 @@ class _InternshipProgressViewState extends State<InternshipProgressView> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                const SizedBox(height: 10),
-
-                OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    side: BorderSide(
-                      color: isDark ? AppColors.darkBorder : AppColors.border,
-                    ),
-                  ),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Hesap ayarları modalı açılıyor...'),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.manage_accounts_outlined, size: 20),
-                  label: const Text(
-                    'Hesap Bilgilerini Düzenle',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
-                const SizedBox(height: 10),
-
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFDEEEE),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: TextButton.icon(
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      foregroundColor: AppColors.error,
-                    ),
-                    onPressed: () {
-                      context.read<AuthCubit>().signOut();
-                    },
-                    icon: const Icon(Icons.logout_rounded, size: 18),
-                    label: const Text(
-                      'Güvenli Çıkış Yap',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

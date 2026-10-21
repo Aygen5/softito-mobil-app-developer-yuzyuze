@@ -31,6 +31,26 @@
 
   <title>staj_takip</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- PDF.js compatibility polyfill for Map.prototype.getOrInsertComputed -->
+  <script>
+    if (typeof Map.prototype.getOrInsertComputed !== "function") {
+      Map.prototype.getOrInsertComputed = function (key, callbackFn) {
+        if (!this.has(key)) {
+          this.set(key, callbackFn(key));
+        }
+        return this.get(key);
+      };
+    }
+    if (typeof Map.prototype.getOrInsert !== "function") {
+      Map.prototype.getOrInsert = function (key, defaultValue) {
+        if (!this.has(key)) {
+          this.set(key, defaultValue);
+        }
+        return this.get(key);
+      };
+    }
+  </script>
 </head>
 <body>
   <!--

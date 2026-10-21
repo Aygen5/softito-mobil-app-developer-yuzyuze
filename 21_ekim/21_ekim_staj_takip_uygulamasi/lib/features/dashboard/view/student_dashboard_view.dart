@@ -53,7 +53,7 @@ class _DashboardScaffold extends StatelessWidget {
 
     final displayName = user?.fullName.isNotEmpty == true
         ? user!.fullName.split(' ').first
-        : 'Deniz';
+        : 'Aygen';
     final institutionName =
         user?.institutionId != null && user!.institutionId!.isNotEmpty
         ? 'İstanbul Teknik Üniversitesi'
@@ -134,17 +134,21 @@ class _DashboardScaffold extends StatelessWidget {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16, left: 4),
-            child: CircleAvatar(
-              radius: 17,
-              backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.15),
-              child: Text(
-                displayName.isNotEmpty ? displayName[0].toUpperCase() : 'D',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryBlue,
-                  fontSize: 14,
+          InkWell(
+            onTap: () => context.go(RouteNames.studentProfile),
+            borderRadius: BorderRadius.circular(20),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16, left: 4),
+              child: CircleAvatar(
+                radius: 17,
+                backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.15),
+                child: const Text(
+                  'AY',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryBlue,
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ),
@@ -188,12 +192,10 @@ class _DashboardScaffold extends StatelessWidget {
                         backgroundColor: AppColors.primaryBlue.withValues(
                           alpha: 0.12,
                         ),
-                        child: Text(
-                          displayName.isNotEmpty
-                              ? displayName[0].toUpperCase()
-                              : 'D',
-                          style: const TextStyle(
-                            fontSize: 18,
+                        child: const Text(
+                          'AY',
+                          style: TextStyle(
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primaryBlue,
                           ),

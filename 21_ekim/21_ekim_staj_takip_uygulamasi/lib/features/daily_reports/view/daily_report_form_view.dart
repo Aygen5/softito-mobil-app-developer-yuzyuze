@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../common/widgets/loading_view.dart';
 import '../../../common/widgets/theme_toggle_button.dart';
+import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../data/models/daily_report_model.dart';
@@ -150,19 +151,23 @@ class _ReportFormScaffoldState extends State<_ReportFormScaffold> {
             ),
             actions: [
               const ThemeToggleButton(),
-              Padding(
-                padding: const EdgeInsets.only(right: 16, left: 4),
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: AppColors.primaryBlue.withValues(
-                    alpha: 0.15,
-                  ),
-                  child: const Text(
-                    'D',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryBlue,
-                      fontSize: 13,
+              InkWell(
+                onTap: () => context.go(RouteNames.studentProfile),
+                borderRadius: BorderRadius.circular(20),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16, left: 4),
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: AppColors.primaryBlue.withValues(
+                      alpha: 0.15,
+                    ),
+                    child: const Text(
+                      'AY',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryBlue,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ),

@@ -9,9 +9,9 @@ abstract final class MockData {
   static final UserModel studentUser = UserModel(
     uid: 'demo_student_uid',
     fullName: 'Aygen Yıldırım',
-    email: 'ogrenci@test.com',
+    email: 'aygenyildirim27@gmail.com',
     role: UserRole.student,
-    institutionId: '2024-STJ-042',
+    institutionId: '150200142',
     isActive: true,
     createdAt: DateTime(2026, 9, 1),
   );

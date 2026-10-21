@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/loading_view.dart';
 import '../../../common/widgets/theme_toggle_button.dart';
+import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../data/models/daily_report_model.dart';
@@ -175,17 +176,21 @@ class _ApprovalDetailScaffoldState extends State<_ApprovalDetailScaffold> {
             ),
             actions: [
               const ThemeToggleButton(),
-              Padding(
-                padding: const EdgeInsets.only(right: 14),
-                child: CircleAvatar(
-                  radius: 17,
-                  backgroundColor: const Color(0xFF2563EB),
-                  child: const Text(
-                    'D',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+              InkWell(
+                onTap: () => context.go(RouteNames.studentProfile),
+                borderRadius: BorderRadius.circular(20),
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 14),
+                  child: CircleAvatar(
+                    radius: 17,
+                    backgroundColor: Color(0xFF2563EB),
+                    child: Text(
+                      'AY',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -321,13 +326,11 @@ class _ApprovalDetailScaffoldState extends State<_ApprovalDetailScaffold> {
                               CircleAvatar(
                                 radius: 26,
                                 backgroundColor: const Color(0xFF2563EB),
-                                child: Text(
-                                  student?.fullName.isNotEmpty == true
-                                      ? student!.fullName[0].toUpperCase()
-                                      : 'D',
-                                  style: const TextStyle(
+                                child: const Text(
+                                  'AY',
+                                  style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -358,7 +361,7 @@ class _ApprovalDetailScaffoldState extends State<_ApprovalDetailScaffold> {
                                 Row(
                                   children: [
                                     Text(
-                                      student?.fullName ?? 'Deniz Yılmaz',
+                                      student?.fullName ?? 'Aygen Yıldırım',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,

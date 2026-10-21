@@ -149,7 +149,7 @@ class _ApprovalsListBody extends StatelessWidget {
                 return _PendingReportCard(
                   report: report,
                   isDark: isDark,
-                  studentName: student?.fullName ?? 'Deniz Yılmaz',
+                  studentName: student?.fullName ?? 'Aygen Yıldırım',
                   companyName:
                       internship?.companyName ?? 'Aselsan A.Ş. — Ar-Ge',
                   onTap: () async {

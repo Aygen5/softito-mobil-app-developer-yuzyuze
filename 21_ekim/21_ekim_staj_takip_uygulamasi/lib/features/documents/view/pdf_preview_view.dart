@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:printing/printing.dart';
 
 import '../../../common/widgets/app_button.dart';
 import '../../../common/widgets/empty_view.dart';
 import '../../../common/widgets/loading_view.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
+import '../../../common/widgets/theme_toggle_button.dart';
 import '../../../data/repositories/daily_report_repository.dart';
 import '../../../data/repositories/internship_repository.dart';
 import '../../../data/repositories/user_repository.dart';
@@ -52,27 +52,67 @@ class _PdfPreviewScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF0B1120) : const Color(0xFFF8FAFC);
+    final cardColor = isDark ? const Color(0xFF161F30) : Colors.white;
+    final borderColor =
+        isDark ? const Color(0xFF283548) : const Color(0xFFE2E8F0);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
         elevation: 0,
         scrolledUnderElevation: 1,
-        title: Text(
-          'Staj Defteri PDF',
-          style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.bold),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: isDark ? Colors.white : const Color(0xFF0F172A),
+          ),
+          onPressed: () => context.pop(),
+        ),
+        title: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: const Color(0xFF0F172A),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.school_rounded,
+                  color: Color(0xFF38BDF8),
+                  size: 18,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Staj Defteri PDF',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : const Color(0xFF0F172A),
+              ),
+            ),
+          ],
         ),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.refresh_rounded,
-              color: AppColors.primaryNavy,
+              color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF2563EB),
             ),
             tooltip: 'Yeniden Derle',
             onPressed: () {
               context.read<DocumentsCubit>().regenerate();
             },
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: BlocBuilder<DocumentsCubit, DocumentsState>(
@@ -111,19 +151,27 @@ class _PdfPreviewScaffold extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Durum ve Doğrulama Bilgi Kartı
+                // Durum ve Doğrulama Bilgi Kartı (Light & Dark mode uyumlu)
                 Container(
                   margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: state.isFullyCompleted
-                        ? AppColors.success.withValues(alpha: 0.1)
-                        : AppColors.warning.withValues(alpha: 0.12),
+                        ? (isDark
+                            ? const Color(0xFF064E3B).withValues(alpha: 0.35)
+                            : const Color(0xFFECFDF5))
+                        : (isDark
+                            ? const Color(0xFF451A1A).withValues(alpha: 0.45)
+                            : const Color(0xFFFFFBEB)),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: state.isFullyCompleted
-                          ? AppColors.success.withValues(alpha: 0.4)
-                          : AppColors.warning.withValues(alpha: 0.4),
+                          ? (isDark
+                              ? const Color(0xFF065F46)
+                              : const Color(0xFFA7F3D0))
+                          : (isDark
+                              ? const Color(0xFF7F1D1D)
+                              : const Color(0xFFFDE68A)),
                     ),
                   ),
                   child: Column(
@@ -136,8 +184,8 @@ class _PdfPreviewScaffold extends StatelessWidget {
                                 ? Icons.verified_rounded
                                 : Icons.warning_amber_rounded,
                             color: state.isFullyCompleted
-                                ? AppColors.success
-                                : AppColors.warning,
+                                ? const Color(0xFF10B981)
+                                : const Color(0xFFF59E0B),
                             size: 20,
                           ),
                           const SizedBox(width: 8),
@@ -145,11 +193,16 @@ class _PdfPreviewScaffold extends StatelessWidget {
                             state.isFullyCompleted
                                 ? 'Staj Eksiksiz Tamamlandı'
                                 : 'Eksik veya Onaysız Gün Uyarısı',
-                            style: AppTextStyles.bodyMedium.copyWith(
+                            style: TextStyle(
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: state.isFullyCompleted
-                                  ? AppColors.success
-                                  : AppColors.warning,
+                                  ? (isDark
+                                      ? const Color(0xFF6EE7B7)
+                                      : const Color(0xFF065F46))
+                                  : (isDark
+                                      ? const Color(0xFFFCD34D)
+                                      : const Color(0xFF92400E)),
                             ),
                           ),
                         ],
@@ -159,8 +212,12 @@ class _PdfPreviewScaffold extends StatelessWidget {
                         state.isFullyCompleted
                             ? 'Zorunlu ${state.totalRequiredDays} staj gününün tamamı çift aşamalı onaylanmış olup resmî defter hazırlandı.'
                             : 'Zorunlu ${state.totalRequiredDays} staj gününden ${state.approvedDaysCount} gün onaylanmıştır. Yalnızca danışman ve kurum onayından geçmiş raporlar deftere dahil edilmiştir.',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textPrimary,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          height: 1.4,
+                          color: isDark
+                              ? const Color(0xFFCBD5E1)
+                              : const Color(0xFF334155),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -170,11 +227,17 @@ class _PdfPreviewScaffold extends StatelessWidget {
                             icon: Icons.calendar_today_rounded,
                             label:
                                 '${state.approvedDaysCount} / ${state.totalRequiredDays} Onaylı Gün',
+                            isDark: isDark,
+                            cardColor: cardColor,
+                            borderColor: borderColor,
                           ),
                           const SizedBox(width: 8),
                           _buildChip(
                             icon: Icons.access_time_rounded,
                             label: '${state.totalHours} Saat',
+                            isDark: isDark,
+                            cardColor: cardColor,
+                            borderColor: borderColor,
                           ),
                         ],
                       ),
@@ -191,11 +254,94 @@ class _PdfPreviewScaffold extends StatelessWidget {
                     canDebug: false,
                     allowPrinting: true,
                     allowSharing: true,
+                    scrollViewDecoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF0B1120)
+                          : const Color(0xFFF1F5F9),
+                    ),
+                    pdfPreviewPageDecoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF161F30) : Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(
+                            alpha: isDark ? 0.4 : 0.08,
+                          ),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
                     pdfFileName:
                         'staj_defteri_${state.student.fullName.replaceAll(' ', '_')}.pdf',
-                    loadingWidget: const Center(
-                      child: CircularProgressIndicator(),
+                    loadingWidget: Center(
+                      child: CircularProgressIndicator(
+                        color: isDark
+                            ? const Color(0xFF38BDF8)
+                            : const Color(0xFF2563EB),
+                      ),
                     ),
+                    onError: (context, error) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.picture_as_pdf_rounded,
+                                size: 48,
+                                color: Color(0xFF2563EB),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'PDF Belgeniz Başarıyla Oluşturuldu',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF0F172A),
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                'Aşağıdaki butonları kullanarak PDF staj defterinizi doğrudan yazdırabilir veya kaydedebilirsiniz.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  color: isDark
+                                      ? const Color(0xFF94A3B8)
+                                      : const Color(0xFF64748B),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Printing.sharePdf(
+                                    bytes: state.pdfBytes,
+                                    filename:
+                                        'staj_defteri_${state.student.fullName.replaceAll(' ', '_')}.pdf',
+                                  );
+                                },
+                                icon: const Icon(Icons.share_rounded, size: 18),
+                                label: const Text('PDF İndir / Paylaş'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF2563EB),
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -208,24 +354,33 @@ class _PdfPreviewScaffold extends StatelessWidget {
     );
   }
 
-  static Widget _buildChip({required IconData icon, required String label}) {
+  static Widget _buildChip({
+    required IconData icon,
+    required String label,
+    required bool isDark,
+    required Color cardColor,
+    required Color borderColor,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.primaryBlue),
+          Icon(icon, size: 14, color: const Color(0xFF2563EB)),
           const SizedBox(width: 6),
           Text(
             label,
-            style: AppTextStyles.caption.copyWith(
+            style: TextStyle(
+              fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: isDark ? Colors.white : const Color(0xFF0F172A),
             ),
           ),
         ],

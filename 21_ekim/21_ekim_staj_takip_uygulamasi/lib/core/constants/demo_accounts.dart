@@ -30,8 +30,8 @@ abstract final class DemoAccounts {
   static final student = DemoAccount(
     title: 'Öğrenci Girişi',
     roleLabel: 'Stajyer Paneli & Günlük Rapor',
-    email: 'ogrenci@test.com',
-    password: 'password123',
+    email: 'aygenyildirim27@gmail.com',
+    password: 'aygen123',
     icon: Icons.school_rounded,
     color: AppColors.primaryBlue,
     userModel: MockData.studentUser,
