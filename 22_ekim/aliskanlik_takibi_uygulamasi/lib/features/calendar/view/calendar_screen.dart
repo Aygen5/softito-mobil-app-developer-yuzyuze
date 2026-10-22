@@ -6,7 +6,9 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/date_utils.dart';
+import '../../../models/habit.dart';
 import '../../habits/view/habit_form_sheet.dart';
+import '../../profile/view/profile_modal_sheet.dart';
 import '../cubit/calendar_cubit.dart';
 import '../cubit/calendar_state.dart';
 import '../widgets/activity_heatmap.dart';
@@ -72,13 +74,19 @@ class CalendarScreen extends StatelessWidget {
           const SizedBox(width: 8),
           Padding(
             padding: const EdgeInsets.only(right: AppSpacing.margin),
-            child: CircleAvatar(
-              radius: 17,
-              backgroundColor: AppColors.surfaceContainerHigh,
-              child: const Icon(
-                Icons.person,
-                color: AppColors.primary,
-                size: 20,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => showProfileModal(context),
+                child: CircleAvatar(
+                  radius: 17,
+                  backgroundColor: AppColors.surfaceContainerHigh,
+                  child: const Icon(
+                    Icons.person,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                ),
               ),
             ),
           ),
@@ -298,67 +306,12 @@ class CalendarScreen extends StatelessWidget {
                         c.isCompleted,
                   );
 
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceContainer,
-                      borderRadius: AppRadius.lgRadius,
-                      border: Border.all(
-                        color: isDone
-                            ? AppColors.tertiary.withValues(alpha: 0.3)
-                            : AppColors.outlineVariant.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          IconData(
-                            // ignore: non_const_argument_for_const_parameter
-                            h.iconCodePoint,
-                            fontFamily: 'MaterialIcons',
-                          ),
-                          color: Color(h.colorValue),
-                          size: 20,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            h.title,
-                            style: AppTypography.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDone
-                                ? AppColors.tertiaryContainer
-                                : AppColors.surfaceContainerHigh,
-                            borderRadius: AppRadius.fullRadius,
-                          ),
-                          child: Text(
-                            isDone ? 'Tamamlandı' : 'Tamamlanmadı',
-                            style: AppTypography.caption.copyWith(
-                              fontSize: 10,
-                              color: isDone
-                                  ? AppColors.onTertiaryContainer
-                                  : AppColors.outline,
-                              fontWeight: isDone
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  return _InteractiveCalendarHabitCard(
+                    habit: h,
+                    isDone: isDone,
+                    selectedDate: state.selectedDate,
+                    onToggle: () =>
+                        cubit.toggleHabitCompletion(h.id, state.selectedDate),
                   );
                 }),
 
@@ -457,50 +410,13 @@ class CalendarScreen extends StatelessWidget {
       }
 
       cells.add(
-        GestureDetector(
+        _InteractiveCalendarDay(
+          day: day,
+          date: cellDate,
+          isSelected: isSelected,
+          completedCount: completedCount,
+          dotColor: dotColor,
           onTap: () => cubit.selectDate(cellDate),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? AppColors.secondaryContainer
-                  : AppColors.surfaceContainerHigh,
-              borderRadius: AppRadius.mdRadius,
-              boxShadow: isSelected
-                  ? [
-                      BoxShadow(
-                        color: AppColors.tertiary.withValues(alpha: 0.35),
-                        blurRadius: 10,
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$day',
-                  style: AppTypography.bodySmall.copyWith(
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color: isSelected
-                        ? AppColors.primaryFixed
-                        : AppColors.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Container(
-                  width: 5,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isSelected ? AppColors.tertiary : dotColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       );
     }
@@ -542,6 +458,332 @@ class CalendarScreen extends StatelessWidget {
         const SizedBox(width: 6),
         Text(label, style: AppTypography.caption),
       ],
+    );
+  }
+}
+
+class _InteractiveCalendarDay extends StatefulWidget {
+  final int day;
+  final DateTime date;
+  final bool isSelected;
+  final int completedCount;
+  final Color dotColor;
+  final VoidCallback onTap;
+
+  const _InteractiveCalendarDay({
+    required this.day,
+    required this.date,
+    required this.isSelected,
+    required this.completedCount,
+    required this.dotColor,
+    required this.onTap,
+  });
+
+  @override
+  State<_InteractiveCalendarDay> createState() => _InteractiveCalendarDayState();
+}
+
+class _InteractiveCalendarDayState extends State<_InteractiveCalendarDay> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = widget.isSelected;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(
+            0,
+            isSelected ? -4 : (_isHovered ? -3 : 0),
+            0,
+          ),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppColors.secondaryContainer
+                : (_isHovered
+                    ? AppColors.surfaceContainerHighest
+                    : AppColors.surfaceContainerHigh),
+            borderRadius: AppRadius.mdRadius,
+            border: Border.all(
+              color: isSelected
+                  ? AppColors.tertiary
+                  : (_isHovered
+                      ? AppColors.tertiary.withValues(alpha: 0.7)
+                      : Colors.transparent),
+              width: isSelected || _isHovered ? 1.6 : 1.0,
+            ),
+            boxShadow: [
+              if (isSelected) ...[
+                BoxShadow(
+                  color: AppColors.tertiary.withValues(alpha: 0.45),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ] else if (_isHovered) ...[
+                BoxShadow(
+                  color: AppColors.tertiary.withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '${widget.day}',
+                style: AppTypography.bodySmall.copyWith(
+                  fontWeight: isSelected || _isHovered
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                  color: isSelected
+                      ? AppColors.primaryFixed
+                      : (_isHovered ? AppColors.tertiary : AppColors.onSurface),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Container(
+                width: isSelected || _isHovered ? 6 : 5,
+                height: isSelected || _isHovered ? 6 : 5,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected ? AppColors.tertiary : widget.dotColor,
+                  boxShadow: (isSelected || _isHovered)
+                      ? [
+                          BoxShadow(
+                            color: AppColors.tertiary.withValues(alpha: 0.8),
+                            blurRadius: 4,
+                          ),
+                        ]
+                      : null,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InteractiveCalendarHabitCard extends StatefulWidget {
+  final Habit habit;
+  final bool isDone;
+  final DateTime selectedDate;
+  final VoidCallback onToggle;
+
+  const _InteractiveCalendarHabitCard({
+    required this.habit,
+    required this.isDone,
+    required this.selectedDate,
+    required this.onToggle,
+  });
+
+  @override
+  State<_InteractiveCalendarHabitCard> createState() =>
+      _InteractiveCalendarHabitCardState();
+}
+
+class _InteractiveCalendarHabitCardState
+    extends State<_InteractiveCalendarHabitCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final habit = widget.habit;
+    final isDone = widget.isDone;
+    final themeColor = Color(habit.colorValue);
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onToggle,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(
+            0,
+            _isHovered ? -4 : 0,
+            0,
+          ),
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                _isHovered
+                    ? themeColor.withValues(alpha: 0.28)
+                    : themeColor.withValues(alpha: 0.14),
+                AppColors.surfaceContainer,
+              ],
+            ),
+            borderRadius: AppRadius.lgRadius,
+            border: Border.all(
+              color: _isHovered
+                  ? themeColor.withValues(alpha: 0.85)
+                  : (isDone
+                      ? AppColors.tertiary.withValues(alpha: 0.45)
+                      : AppColors.outlineVariant.withValues(alpha: 0.35)),
+              width: _isHovered ? 1.6 : 1.0,
+            ),
+            boxShadow: [
+              if (_isHovered) ...[
+                BoxShadow(
+                  color: themeColor.withValues(alpha: 0.35),
+                  blurRadius: 14,
+                  offset: const Offset(0, 5),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ] else ...[
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ],
+          ),
+          child: Row(
+            children: [
+              // İkon Kutusu
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: themeColor.withValues(alpha: _isHovered ? 0.35 : 0.22),
+                  borderRadius: AppRadius.smRadius,
+                  border: Border.all(
+                    color: themeColor.withValues(alpha: 0.5),
+                  ),
+                ),
+                child: Icon(
+                  IconData(
+                    habit.iconCodePoint,
+                    fontFamily: 'MaterialIcons',
+                  ),
+                  color: themeColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              // Başlık ve Bilgi
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            habit.title,
+                            style: AppTypography.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 1.5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: themeColor.withValues(alpha: 0.2),
+                            borderRadius: AppRadius.fullRadius,
+                          ),
+                          child: Text(
+                            habit.category.displayName,
+                            style: AppTypography.caption.copyWith(
+                              fontSize: 9,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Hedef: ${habit.targetValue.toInt()} ${habit.targetUnit} • ${habit.currentStreak} gün seri',
+                      style: AppTypography.caption.copyWith(
+                        fontSize: 11,
+                        color: AppColors.secondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 8),
+
+              // Durum Butonu / Rozeti
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: isDone
+                      ? AppColors.tertiaryContainer
+                      : AppColors.surfaceContainerHigh,
+                  borderRadius: AppRadius.fullRadius,
+                  border: Border.all(
+                    color: isDone
+                        ? AppColors.tertiary.withValues(alpha: 0.5)
+                        : Colors.transparent,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isDone
+                          ? Icons.check_circle
+                          : Icons.radio_button_unchecked,
+                      color: isDone
+                          ? AppColors.onTertiaryContainer
+                          : AppColors.outline,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      isDone ? 'Tamamlandı' : 'Tamamlanmadı',
+                      style: AppTypography.caption.copyWith(
+                        fontSize: 11,
+                        color: isDone
+                            ? AppColors.onTertiaryContainer
+                            : AppColors.outline,
+                        fontWeight: isDone
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

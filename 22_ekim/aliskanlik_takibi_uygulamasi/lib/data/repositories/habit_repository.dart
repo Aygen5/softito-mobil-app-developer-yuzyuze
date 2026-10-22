@@ -14,4 +14,5 @@ abstract class HabitRepository {
   Future<void> deleteHabit(String habitId);
   Future<void> toggleHabitCompletion(String habitId, DateTime date);
   Future<void> updateHabitProgress(String habitId, DateTime date, double value);
+  Future<void> startHabit(String habitId);
 }

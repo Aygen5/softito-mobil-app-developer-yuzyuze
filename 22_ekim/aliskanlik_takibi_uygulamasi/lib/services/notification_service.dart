@@ -6,14 +6,17 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
 
   Future<void> initialize() async {
     if (_isInitialized) return;
 
     try {
-      const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const androidSettings = AndroidInitializationSettings(
+        '@mipmap/ic_launcher',
+      );
       const darwinSettings = DarwinInitializationSettings(
         requestAlertPermission: false,
         requestBadgePermission: false,
@@ -26,9 +29,7 @@ class NotificationService {
         macOS: darwinSettings,
       );
 
-      await _notificationsPlugin.initialize(
-        settings: initSettings,
-      );
+      await _notificationsPlugin.initialize(settings: initSettings);
       _isInitialized = true;
     } catch (e) {
       debugPrint('NotificationService init error (graceful fallback): $e');
@@ -40,14 +41,18 @@ class NotificationService {
       if (!_isInitialized) await initialize();
 
       final androidImpl = _notificationsPlugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       if (androidImpl != null) {
         final granted = await androidImpl.requestNotificationsPermission();
         return granted ?? false;
       }
 
       final iosImpl = _notificationsPlugin
-          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
       if (iosImpl != null) {
         final granted = await iosImpl.requestPermissions(
           alert: true,
@@ -75,7 +80,8 @@ class NotificationService {
       const androidDetails = AndroidNotificationDetails(
         'verdant_habits_channel',
         'Alışkanlık Hatırlatıcıları',
-        channelDescription: 'Günlük alışkanlıklarınızı hatırlatan nazik bildirimler',
+        channelDescription:
+            'Günlük alışkanlıklarınızı hatırlatan nazik bildirimler',
         importance: Importance.high,
         priority: Priority.high,
       );

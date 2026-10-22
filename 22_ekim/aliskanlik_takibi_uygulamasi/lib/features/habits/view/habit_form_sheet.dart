@@ -62,7 +62,16 @@ class _HabitFormSheetState extends State<HabitFormSheet> {
     'ml',
     'Litre',
     'Kez',
+    'Gün',
+    'Hafta',
   ];
+
+  List<String> get _availableUnits {
+    if (!units.contains(_targetUnit)) {
+      return [...units, _targetUnit];
+    }
+    return units;
+  }
 
   @override
   void initState() {
@@ -538,13 +547,15 @@ class _HabitFormSheetState extends State<HabitFormSheet> {
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
-                              value: _targetUnit,
+                              value: _availableUnits.contains(_targetUnit)
+                                  ? _targetUnit
+                                  : _availableUnits.first,
                               dropdownColor: AppColors.surfaceContainerHigh,
                               icon: const Icon(
                                 Icons.keyboard_arrow_down,
                                 color: AppColors.outline,
                               ),
-                              items: units.map((u) {
+                              items: _availableUnits.map((u) {
                                 return DropdownMenuItem<String>(
                                   value: u,
                                   child: Row(

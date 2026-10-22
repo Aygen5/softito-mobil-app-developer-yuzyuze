@@ -8,6 +8,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/brand_logo.dart';
+import '../../../core/widgets/password_validation_indicator.dart';
 import '../cubit/onboarding_cubit.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -18,9 +19,9 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _nameController = TextEditingController(text: 'Aygen Kaya');
-  final _emailController = TextEditingController(text: 'aygen@example.com');
-  final _passwordController = TextEditingController(text: 'verdant123');
+  final _nameController = TextEditingController(text: 'Aygen Yıldırım');
+  final _emailController = TextEditingController(text: 'aygen@yildirim.dev');
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
@@ -141,7 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   label: 'AD SOYAD',
                   controller: _nameController,
                   icon: Icons.person_outline,
-                  hint: 'Örn. Aygen Kaya',
+                  hint: 'Örn. Aygen Yıldırım',
                 ),
 
                 const SizedBox(height: 16),
@@ -167,8 +168,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
                       color: AppColors.outline,
                       size: 20,
                     ),
@@ -178,6 +179,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       });
                     },
                   ),
+                ),
+
+                // Canlı / Anlık Şifre Validasyon Göstergesi
+                PasswordValidationIndicator(
+                  controller: _passwordController,
                 ),
 
                 const SizedBox(height: 16),
@@ -221,6 +227,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   icon: Icons.eco,
                   type: AppButtonType.primary,
                   onPressed: () {
+                    final pass = _passwordController.text;
+                    if (!PasswordValidationIndicator.isAllValid(pass)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Şifre en az bir büyük harf, bir rakam ve en az 8 karakter içermelidir!',
+                          ),
+                          backgroundColor: AppColors.errorContainer,
+                        ),
+                      );
+                      return;
+                    }
                     context.read<OnboardingCubit>().register(
                       _nameController.text,
                       _emailController.text,

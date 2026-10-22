@@ -8,6 +8,7 @@ class StatisticsState {
   final int longestStreak;
   final double consistencyRate;
   final List<double> weeklyActivity;
+  final List<double> monthlyActivity;
   final Map<String, double> habitRates;
   final List<Achievement> achievements;
   final Habit? mostConsistentHabit;
@@ -20,6 +21,7 @@ class StatisticsState {
     this.longestStreak = 45,
     this.consistencyRate = 0.84,
     this.weeklyActivity = const [4, 5, 4, 3, 5, 4, 3],
+    this.monthlyActivity = const [24, 28, 26, 22],
     this.habitRates = const {},
     this.achievements = const [],
     this.mostConsistentHabit,
@@ -35,6 +37,7 @@ class StatisticsState {
     int? longestStreak,
     double? consistencyRate,
     List<double>? weeklyActivity,
+    List<double>? monthlyActivity,
     Map<String, double>? habitRates,
     List<Achievement>? achievements,
     Habit? mostConsistentHabit,
@@ -47,6 +50,7 @@ class StatisticsState {
       longestStreak: longestStreak ?? this.longestStreak,
       consistencyRate: consistencyRate ?? this.consistencyRate,
       weeklyActivity: weeklyActivity ?? this.weeklyActivity,
+      monthlyActivity: monthlyActivity ?? this.monthlyActivity,
       habitRates: habitRates ?? this.habitRates,
       achievements: achievements ?? this.achievements,
       mostConsistentHabit: mostConsistentHabit ?? this.mostConsistentHabit,

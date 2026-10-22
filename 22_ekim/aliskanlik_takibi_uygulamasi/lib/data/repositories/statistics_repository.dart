@@ -7,6 +7,7 @@ abstract class StatisticsRepository {
   int getLongestStreak();
   double getConsistencyRate();
   List<double> getWeeklyActivity();
+  List<double> getMonthlyActivity();
   List<Achievement> getAchievements();
   Habit? getMostConsistentHabit();
   Habit? getNextFocusHabit();

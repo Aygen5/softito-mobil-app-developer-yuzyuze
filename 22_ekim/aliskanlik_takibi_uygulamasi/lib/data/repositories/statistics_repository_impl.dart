@@ -100,6 +100,41 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
   }
 
   @override
+  List<double> getMonthlyActivity() {
+    // Mevcut ayın 4 haftalık tamamlanma dağılımı (1-7, 8-14, 15-21, 22-son)
+    final now = DateTime.now();
+    final completions = habitRepository.getCompletions();
+    final result = <double>[];
+
+    final year = now.year;
+    final month = now.month;
+    final lastDay = DateTime(year, month + 1, 0).day;
+
+    final intervals = [
+      (1, 7),
+      (8, 14),
+      (15, 21),
+      (22, lastDay),
+    ];
+
+    for (final interval in intervals) {
+      final start = DateTime(year, month, interval.$1);
+      final end = DateTime(year, month, interval.$2, 23, 59, 59);
+
+      final count = completions.where((c) {
+        if (!c.isCompleted) return false;
+        final d = c.date;
+        return (d.isAfter(start.subtract(const Duration(seconds: 1))) &&
+            d.isBefore(end.add(const Duration(seconds: 1))));
+      }).length;
+
+      result.add(count.toDouble());
+    }
+
+    return result;
+  }
+
+  @override
   List<Achievement> getAchievements() {
     return AchievementCalculator.evaluateAchievements(
       habits: habitRepository.getHabits(),

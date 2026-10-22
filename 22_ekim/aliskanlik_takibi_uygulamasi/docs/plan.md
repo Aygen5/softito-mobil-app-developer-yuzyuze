@@ -222,13 +222,13 @@ graph TD
 
 | Aşama | Görev | Hedef Çıktı | Durum |
 | :--- | :--- | :--- | :---: |
-| **Aşama 1** | Flutter İskeleti & Paket Kurulumu | `pubspec.yaml`, Dizin Yapısı | ⏳ Bekliyor |
-| **Aşama 2** | Tasarım Sistemi & Çekirdek Bileşenler | `AppTheme`, `AppColors`, Çekirdek Widget'lar | ⏳ Bekliyor |
-| **Aşama 3** | Modeller & Demo Veri Fabrikası | 5 Alışkanlık, 30 Günlük Geçmiş, Hesaplayıcılar | ⏳ Bekliyor |
-| **Aşama 4** | Repository, Cubit & GoRouter | Merkezi Durum ve Rota Mimarisi | ⏳ Bekliyor |
-| **Aşama 5** | Karşılama/Kayıt & Ana Sayfa Pano | Giriş Akışı, İlerleme Halkası, 5 Kart, Mikro-Animasyonlar | ⏳ Bekliyor |
-| **Aşama 6** | Modal, Takvim & İstatistik Ekranları | Ekle/Düzenle Formu, Aktivite Izgarası, Grafikler, Rozetler | ⏳ Bekliyor |
-| **Aşama 7** | Bildirimler, flutter analyze & Teslim | Bildirim Servisi, Temiz Kod Doğrulaması | ⏳ Bekliyor |
+| **Aşama 1** | Flutter İskeleti & Paket Kurulumu | `pubspec.yaml`, Dizin Yapısı | ✅ Tamamlandı |
+| **Aşama 2** | Tasarım Sistemi & Çekirdek Bileşenler | `AppTheme`, `AppColors`, Çekirdek Widget'lar | ✅ Tamamlandı |
+| **Aşama 3** | Modeller & Demo Veri Fabrikası | 5 Alışkanlık, 30 Günlük Geçmiş, Hesaplayıcılar | ✅ Tamamlandı |
+| **Aşama 4** | Repository, Cubit & GoRouter | Merkezi Durum ve Rota Mimarisi | ✅ Tamamlandı |
+| **Aşama 5** | Karşılama/Kayıt & Ana Sayfa Pano | Giriş Akışı, İlerleme Halkası, 5 Kart, Mikro-Animasyonlar | ✅ Tamamlandı |
+| **Aşama 6** | Modal, Takvim & İstatistik Ekranları | Ekle/Düzenle Formu, Aktivite Izgarası, Grafikler, Rozetler | ✅ Tamamlandı |
+| **Aşama 7** | Bildirimler, flutter analyze & Teslim | Bildirim Servisi, Testler, UI İnceleme & Teslim | ✅ Tamamlandı |
 
 ---
 *Bu plan oluşturulduktan sonra, kullanıcının sunacağı Stitch ekran tasarımlarına sadık kalınarak adım adım hayata geçirilecektir.*

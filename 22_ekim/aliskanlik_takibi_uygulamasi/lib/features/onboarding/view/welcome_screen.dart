@@ -9,6 +9,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/brand_logo.dart';
 import '../../../core/widgets/demo_action_tile.dart';
+import '../../../core/widgets/password_validation_indicator.dart';
 import '../cubit/onboarding_cubit.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -189,7 +190,12 @@ class WelcomeScreen extends StatelessWidget {
                       icon: Icons.arrow_forward,
                       type: AppButtonType.primary,
                       onPressed: () {
-                        context.read<OnboardingCubit>().continueAsDemo();
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (ctx) => const _LoginModalSheet(),
+                        );
                       },
                     ),
                     const SizedBox(height: 12),
@@ -231,6 +237,218 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoginModalSheet extends StatefulWidget {
+  const _LoginModalSheet();
+
+  @override
+  State<_LoginModalSheet> createState() => _LoginModalSheetState();
+}
+
+class _LoginModalSheetState extends State<_LoginModalSheet> {
+  final _emailController = TextEditingController(text: 'aygen@yildirim.dev');
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _submitLogin() {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Lütfen e-posta ve şifrenizi girin.'),
+          backgroundColor: AppColors.errorContainer,
+        ),
+      );
+      return;
+    }
+
+    if (!PasswordValidationIndicator.isAllValid(password)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Şifre en az bir büyük harf, bir rakam ve en az 8 karakter içermelidir!',
+          ),
+          backgroundColor: AppColors.errorContainer,
+        ),
+      );
+      return;
+    }
+
+    Navigator.of(context).pop();
+    context.read<OnboardingCubit>().login(email, password);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.88,
+      ),
+      padding: EdgeInsets.only(
+        left: AppSpacing.margin,
+        right: AppSpacing.margin,
+        top: 12,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainer,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppRadius.xxl),
+        ),
+        border: Border.all(
+          color: AppColors.outlineVariant.withValues(alpha: 0.35),
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.outlineVariant,
+                  borderRadius: AppRadius.fullRadius,
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryContainer,
+                    borderRadius: AppRadius.mdRadius,
+                  ),
+                  child: const Icon(
+                    Icons.login,
+                    color: AppColors.onPrimaryContainer,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Giriş Yap',
+                        style: AppTypography.headlineSmall.copyWith(
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        'Alışkanlık ritüeline devam et',
+                        style: AppTypography.caption,
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, size: 20),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const Divider(color: AppColors.outlineVariant, height: 1),
+            const SizedBox(height: 16),
+            Text(
+              'E-POSTA ADRESİ',
+              style: AppTypography.labelCaps.copyWith(color: AppColors.primary),
+            ),
+            const SizedBox(height: 6),
+            TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                hintText: 'aygen@yildirim.dev',
+                prefixIcon: const Icon(Icons.mail_outline, size: 20),
+                filled: true,
+                fillColor: AppColors.surfaceContainerLow,
+                border: OutlineInputBorder(
+                  borderRadius: AppRadius.mdRadius,
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'PAROLA',
+              style: AppTypography.labelCaps.copyWith(color: AppColors.primary),
+            ),
+            const SizedBox(height: 6),
+            TextField(
+              controller: _passwordController,
+              obscureText: _obscurePassword,
+              decoration: InputDecoration(
+                hintText: '••••••••',
+                prefixIcon: const Icon(Icons.lock_outline, size: 20),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    color: AppColors.outline,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+                filled: true,
+                fillColor: AppColors.surfaceContainerLow,
+                border: OutlineInputBorder(
+                  borderRadius: AppRadius.mdRadius,
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+            // Canlı / Anlık Şifre Validasyon Göstergesi
+            PasswordValidationIndicator(controller: _passwordController),
+            const SizedBox(height: 20),
+            AppButton(
+              label: 'Giriş Yap',
+              icon: Icons.arrow_forward,
+              type: AppButtonType.primary,
+              onPressed: _submitLogin,
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.read<OnboardingCubit>().continueAsDemo();
+                },
+                child: Text(
+                  'Giriş yapmadan demo olarak devam et →',
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.tertiary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

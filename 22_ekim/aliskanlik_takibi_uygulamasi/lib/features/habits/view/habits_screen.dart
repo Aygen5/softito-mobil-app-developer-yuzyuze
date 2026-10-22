@@ -9,6 +9,7 @@ import '../../../models/habit.dart';
 import '../cubit/habits_cubit.dart';
 import '../cubit/habits_state.dart';
 import 'habit_form_sheet.dart';
+import '../../profile/view/profile_modal_sheet.dart';
 
 class HabitsScreen extends StatelessWidget {
   const HabitsScreen({super.key});
@@ -71,13 +72,19 @@ class HabitsScreen extends StatelessWidget {
           const SizedBox(width: 8),
           Padding(
             padding: const EdgeInsets.only(right: AppSpacing.margin),
-            child: CircleAvatar(
-              radius: 17,
-              backgroundColor: AppColors.surfaceContainerHigh,
-              child: const Icon(
-                Icons.person,
-                color: AppColors.primary,
-                size: 20,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => showProfileModal(context),
+                child: CircleAvatar(
+                  radius: 17,
+                  backgroundColor: AppColors.surfaceContainerHigh,
+                  child: const Icon(
+                    Icons.person,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                ),
               ),
             ),
           ),

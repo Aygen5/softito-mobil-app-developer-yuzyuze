@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:aliskanlik_takibi_uygulamasi/core/utils/date_utils.dart';
 import 'package:aliskanlik_takibi_uygulamasi/core/utils/progress_calculator.dart';
 import 'package:aliskanlik_takibi_uygulamasi/data/repositories/habit_repository.dart';
+
 import 'calendar_state.dart';
 
 class CalendarCubit extends Cubit<CalendarState> {
@@ -84,6 +85,10 @@ class CalendarCubit extends Cubit<CalendarState> {
     final prev = DateTime(cur.year, cur.month - 1, 1);
     emit(state.copyWith(selectedMonth: prev));
     _recalculate();
+  }
+
+  Future<void> toggleHabitCompletion(String habitId, DateTime date) async {
+    await _habitRepository.toggleHabitCompletion(habitId, date);
   }
 
   @override

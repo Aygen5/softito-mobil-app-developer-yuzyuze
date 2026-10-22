@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:aliskanlik_takibi_uygulamasi/data/repositories/habit_repository.dart';
 import 'package:aliskanlik_takibi_uygulamasi/data/repositories/statistics_repository.dart';
+
 import 'statistics_state.dart';
 
 class StatisticsCubit extends Cubit<StatisticsState> {
@@ -31,6 +32,7 @@ class StatisticsCubit extends Cubit<StatisticsState> {
         longestStreak: statisticsRepository.getLongestStreak(),
         consistencyRate: statisticsRepository.getConsistencyRate(),
         weeklyActivity: statisticsRepository.getWeeklyActivity(),
+        monthlyActivity: statisticsRepository.getMonthlyActivity(),
         habitRates: statisticsRepository.getHabitRates(),
         achievements: statisticsRepository.getAchievements(),
         mostConsistentHabit: statisticsRepository.getMostConsistentHabit(),

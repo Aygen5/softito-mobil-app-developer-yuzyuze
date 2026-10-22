@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'app_colors.dart';
 import 'app_radius.dart';
 
@@ -60,16 +61,12 @@ abstract class AppTheme {
         backgroundColor: AppColors.surfaceContainerLow,
         modalBackgroundColor: AppColors.surfaceContainerLow,
         elevation: 8,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.sheetRadius,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.sheetRadius),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surfaceContainer,
         elevation: 8,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.xlRadius,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.xlRadius),
       ),
     );
   }

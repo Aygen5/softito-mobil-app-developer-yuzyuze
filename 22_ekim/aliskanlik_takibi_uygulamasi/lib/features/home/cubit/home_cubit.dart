@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:aliskanlik_takibi_uygulamasi/core/utils/progress_calculator.dart';
 import 'package:aliskanlik_takibi_uygulamasi/data/repositories/habit_repository.dart';
+
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
@@ -79,8 +80,16 @@ class HomeCubit extends Cubit<HomeState> {
     await _habitRepository.toggleHabitCompletion(habitId, state.selectedDate);
   }
 
+  Future<void> startHabit(String habitId) async {
+    await _habitRepository.startHabit(habitId);
+  }
+
   Future<void> addWaterGlass() async {
-    final newAmount = (state.waterConsumed + 250).clamp(0.0, 3000.0);
+    await addWater(250);
+  }
+
+  Future<void> addWater(double amount) async {
+    final newAmount = (state.waterConsumed + amount).clamp(0.0, 3000.0);
     await _habitRepository.updateHabitProgress(
       'water_3l',
       state.selectedDate,

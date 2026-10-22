@@ -6,6 +6,7 @@ import '../../features/calendar/view/calendar_screen.dart';
 import '../../features/habits/view/habits_screen.dart';
 import '../../features/home/view/home_screen.dart';
 import '../../features/onboarding/view/register_screen.dart';
+import '../../features/onboarding/view/splash_screen.dart';
 import '../../features/onboarding/view/welcome_screen.dart';
 import '../../features/statistics/view/statistics_screen.dart';
 import 'route_names.dart';
@@ -15,8 +16,12 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 class AppRouter {
   static final GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: RouteNames.welcome,
+    initialLocation: RouteNames.splash,
     routes: [
+      GoRoute(
+        path: RouteNames.splash,
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: RouteNames.welcome,
         builder: (context, state) => const WelcomeScreen(),

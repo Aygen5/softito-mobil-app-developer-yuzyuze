@@ -183,4 +183,19 @@ class HabitRepositoryImpl implements HabitRepository {
     _recalculateStreaks();
     _notify();
   }
+
+  @override
+  Future<void> startHabit(String habitId) async {
+    final habitIdx = _habits.indexWhere((h) => h.id == habitId);
+    if (habitIdx == -1) return;
+    final habit = _habits[habitIdx];
+
+    _habits[habitIdx] = habit.copyWith(
+      isNotStarted: false,
+      createdAt: DateTime.now(),
+    );
+
+    _recalculateStreaks();
+    _notify();
+  }
 }
