@@ -3,7 +3,7 @@ enum Kategori {
   elektronik('Elektronik', 'E'),
   giyim('Giyim', 'G'),
   ayakkabi('Ayakkabı', 'A'),
-  aksesuar('Aksesuar', 'K');
+  aksesuar('Aksesuar', 'AK');
 
   final String baslik;
   final String ikon;

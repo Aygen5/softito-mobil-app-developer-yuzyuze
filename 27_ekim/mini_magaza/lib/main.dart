@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/urun_listesi_ekrani.dart';
 
 void main() {
   runApp(MiniMagazaUygulamasi());
@@ -23,17 +24,7 @@ class MiniMagazaUygulamasi extends StatelessWidget {
         ),
       ),
 
-      home: const Scaffold(
-        body: Center(
-          child: Text(
-            "Ana Sayfa",
-          style: TextStyle(
-            fontSize:24,
-            fontWeight: FontWeight.bold
-           ),
-          ),
-        ),
-      ),
+      home: const UrunListesiEkrani(),
     );
     }
  }
