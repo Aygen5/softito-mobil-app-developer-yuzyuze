@@ -40,6 +40,7 @@ class _SusadimAppState extends State<SusadimApp> {
 
   @override
   Widget build(BuildContext context) {
+    // ListenableBuilder: Tema değiştiğinde (koyu/açık) MaterialApp'i otomatik günceller
     return ListenableBuilder(
       listenable: _themeController,
       builder: (context, _) {
@@ -48,7 +49,7 @@ class _SusadimAppState extends State<SusadimApp> {
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: _themeController.themeMode,
+          themeMode: _themeController.themeMode, // Kullanıcının seçtiği aktif tema modu
           home: SplashScreen(
             beverageController: _beverageController,
             workoutController: _workoutController,

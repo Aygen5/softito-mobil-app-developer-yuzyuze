@@ -39,6 +39,7 @@ class WorkoutController extends ChangeNotifier {
 
   int _workoutCounter = 0;
 
+  // Yeni antrenman ekleme: Kalori verilmediyse süreye göre otomatik hesaplar
   void addWorkout(WorkoutType type, int durationMinutes, [int? calories]) {
     final calculatedCal = calories ?? (type.defaultCalPerMin * durationMinutes);
     final workout = WorkoutModel(
@@ -48,10 +49,13 @@ class WorkoutController extends ChangeNotifier {
       caloriesBurned: calculatedCal,
       timestamp: DateTime.now(),
     );
+    // En yeni antrenmanı listenin en başına (0. indekse) ekliyoruz
     _workouts.insert(0, workout);
+    // notifyListeners: UI'a verinin değiştiğini bildirir, dinleyen widget'lar yeniden çizilir
     notifyListeners();
   }
 
+  // Antrenmanı listeden siler ve arayüzü günceller
   void removeWorkout(String id) {
     _workouts.removeWhere((w) => w.id == id);
     notifyListeners();

@@ -44,21 +44,25 @@ class _CalendarScreenState extends State<CalendarScreen> {
     // Başlangıçta örnek/sahte veri konulmaz; kullanıcının kaydettiği gerçek kayıtlar tutulur.
   }
 
+  // Tarihi Map içinde saklamak için 'YYYY-MM-DD' formatında string anahtara çeviriyoruz
   String _dateKey(DateTime d) =>
       '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
+  // Önceki aya geçiş fonksiyonu
   void _previousMonth() {
     setState(() {
       _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1, 1);
     });
   }
 
+  // Sonraki aya geçiş fonksiyonu
   void _nextMonth() {
     setState(() {
       _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1, 1);
     });
   }
 
+  // Seçilen günün günlük yazma/düzenleme sayfasına geçiş
   Future<void> _openDiaryScreen(DateTime date) async {
     setState(() {
       _selectedDate = date;

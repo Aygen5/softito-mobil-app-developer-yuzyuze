@@ -1,4 +1,5 @@
-/// Tek bir güne ait günlük kaydını temsil eden model.
+// Günlük verisini tuttuğumuz model. Alanları final yaptık (immutable).
+// Veri güncelleneceği zaman nesneyi doğrudan değiştirmek yerine copyWith ile yenisini üretiyoruz.
 class DiaryEntry {
   /// Günlüğün ait olduğu tarih (saat/dakika sıfırlanmış olmalıdır)
   final DateTime date;
@@ -19,7 +20,7 @@ class DiaryEntry {
     required this.updatedAt,
   });
 
-  /// Günlük kaydının kopyasını güncel alanlarla üretir.
+  // copyWith: Bir günlük kaydını kopyalayıp sadece değişen kısımlarını güncellemek için kullanıldı
   DiaryEntry copyWith({
     DateTime? date,
     String? content,

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'screens/calendar_screen.dart';
 import 'theme/app_colors.dart';
 
+// Uygulamanın giriş noktası
 void main() {
+  // Widget ağacı çizilmeden önce Flutter motorunu hazır hale getiriyoruz
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const GunlugumApp());
 }
@@ -20,6 +22,7 @@ class GunlugumApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: AppColors.background,
+        // Projenin renk paletini AppColors'dan alıyoruz
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
           primary: AppColors.primary,
@@ -34,6 +37,7 @@ class GunlugumApp extends StatelessWidget {
           scrolledUnderElevation: 0,
         ),
       ),
+      // İlk açılış sayfası takvim ekranı
       home: const CalendarScreen(),
     );
   }

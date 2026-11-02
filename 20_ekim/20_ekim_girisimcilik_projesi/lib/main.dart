@@ -10,6 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final themeController = ThemeController();
   final authController = AuthController();
+  // Kayıtlı kullanıcı oturumu var mı diye kontrol ediyoruz
   await authController.initSession();
 
   runApp(
@@ -20,6 +21,7 @@ void main() async {
   );
 }
 
+// Yörünge Girişimcilik Uygulaması
 class YorungeApp extends StatelessWidget {
   final ThemeController themeController;
   final AuthController authController;
@@ -32,6 +34,7 @@ class YorungeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ValueListenableBuilder: Tema modu (açık/koyu) değiştiğinde MaterialApp'i yeniler
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeController.themeMode,
       builder: (context, currentMode, _) {
@@ -41,6 +44,7 @@ class YorungeApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: currentMode,
+          // Açılış ekranı olarak SplashScreen başlatıyoruz
           home: SplashScreen(
             themeController: themeController,
             authController: authController,

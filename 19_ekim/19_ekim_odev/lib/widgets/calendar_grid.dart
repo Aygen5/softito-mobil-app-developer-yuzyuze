@@ -36,6 +36,7 @@ class CalendarGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     // Ayın ilk gününün haftanın hangi gününe denk geldiği (1 = Pazartesi ... 7 = Pazar)
     final firstDayOfMonth = DateTime(currentMonth.year, currentMonth.month, 1);
+    // Bir sonraki ayın 0. günü o ayın son gününü (yani bu aydaki toplam gün sayısını) verir
     final daysInMonth =
         DateTime(currentMonth.year, currentMonth.month + 1, 0).day;
 

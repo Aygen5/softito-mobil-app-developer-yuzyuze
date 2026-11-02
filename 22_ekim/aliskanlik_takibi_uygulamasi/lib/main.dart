@@ -57,6 +57,7 @@ class VerdantApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // MultiRepositoryProvider: Veri kaynaklarını alt widget'ların erişebilmesi için enjekte ediyoruz
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<HabitRepository>.value(value: habitRepository),
@@ -64,6 +65,7 @@ class VerdantApp extends StatelessWidget {
           value: statisticsRepository,
         ),
       ],
+      // MultiBlocProvider: Sayfaların durumunu yönetecek Cubit'leri burada oluşturup sağlıyoruz
       child: MultiBlocProvider(
         providers: [
           BlocProvider<OnboardingCubit>(create: (context) => OnboardingCubit()),
@@ -88,6 +90,7 @@ class VerdantApp extends StatelessWidget {
           title: 'Verdant',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.darkTheme,
+          // go_router rotalarını AppRouter üzerinden bağlıyoruz
           routerConfig: AppRouter.router,
         ),
       ),

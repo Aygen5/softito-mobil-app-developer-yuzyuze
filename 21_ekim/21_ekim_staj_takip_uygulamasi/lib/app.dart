@@ -82,6 +82,8 @@ class _StajTakipAppState extends State<StajTakipApp> {
 
   @override
   Widget build(BuildContext context) {
+    // MultiRepositoryProvider: Veri tabanı ve servis repository'lerini widget ağacına enjekte ediyoruz (Dependency Injection).
+    // Böylece alt sayfalardan context.read<AuthRepository>() diyerek kolayca erişebiliyoruz.
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>.value(value: _authRepository),
@@ -97,11 +99,13 @@ class _StajTakipAppState extends State<StajTakipApp> {
           value: _documentRepository,
         ),
       ],
+      // MultiBlocProvider: AuthCubit ve ThemeCubit gibi genel durum yöneticilerini tüm uygulamaya sağlıyoruz
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AuthCubit>.value(value: _authCubit),
           BlocProvider<ThemeCubit>.value(value: _themeCubit),
         ],
+        // BlocBuilder: Tema değiştiğinde MaterialApp.router'ı günceller
         child: BlocBuilder<ThemeCubit, ThemeMode>(
           builder: (context, themeMode) {
             return MaterialApp.router(

@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import '../models/beverage_log_model.dart';
 import '../models/beverage_type.dart';
 
+// ChangeNotifier: Durum (state) yönetimi için kullanılır.
+// Veriler güncellendiğinde notifyListeners() çağrılarak arayüze haber verilir.
 class BeverageTrackerController extends ChangeNotifier {
   int _dailyGoalMl = 2500;
   BeverageType _selectedType = BeverageType.water;
@@ -37,10 +39,13 @@ class BeverageTrackerController extends ChangeNotifier {
 
   int get dailyGoalMl => _dailyGoalMl;
   BeverageType get selectedType => _selectedType;
+  // Dışarıdan listeyi doğrudan değiştirmesinler diye unmodifiable (değiştirilemez) liste döndürüyoruz
   List<BeverageLogModel> get logs => List.unmodifiable(_logs);
 
+  // fold(): Listedeki tüm içilen miktarları toplayıp genel tüketimi hesaplamak için kullanıldı
   int get consumedMl => _logs.fold<int>(0, (sum, log) => sum + log.amountMl);
 
+  // İçeceğin su eşdeğerini (hidrasyon etkisini) hesaplar
   int get effectiveHydrationMl =>
       _logs.fold<int>(0, (sum, log) => sum + log.effectiveHydrationMl);
 

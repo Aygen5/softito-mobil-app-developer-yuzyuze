@@ -1,11 +1,13 @@
 import '../../models/habit.dart';
 import '../../models/habit_completion.dart';
 
+// Alışkanlık veri işlemlerini yöneten Repository sözleşmesi (Interface)
 abstract class HabitRepository {
   List<Habit> getHabits();
   List<HabitCompletion> getCompletions();
   List<HabitCompletion> getCompletionsForDate(DateTime date);
 
+  // Stream: Alışkanlıklar güncellendiğinde UI'ın anlık ve reaktif olarak yenilenmesi için kullanıldı
   Stream<List<Habit>> get habitsStream;
   Stream<List<HabitCompletion>> get completionsStream;
 

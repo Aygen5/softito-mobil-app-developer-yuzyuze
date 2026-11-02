@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 /// Günlüğüm tasarım sistemine ait renk paleti.
 /// Stitch tasarımındaki tonlara uygun olarak oluşturulmuştur.
 class AppColors {
+  // Dışarıdan 'new AppColors()' yapılmasın, sadece statik olarak erişilsin diye private constructor yaptık
   AppColors._();
 
   // Zemin & Yüzey Renkleri

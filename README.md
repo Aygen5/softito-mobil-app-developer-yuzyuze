@@ -10,3 +10,4 @@ Bu repository, Softito Mobil App Developer (Yüzyüze) eğitimi kapsamında ger�
 - **21.10**: Staj takip uygulaması mimarisi ve ekran tasarımları geliştirildi.
 - **22.10**: Alışkanlık takibi uygulaması geliştirildi ve Flutter terimler sözlüğü dokümantasyonu hazırlandı.
 - **27-30.10**: Canlı FakeStore REST API entegrasyonlu `mini_magaza_canli_api` e-ticaret uygulaması, katmanlı mimari (models, services, widgets, screens), 4 UI durumu yönetimi, filtreleme/arama ve detaylı öğrenci rehberi hazırlandı.
+- **02.11**: Dart 3 modern özellikleri (sealed class, record, mixin), Row taşma çözümleri, ValueNotifier ile state yönetimi, go_router sekme navigasyonu ve katmanlı API servis mimarisi pekiştirildi.

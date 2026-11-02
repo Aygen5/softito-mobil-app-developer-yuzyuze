@@ -39,6 +39,7 @@ class Habit {
     this.isNotStarted = false,
   });
 
+  // Alışkanlığın bugünkü tamamlanma yüzdesini (0.0 ile 1.0 arasında) hesaplayan getter
   double get completionRatio {
     if (isCompletedToday) return 1.0;
     if (isNotStarted) return 0.0;
@@ -51,6 +52,7 @@ class Habit {
     return 0.0;
   }
 
+  // Alışkanlığı güncellerken kopyasını üretmek için kullanılan copyWith metodu
   Habit copyWith({
     String? id,
     String? title,

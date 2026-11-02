@@ -1,7 +1,8 @@
 // lib/screens/anasayfa.dart
 import 'package:flutter/material.dart';
-import '../services/urun_servisi.dart'; // Servis dosyanızın yolu (kendinize göre güncelleyin)
+import '../services/urun_servisi.dart'; // Model ve servis katmanını dahil ettik
 
+// Anasayfa: API'den gelen canlı ürün listesini ekranda gösteren ana ekranımız
 class Anasayfa extends StatefulWidget {
   const Anasayfa({super.key});
 
@@ -10,22 +11,25 @@ class Anasayfa extends StatefulWidget {
 }
 
 class _AnasayfaState extends State<Anasayfa> {
-  // Yazdığınız servis sınıfından bir nesne üretiyoruz
+  // IUrunServisi tipinde referans alıyoruz (Polimorfizm):
+  // Yarın CanliApiUrunServisi yerine TestServisi gelse bile aşağıdaki kodları değiştirmemiz gerekmez.
   final IUrunServisi _urunServisi = CanliApiUrunServisi();
   
-  // API isteğini tutacak olan Future değişkenimiz
+  // Future<List<UrunModel>>: Asenkron API isteğinin sonucunu (bekleme, başarı veya hata) tutacak değişken
   late Future<List<UrunModel>> _urunlerFuture;
 
   @override
   void initState() {
     super.initState();
-    // Sayfa ilk açıldığında verileri çekmeye başlıyoruz
+    // initState: Sayfa ilk açıldığında sadece 1 kez çalışan metot.
+    // build() içinde çağırmıyoruz çünkü build her tetiklendiğinde tekrar tekrar API'ye istek atıp kota bitmesin.
     _urunlerFuture = _urunServisi.urunleriGetir();
   }
 
   @override
   Widget build(BuildContext context) {
-    // İnternetten veri beklediğimiz için FutureBuilder kullanıyoruz
+    // FutureBuilder: Asenkron işlem bitene kadar bekleyen, snapshot ile durumları kontrol eden widget.
+    // setState kullanmaya gerek kalmadan loading -> data -> error geçişlerini otomatik yönetir.
     return FutureBuilder<List<UrunModel>>(
       future: _urunlerFuture,
       builder: (context, snapshot) {

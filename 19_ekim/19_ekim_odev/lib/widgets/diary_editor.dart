@@ -51,6 +51,7 @@ class DiaryEditor extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Metin Girişi
+              // maxLines: null vererek kullanıcı yazdıkça kutunun aşağıya doğru büyümesini sağladık
               TextField(
                 controller: controller,
                 maxLines: null,
