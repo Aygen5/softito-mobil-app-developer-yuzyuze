@@ -1,5 +1,0 @@
-package com.example.mini_magaza
-
-import io.flutter.embedding.android.FlutterActivity
-
-class MainActivity : FlutterActivity()
