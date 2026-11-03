@@ -1,6 +1,5 @@
 // Degerlendirme Modeli:
-// FakeStore API'deki her ürünün içinde gelen "rating": {"rate": 3.9, "count": 120}
-// yapısını karşılayan iç içe (nested) model sınıfıdır.
+// FakeStore API'deki her ürünün içinde gelen "rating": {"rate": 3.9, "count": 120} yapısını karşılayan iç içe (nested) model sınıfıdır.
 class Degerlendirme {
   final double puan;    // Ürünün ortalama puanı (rate)
   final int oySayisi;   // Ürüne verilen toplam oy adedi (count)

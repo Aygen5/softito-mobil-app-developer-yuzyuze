@@ -3,8 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/urun.dart';
 import 'i_urun_servisi.dart';
 
-// ApiUrunServisi:
-// IUrunServisi sözleşmesini uygulayan ve FakeStore REST API'ye gerçek internet istekleri atan somut sınıfımızdır.
+// ApiUrunServisi: IUrunServisi sözleşmesini uygulayan ve FakeStore REST API'ye gerçek internet istekleri atan somut sınıfımızdır.
 class ApiUrunServisi implements IUrunServisi {
   static const String _baseUrl = 'https://fakestoreapi.com';
   // Ağ isteklerinin sonsuz döngüde asılı kalmaması için 10 saniyelik zaman aşımı süresi belirledik

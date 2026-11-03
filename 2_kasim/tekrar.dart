@@ -6,8 +6,7 @@ sealed class OdemeDurumu {}
 
 // Ödeme başarılı olduğunda dönecek durum sınıfı
 class OdemeBasarili extends OdemeDurumu {
-  // Record kullanımı: Ayrı bir model/class yazmadan birden fazla veriyi (referansKodu ve tutar)
-  // tek seferde taşımak için Dart 3'ün bu özelliğini kullandık.
+  // Record kullanımı: Ayrı bir model/class yazmadan birden fazla veriyi (referansKodu ve tutar)tek seferde taşımak için Dart 3'ün bu özelliğini kullandık.
   final ({String referansKodu, double tutar}) veri;
   OdemeBasarili(this.veri);
 }
@@ -19,8 +18,7 @@ class OdemeBasarisiz extends OdemeDurumu {
 }
 
 // abstract class (Soyut Arayüz / Interface):
-// Buradaki amaç bir standart/sözleşme belirlemek. Yarın Garanti yerine Akbank gelse de
-// odemeYap metodunu aynı parametrelerle ezmek (override etmek) zorunda kalacak.
+// Buradaki amaç bir standart/sözleşme belirlemek. Yarın Garanti yerine Akbank gelse de odemeYap metodunu aynı parametrelerle ezmek (override etmek) zorunda kalacak.
 abstract class IBankaServisi {
   Future<OdemeDurumu> odemeYap({required double miktar});
 }

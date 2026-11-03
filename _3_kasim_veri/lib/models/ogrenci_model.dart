@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// Firestore üzerindeki öğrenci verisini temsil eden model sınıfı.
 class OgrenciModel {
   final String id;
   final String adSoyad;
@@ -7,7 +8,7 @@ class OgrenciModel {
   final int notu;
   final DateTime kayitTarihi;
 
-  OgrenciModel({
+  const OgrenciModel({
     required this.id,
     required this.adSoyad,
     required this.projeAdi,
@@ -15,78 +16,43 @@ class OgrenciModel {
     required this.kayitTarihi,
   });
 
+  /// Firestore dökümanından (DocumentSnapshot) Dart modeline parse işlemi
   factory OgrenciModel.fromFireStore(DocumentSnapshot doc) {
     final veri = doc.data() as Map<String, dynamic>? ?? {};
 
     return OgrenciModel(
       id: doc.id,
-      adSoyad: veri['adSoyad'] as String? ?? 'İsimsiz öğrenci',
-      projeAdi: veri['projeAdi'] as String? ?? 'Öğrencinin henüz projesi yok.',
+      adSoyad: veri['adSoyad'] as String? ?? 'İsimsiz Öğrenci',
+      projeAdi: veri['projeAdi'] as String? ?? 'Proje Belirtilmedi',
       notu: (veri['notu'] as num?)?.toInt() ?? 0,
       kayitTarihi: (veri['kayitTarihi'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
-}
 
-class FireStoreOgrenciServisi{
-  final CollectionReference _ogrencilerKoleksiyonu = FirebaseFirestore.instance.collection('ogrenciler');
-  Future<void> ogrenciEkle ({
-    required String adSoyad,
-    required String projeAdi,
-    required int notu,
-  })
-  async {
-    try {
-      await _ogrencilerKoleksiyonu.add({
-        'adSoyad': adSoyad,
-        'projeAdi': projeAdi,
-        'notu': notu,
-        'kayitTarihi': FieldValue.serverTimestamp(),
-      });
-      print('Öğrenci Başarıyla Kaydedildi');
-     }
-     catch (e) {
-      print ('Öğrenci ekleme başarısız $e');
-      rethrow; 
-    }
+  /// Firestore'a kayıt ederken veya güncellerken Map formatına dönüştürme
+  Map<String, dynamic> toMap() {
+    return {
+      'adSoyad': adSoyad,
+      'projeAdi': projeAdi,
+      'notu': notu,
+      'kayitTarihi': Timestamp.fromDate(kayitTarihi),
+    };
   }
 
-  Future <void> ogrenciIdIleKaydet ({
-    required String tcNo,
-    required String adSoyad,
-    required String projeAdi,
-  })
-  async {
-    await _ogrencilerKoleksiyonu.doc(tcNo).set({
-      'adSoyad':adSoyad,
-      'projeAdi':projeAdi,
-      'guncellemeTarihi': FieldValue.serverTimestamp(),
-    }, SetOptions(merge:true));
+  /// Mevcut modelin bir kopyasını alıp belirli alanları güncellemek için yardımcı metot
+  OgrenciModel copyWith({
+    String? id,
+    String? adSoyad,
+    String? projeAdi,
+    int? notu,
+    DateTime? kayitTarihi,
+  }) {
+    return OgrenciModel(
+      id: id ?? this.id,
+      adSoyad: adSoyad ?? this.adSoyad,
+      projeAdi: projeAdi ?? this.projeAdi,
+      notu: notu ?? this.notu,
+      kayitTarihi: kayitTarihi ?? this.kayitTarihi,
+    );
   }
-
-  Future<List<OgrenciModel>> tumOgrencileriGetir() async {
-    try {
-      final QuerySnapshot snapshot = await _ogrencilerKoleksiyonu.orderBy('notu', descending: true).get();
-      return snapshot.docs.map((doc)=>OgrenciModel.fromFireStore(doc)).toList();
-    }
-    catch (e) {
-      print ("Veri çekme hatası: $e");
-      return [];
-    }
-  }
-
-  Future<void> ogrenciNotuGuncelle(String documanId, int yeniNot) async {
-    await _ogrencilerKoleksiyonu.doc(documanId).update({
-      'notu': yeniNot,
-      'sonDuzenleme':FieldValue.serverTimestamp(),
-    });
-  }
-
-  Future<void> ogrenciSil(String documanId) async {
-    await _ogrencilerKoleksiyonu.doc(documanId).delete();
-    print('$documanId referanslı veri tamamen silindi.');
-
-  }
-  
-  
 }

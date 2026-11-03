@@ -31,8 +31,7 @@ class SepetKontrolu{
 final GoRouter uygulamaRotalari = GoRouter(
    initialLocation: '/anasayfa',
    routes:[
-      // ShellRoute: Alt bar (NavigationBar) sabit kalsın, sekmeye tıklayınca
-      // sadece ortadaki ekran değişsin diye bu yapıyı kullandık.
+      // ShellRoute: Alt bar (NavigationBar) sabit kalsın, sekmeye tıklayınca sadece ortadaki ekran değişsin diye bu yapıyı kullandık.
       ShellRouter(
         builder(BuildContext context, GoRouterState state, Widget child){
           return AnaKasaEkrani(ekranGovdesi:child);

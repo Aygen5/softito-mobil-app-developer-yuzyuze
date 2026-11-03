@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Bu widget'ta Flutter'da sıkça karşılaşılan "Row içinde metin taşması (overflow)"
-// hatasını ve Expanded ile çözümünü inceliyoruz.
+// Bu widget'ta Flutter'da sıkça karşılaşılan "Row içinde metin taşması (overflow)" hatasını ve Expanded ile çözümünü inceliyoruz.
 class HataliveDogruRow extends StatelessWidget {
     const HataliveDogruRow({super.key});
 
@@ -15,8 +14,7 @@ class HataliveDogruRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                        // 1. Kısım: Hatalı yapı örneği
-                       // Row yatayda sınırsız genişlik verir. Eğer Row içine uzun bir Text koyarsak
-                       // ekran sınırını aşar ve meşhur sarı-siyah şeritli "RenderFlex overflowed" hatası çıkar.
+                       // Row yatayda sınırsız genişlik verir. Eğer Row içine uzun bir Text koyarsak ekran sınırını aşar ve meşhur sarı-siyah şeritli "RenderFlex overflowed" hatası çıkar.
                        const Text(
                         'Hatalı Yapı: A overflowed by *** pixels (sarı siyah şerit)',
                         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
@@ -28,8 +26,7 @@ class HataliveDogruRow extends StatelessWidget {
                         child: Row(
                             children: const [
                                 Icon(Icons.warning, color: Colors.red),
-                                // Bu metin kısa kaldığı sürece patlamaz ama yarın bir gün uzarsa
-                                // veya ekran daralırsa sınır olmadığı için taşma hatası verecektir.
+                                // Bu metin kısa kaldığı sürece patlamaz ama yarın bir gün uzarsa veya ekran daralırsa sınır olmadığı için taşma hatası verecektir.
                                 Text('Kısa Metin (hata vermez ama uzarsa Render Patlar)'),
                             ],
                         ),
@@ -37,8 +34,7 @@ class HataliveDogruRow extends StatelessWidget {
                        const SizedBox(height: 32),
                        
                        // 2. Kısım: Doğru yapı örneği
-                       // Expanded kullanmak demek: "Row içindeki kalan tüm boşluğu sen kapla ve
-                       // çocuğunun bu sınırı aşmasına izin verme" demektir. Böylece metin alt satıra geçer.
+                       // Expanded kullanmak demek: "Row içindeki kalan tüm boşluğu sen kapla ve çocuğunun bu sınırı aşmasına izin verme" demektir. Böylece metin alt satıra geçer.
                        const Text(
                          'Doğru Yapı: Flexible ve Expanded ile sınırlandırılmıştır.',
                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),

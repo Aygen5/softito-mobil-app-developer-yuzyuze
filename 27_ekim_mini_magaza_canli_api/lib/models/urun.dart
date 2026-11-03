@@ -25,8 +25,7 @@ class Urun {
     this.stoktaVarMi = true,
   });
 
-  // fromJson: FakeStore API'den gelen ham JSON haritasını (Map<String, dynamic>)
-  // tip güvenli bir Urun nesnesine dönüştürmek için kullandık.
+  // fromJson: FakeStore API'den gelen ham JSON haritasını (Map<String, dynamic>) tip güvenli bir Urun nesnesine dönüştürmek için kullandık.
   factory Urun.fromJson(Map<String, dynamic> json) {
     return Urun(
       id: (json['id'] as num).toInt(),
@@ -46,8 +45,7 @@ class Urun {
     );
   }
 
-  // copyWith: Bir ürünün mevcut verilerini koruyarak sadece belli alanlarını
-  // (örneğin sepet durumu veya stok bilgisi) değiştirmek amacıyla kullandığımız metottur.
+  // copyWith: Bir ürünün mevcut verilerini koruyarak sadece belli alanlarını (örneğin sepet durumu veya stok bilgisi) değiştirmek amacıyla kullandığımız metottur.
   Urun copyWith({
     int? id,
     String? baslik,

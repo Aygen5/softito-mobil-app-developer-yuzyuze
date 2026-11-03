@@ -1,4 +1,4 @@
-// lib/screens/anasayfa.dart
+
 import 'package:flutter/material.dart';
 import '../services/urun_servisi.dart'; // Model ve servis katmanını dahil ettik
 

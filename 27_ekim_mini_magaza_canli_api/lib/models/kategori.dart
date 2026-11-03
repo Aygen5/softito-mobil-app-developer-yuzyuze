@@ -1,6 +1,5 @@
 // Kategori Enumu:
-// API'den gelen string kategori isimlerini ("electronics", "jewelery") doğrudan string olarak kullanmak yerine
-// enum'a çevirdik. Amacı: Tip güvenliği (type-safety) sağlamak ve kod yazarken harf hatası yapmayı önlemek.
+// API'den gelen string kategori isimlerini ("electronics", "jewelery") doğrudan string olarak kullanmak yerine enum'a çevirdik. Amacı: Tip güvenliği (type-safety) sağlamak ve kod yazarken harf hatası yapmayı önlemek.
 enum Kategori {
   hepsi,        // Filtrelemede 'Tümü' seçeneği için
   elektronik,   // FakeStore: electronics

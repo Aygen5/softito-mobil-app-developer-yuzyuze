@@ -10,8 +10,7 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/', // Uygulama ilk açıldığında gösterilecek başlangıç rotası
   routes: [
     // StatefulShellRoute.indexedStack:
-    // Bu yapının en büyük avantajı; sekmeler (tabs) arası geçişte sayfaların durumunu (scroll konumu, girilen veriler)
-    // kaybetmemesidir. Sayfalar arkada canlı kalır, IndexedStack mantığıyla gizlenip gösterilir.
+    // Bu yapının en büyük avantajı; sekmeler (tabs) arası geçişte sayfaların durumunu (scroll konumu, girilen veriler) kaybetmemesidir. Sayfalar arkada canlı kalır, IndexedStack mantığıyla gizlenip gösterilir.
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         // Alt çubuğu (BottomNavigationBar) barındıran ortak kabuk ekran

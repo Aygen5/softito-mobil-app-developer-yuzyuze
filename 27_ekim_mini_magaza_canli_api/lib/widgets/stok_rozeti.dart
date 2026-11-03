@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 // StokRozeti:
-// Ürünün stokta olup olmadığını yeşil veya kırmızı renkli bir etiket (badge) olarak gösteren
-// tekrar kullanılabilir (reusable) özel widget'ımız.
+// Ürünün stokta olup olmadığını yeşil veya kırmızı renkli bir etiket (badge) olarak gösteren tekrar kullanılabilir (reusable) özel widget'ımız.
 class StokRozeti extends StatelessWidget {
   final bool stoktaVarMi; // Ürünün stokta olup olmadığı bilgisi
 
@@ -13,8 +12,7 @@ class StokRozeti extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ternary operator (? :) kullanarak stok durumuna göre rengi dinamik seçiyoruz:
-    // Stokta varsa yeşil tonları, tükenmişse kırmızı tonları uyguluyoruz.
+    // Ternary operator (? :) kullanarak stok durumuna göre rengi dinamik seçiyoruz: Stokta varsa yeşil tonları, tükenmişse kırmızı tonları uyguluyoruz.
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(

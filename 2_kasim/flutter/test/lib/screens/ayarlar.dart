@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 // Ayarlar Ekranı: go_router içerisindeki 3. sekmeyi (StatefulShellBranch) temsil eder.
 // Alt bardaki 'Ayarlar' sekmesine tıklandığında ekrana basılır.
 class Ayarlar extends StatelessWidget {
