@@ -29,6 +29,7 @@
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		72995797D1BAA38FC896377F /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1FF55B338EBB1DF6B6F102B /* Pods_RunnerTests.framework */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
+		9C31AC4AACA38207752779EE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 314E8EE87931698805D1430B /* GoogleService-Info.plist */; };
 		BBD8DEDEA1E70BEC5528CA91 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0662C93DEF49F298747F07 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +65,7 @@
 
 /* Begin PBXFileReference section */
 		116016C085128CC5EC99EECD /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		314E8EE87931698805D1430B /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Runner/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		325C3B58D6FEF413539E0F23 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		331C80D5294CF71000263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		331C80D7294CF71000263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				33CC10EE2044A3C60003C045 /* Products */,
 				D73912EC22F37F3D000D13A0 /* Frameworks */,
 				274D9C56A7DDB4CBC5B89D20 /* Pods */,
+				314E8EE87931698805D1430B /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -327,6 +330,7 @@
 			files = (
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
+				9C31AC4AACA38207752779EE /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

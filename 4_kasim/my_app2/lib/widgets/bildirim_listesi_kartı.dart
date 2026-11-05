@@ -69,7 +69,7 @@ class BildirimListesiKarti extends StatelessWidget {
                 Switch(
                   value: konuyaAboneMi,
                   onChanged: onAboneDegisti,
-                  activeColor: const Color(0xFF006C4A),
+                  activeThumbColor: const Color(0xFF006C4A),
                 ),
               ],
             ),
@@ -157,7 +157,7 @@ class BildirimListesiKarti extends StatelessWidget {
                     shrinkWrap: true, // Card içinde yükseklik taşmasını önler
                     physics: const NeverScrollableScrollPhysics(), // Ana ekranın kaymasını engellemez
                     itemCount: bildirimler.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    separatorBuilder: (_, _) => const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final item = bildirimler[index];
                       return ListTile(

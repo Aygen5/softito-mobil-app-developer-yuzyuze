@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "83997665822",
+    "project_id": "softitofcmdemoapp",
+    "storage_bucket": "softitofcmdemoapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83997665822:android:4b2dd057effa6b4f78dc0f",
+        "android_client_info": {
+          "package_name": "com.example.my_app2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfT2MKEWwKoA7TtnD4flQ7y-RCswLTIoQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

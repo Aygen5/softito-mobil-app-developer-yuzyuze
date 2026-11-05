@@ -36,8 +36,8 @@ class FcmBildirimServisi {
   /// ==========================================================================
   /// 1. BİLDİRİM SERVİSİNİ BAŞLATMA VE YAPILANDIRMA
   /// ==========================================================================
-  /// Bildirim izinlerini talep eder, yerel bildirim motorunu kurar ve
-  /// ön plan dinleyicisini (Foreground Listener) devreye sokar.
+  /// Bildirim izinlerini talep eder, yerel bildirim motorunu kurar,
+  /// ön plan ve arka plan dinleyicilerini devreye sokar.
   Future<void> baslat() async {
     // 1. Kullanıcıdan bildirim izni talep etme (iOS ve Android 13+)
     await _firebaseMessaging.requestPermission(
@@ -58,50 +58,52 @@ class FcmBildirimServisi {
     await _flutterLocalNotificationsPlugin.initialize(initSettings);
 
     // 3. Ön Plan Mesaj Dinleyicisi (Foreground Stream Listener)
-    // Uygulama açık ve ekrandayken bir FCM mesajı geldiğinde tetiklenir:
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Bildirimi kullanıcıya açılır pencere (heads-up notification) olarak göster
       _yerelBildirimGoster(message);
-
-      // Eğer bir UI dinleyicisi tanımlanmışsa (kart listesi gibi), mesaja haber ver
       if (onMesajGeldi != null) {
         onMesajGeldi!(message);
       }
     });
+
+    // 4. Arka Plan Mesaj Dinleyicisi (Background Message Handler)
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
   /// ==========================================================================
   /// 2. TOPIC (KONU) ABONELİĞİ YÖNETİMİ
   /// ==========================================================================
-  /// FCM Konuları (Topics); tek tek kullanıcı token'ları ile uğraşmadan, belirli
-  /// bir gruba (Örn: 'tum_sinif', 'kampanyalar', 'duyurular') toplu bildirim (broadcast)
-  /// göndermeyi sağlayan çok güçlü bir mekanizmadır.
-
   /// Belirtilen bir konuya abone olma
-  Future<void> konudanAboneOl(String konu) async {
-    // Kullanıcı bu konuya abone olduğunda, sunucu o konuya mesaj attığında cihaz bildirim alır.
+  Future<void> konuyaAboneOl(String konu) async {
     await _firebaseMessaging.subscribeToTopic(konu);
     print('$konu konusuna başarıyla abone olundu.');
   }
 
+  /// Geriye dönük uyumluluk için alias metot
+  Future<void> konudanAboneOl(String konu) async {
+    await konuyaAboneOl(konu);
+  }
+
   /// Belirtilen bir konunun aboneliğinden çıkma
-  Future<void> konudanAyrıl(String konu) async {
-    // Kullanıcı konudan çıktığında artık bu grup bildirimlerini almaz.
+  Future<void> konudanAyril(String konu) async {
     await _firebaseMessaging.unsubscribeFromTopic(konu);
     print('$konu konusunun aboneliğinden ayrılındı.');
   }
 
-  /// Cihazın güncel FCM Token bilgisini döndürür
+  /// ==========================================================================
+  /// 3. CİHAZIN FCM TOKEN BİLGİSİNİ ALMA
+  /// ==========================================================================
   Future<String?> tokenAl() async {
-    return await _firebaseMessaging.getToken();
+    try {
+      return await _firebaseMessaging.getToken();
+    } catch (_) {
+      return null;
+    }
   }
 
   /// ==========================================================================
-  /// 3. YEREL BİLDİRİM GÖSTERME (HEADS-UP BANNER)
+  /// 4. YEREL BİLDİRİM GÖSTERME (HEADS-UP BANNER)
   /// ==========================================================================
-  /// Ön planda gelen FCM mesajını sistem bildirim tepsisinde gösteren yardımcı metot.
   Future<void> _yerelBildirimGoster(RemoteMessage message) async {
-    // Android bildirim kanalı yapılandırması
     const androidDetails = AndroidNotificationDetails(
       'kanal_id',
       'Kanal Adı',
@@ -114,11 +116,10 @@ class FcmBildirimServisi {
       iOS: iosDetails,
     );
 
-    // Yerel bildirimi patlatıyoruz
     await _flutterLocalNotificationsPlugin.show(
-      message.hashCode,                     // Benzersiz ID
-      message.notification?.title ?? '',   // Bildirim Başlığı
-      message.notification?.body ?? '',    // Bildirim Gövdesi
+      message.hashCode,
+      message.notification?.title ?? '',
+      message.notification?.body ?? '',
       notificationDetails,
     );
   }

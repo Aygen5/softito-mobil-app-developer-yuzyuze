@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Profil ve görsel yükleme işlemleri için kamera erişim izni gereklidir.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Galerinizden fotoğraf seçip yükleyebilmek için fotoğraf kitaplığı erişim izni gereklidir.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Kamera kullanımı sırasında ses kaydı için mikrofon izni gereklidir.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
