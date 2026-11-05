@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
+import 'services/fcm_bildirim_servisi.dart';
 import 'screens/storage_ve_fcm_ekrani.dart';
 
 /// ============================================================================
@@ -15,6 +17,8 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    // Arka plan mesaj dinleyicisini uygulama açılır açılmaz kaydediyoruz
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   } catch (e) {
     debugPrint('Firebase başlatma hatası: $e');
   }

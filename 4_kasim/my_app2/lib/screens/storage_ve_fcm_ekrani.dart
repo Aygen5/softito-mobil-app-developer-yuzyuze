@@ -14,12 +14,6 @@ import '../widgets/gorsel_yukleme.karti.dart';
 /// Bu ekran; hem Firebase Cloud Messaging (FCM) anlık bildirim altyapısını hem de
 /// Firebase Cloud Storage medya yükleme süreçlerini tek bir çatı altında birleştiren,
 /// State yönetimini ve servis koordinasyonunu sağlayan ana ekran widget'ıdır.
-///
-/// 💡 Mimari Yaklaşım:
-/// Ekran 'Stateful' olarak kurgulanmıştır. Servislerden (Storage & FCM) gelen
-/// dinamik veriler (yükleme yüzdesi, dosya URL'i, gelen bildirimler, token)
-/// ekranın State'inde tutulur ve alt widget'lara (GorselYuklemeKarti, BildirimListesiKarti)
-/// parametre ve callback fonksiyonları olarak aktarılır.
 class StorageVeFcmEkrani extends StatefulWidget {
   const StorageVeFcmEkrani({super.key});
 
@@ -31,37 +25,22 @@ class _StorageVeFcmEkraniState extends State<StorageVeFcmEkrani> {
   // ---------------------------------------------------------------------------
   // 1. SERVİS NESNELERİ (SERVICE INSTANCES)
   // ---------------------------------------------------------------------------
-  // Firebase Cloud Storage dosya seçme ve yükleme işlemlerini yöneten servis
   final StorageServisi _storageServisi = StorageServisi();
-
-  // Firebase Cloud Messaging bildirim izinleri, dinleyicisi ve token işlemlerini yöneten servis
   final FcmBildirimServisi _fcmBildirimServisi = FcmBildirimServisi();
 
   // ---------------------------------------------------------------------------
   // 2. STORAGE İLE İLGİLİ STATE DEĞİŞKENLERİ
   // ---------------------------------------------------------------------------
-  // Galeriden veya kameradan seçilen yerel görsel dosyası (seçilmediyse null)
   File? _secilenDosya;
-
-  // Buluta başarıyla yüklendikten sonra dönen HTTPS indirme bağlantısı (Download URL)
   String? _yuklenenUrl;
-
-  // Firebase Storage yükleme ilerleme oranı (0.0 ile 1.0 arasında değer alır)
   double _yuklemeOrani = 0.0;
-
-  // Dosya yükleme işleminin devam edip etmediğini belirten durum bayrağı
   bool _yukleniyorMu = false;
 
   // ---------------------------------------------------------------------------
   // 3. FCM BİLDİRİM İLE İLGİLİ STATE DEĞİŞKENLERİ
   // ---------------------------------------------------------------------------
-  // Cihazın Firebase'e kayıtlı benzersiz FCM Token'ı (test bildirimleri için kullanılır)
   String? _fcmToken;
-
-  // Kullanıcının 'tum_sinif' genel yayın konusuna (topic) abone olup olmadığı
   bool _konuyaAboneMi = false;
-
-  // Uygulama çalışırken FCM üzerinden gelen anlık bildirimlerin listesi
   final List<BildirimModeli> _bildirimler = [];
 
   // ===========================================================================
@@ -79,16 +58,24 @@ class _StorageVeFcmEkraniState extends State<StorageVeFcmEkrani> {
   // ===========================================================================
   /// FCM izinlerini talep eder, ön plan mesaj dinleyicisini bağlar ve cihaz token'ını alır.
   Future<void> _fcmKur() async {
-    // Ön planda (Foreground) yeni bir FCM mesajı geldiğinde tetiklenecek callback
+    // Ön planda (Foreground) veya arka plandan tıklanınca yeni bir FCM mesajı geldiğinde tetiklenecek callback
     _fcmBildirimServisi.onMesajGeldi = (message) {
+      final baslik = message.notification?.title ??
+          message.data['title'] ??
+          "Yeni Bildirim";
+      final icerik = message.notification?.body ??
+          message.data['body'] ??
+          message.data['message'] ??
+          "";
+
       setState(() {
         // Gelen bildirimi listenin en başına (index 0) ekliyoruz
         _bildirimler.insert(
           0,
           BildirimModeli(
             id: message.messageId ?? DateTime.now().toIso8601String(),
-            baslik: message.notification?.title ?? "Yeni Bildirim",
-            icerik: message.notification?.body ?? "",
+            baslik: baslik,
+            icerik: icerik,
             tarih: DateTime.now(),
             okunduMu: false,
           ),
@@ -96,12 +83,63 @@ class _StorageVeFcmEkraniState extends State<StorageVeFcmEkrani> {
       });
     };
 
-    // Bildirim izinlerini ve yerel bildirim motorunu başlat
+    // Bildirime tıklandığında tetiklenecek bildirim yanıt callback'i
+    _fcmBildirimServisi.onBildirimeTiklandi = (payload) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Bildirime tıklandı! ($payload)'),
+            backgroundColor: const Color(0xFF0284C7),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    };
+
+    // Bildirim izinlerini ve bildirim kanalını başlat
     await _fcmBildirimServisi.baslat();
 
     // Firebase'den bu cihaza özel oluşturulan FCM Token'ı al ve State'e yaz
     final token = await _fcmBildirimServisi.tokenAl();
-    setState(() => _fcmToken = token);
+    if (mounted) {
+      setState(() => _fcmToken = token);
+    }
+  }
+
+  /// Cihazda anlık test bildirimi tetikleme metodu
+  Future<void> _testBildirimiTetikle() async {
+    const testBaslik = "Softito Test Bildirimi 🚀";
+    const testIcerik = "Bildirim mekanizması sorunsuz ve aktif olarak çalışıyor!";
+
+    // Heads-up yerel bildirimi gönder
+    await _fcmBildirimServisi.testBildirimiGoster(
+      baslik: testBaslik,
+      icerik: testIcerik,
+    );
+
+    // Uygulama içi bildirim listesine ekle
+    setState(() {
+      _bildirimler.insert(
+        0,
+        BildirimModeli(
+          id: 'test_${DateTime.now().millisecondsSinceEpoch}',
+          baslik: testBaslik,
+          icerik: testIcerik,
+          tarih: DateTime.now(),
+          okunduMu: false,
+        ),
+      );
+    });
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Test bildirimi oluşturuldu! Bildirim panelinizi kontrol edin."),
+          backgroundColor: Color(0xFF006C4A),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   /// Kullanıcının konuya (Topic) abone olma veya abonelikten çıkma durumunu yönetir.
@@ -133,7 +171,6 @@ class _StorageVeFcmEkraniState extends State<StorageVeFcmEkrani> {
 
   /// Seçilen yerel dosyayı Firebase Storage havuzuna asenkron olarak yükler.
   Future<void> _bulutaYukle() async {
-    // Seçilmiş bir dosya yoksa işlem yapma
     if (_secilenDosya == null) return;
 
     setState(() {
@@ -141,29 +178,22 @@ class _StorageVeFcmEkraniState extends State<StorageVeFcmEkrani> {
     });
 
     try {
-      // Benzersiz bir dosya ismi oluşturuluyor (Örn: profil_1699185000000.jpg)
       final dosyaAdi = 'profil_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      // Storage servisinde yükleme görevi (UploadTask) başlatılıyor
       final task = _storageServisi.yuklemeBaslat(
         dosya: _secilenDosya!,
         dosyaAdi: dosyaAdi,
       );
 
-      // Yükleme akışını (Stream) dinleyerek anlık aktarılan byte oranını güncelliyoruz
       task.snapshotEvents.listen((snapshot) {
         setState(() {
           _yuklemeOrani = snapshot.bytesTransferred / snapshot.totalBytes;
         });
       });
 
-      // Yüklemenin tamamen bitmesini bekliyoruz
       final tamamlanan = await task;
-
-      // Buluta yüklenen dosyanın indirme bağlantısını (Download URL) alıyoruz
       final url = await _storageServisi.urlGetir(tamamlanan.ref);
 
-      // Yükleme başarıyla bittiğinde State güncellenir
       setState(() {
         _yuklenenUrl = url;
         _yuklemeOrani = 0.0;
@@ -171,7 +201,6 @@ class _StorageVeFcmEkraniState extends State<StorageVeFcmEkrani> {
         _yukleniyorMu = false;
       });
 
-      // Kullanıcıya işlemin başarılı olduğunu bildiren yeşil SnackBar göster
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -181,10 +210,8 @@ class _StorageVeFcmEkraniState extends State<StorageVeFcmEkrani> {
         );
       }
     } catch (e) {
-      // Hata durumunda yükleniyor durumunu kapat
       setState(() => _yukleniyorMu = false);
 
-      // Kullanıcıya hata mesajı içeren kırmızı SnackBar göster
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -244,6 +271,7 @@ class _StorageVeFcmEkraniState extends State<StorageVeFcmEkrani> {
               token: _fcmToken,
               konuyaAboneMi: _konuyaAboneMi,
               onAboneDegisti: _abonelikDegistir,
+              onTestBildirimiGonder: _testBildirimiTetikle,
             ),
           ],
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/bildirim_modeli.dart';
 
 /// ============================================================================
@@ -10,7 +11,7 @@ import '../models/bildirim_modeli.dart';
 /// 
 /// 💡 Tekrar Kullanılabilirlik (Reusability):
 /// Tamamen 'Stateless' tasarlanmış olup verilerini üst widget'tan parametre olarak
-/// alır ve kullanıcı etkileşimlerini (örneğin switch değişimi) callback ile iletir.
+/// alır ve kullanıcı etkileşimlerini callback ile iletir.
 class BildirimListesiKarti extends StatelessWidget {
   // Gelen bildirimlerin dinamik listesi
   final List<BildirimModeli> bildirimler;
@@ -24,12 +25,16 @@ class BildirimListesiKarti extends StatelessWidget {
   // Abone switch'i açılıp kapandığında üst widget'a haber veren tetikleyici (callback)
   final ValueChanged<bool> onAboneDegisti;
 
+  // Cihazda bildirim mekanizmasını anında test etmek için tetikleyici
+  final VoidCallback onTestBildirimiGonder;
+
   const BildirimListesiKarti({
     super.key,
     required this.bildirimler,
     required this.token,
     required this.konuyaAboneMi,
     required this.onAboneDegisti,
+    required this.onTestBildirimiGonder,
   });
 
   @override
@@ -90,10 +95,8 @@ class BildirimListesiKarti extends StatelessWidget {
             /// ----------------------------------------------------------------
             /// 2. CİHAZIN FCM TOKEN GÖSTERİM KUTUSU
             /// ----------------------------------------------------------------
-            /// Cihazın FCM Token'ı çok uzundur ve Firebase Console'dan test mesajı
-            /// atarken kopyalanması gerekir. Bu sebeple SelectableText kullanılmıştır.
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: const Color(0xFF0F172A), // Koyu konsol teması
                 borderRadius: BorderRadius.circular(8),
@@ -101,15 +104,46 @@ class BildirimListesiKarti extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Cihazın FCM Tokeni (Kopyalanabilir):",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 11,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Cihazın FCM Tokeni:",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 11,
+                        ),
+                      ),
+                      if (token != null)
+                        InkWell(
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: token!));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('FCM Token panoya kopyalandı!'),
+                                duration: Duration(seconds: 2),
+                                backgroundColor: Color(0xFF006C4A),
+                              ),
+                            );
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.copy, size: 14, color: Color(0xFF38BDF8)),
+                              SizedBox(width: 4),
+                              Text(
+                                "Kopyala",
+                                style: TextStyle(
+                                  color: Color(0xFF38BDF8),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  // SelectableText sayesinde öğrenci/geliştirici token'ı uzun basarak seçip kopyalayabilir
+                  const SizedBox(height: 6),
                   SelectableText(
                     token ?? 'Token alınıyor...',
                     style: const TextStyle(
@@ -119,6 +153,28 @@ class BildirimListesiKarti extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            /// ----------------------------------------------------------------
+            /// 2.1 ANINDA TEST BİLDİRİMİ GÖNDERME BUTONU
+            /// ----------------------------------------------------------------
+            OutlinedButton.icon(
+              onPressed: onTestBildirimiGonder,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF006C4A),
+                side: const BorderSide(color: Color(0xFF006C4A)),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              icon: const Icon(Icons.send_to_mobile, size: 18),
+              label: const Text(
+                'Test Bildirimi Tetikle',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               ),
             ),
 
